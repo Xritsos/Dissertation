@@ -344,7 +344,6 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
             for lon in range(lon_start, lon_range):
 
                 heights[lat, lon, lev] = zgmid_in[timer, lev, lat, lon] / 1e5  # altitude in km
-                print(heights[lat, lon, lev])
 
                 # Average heights for Lat - Alt map
                 temp_height = temp_height + heights[lat, lon, lev]

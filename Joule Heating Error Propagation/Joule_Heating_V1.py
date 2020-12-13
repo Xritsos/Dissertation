@@ -1727,9 +1727,9 @@ def plot_collisions(lat_value, lon_value, min_alt, max_alt):
 
     # updating the layout of the figure
     fig1.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis_title="Frequency (Hz)", yaxis_title="$Altitude (km)$",
-                       width=800, height=650,
-                       title={'text': 'Collision Frequencies' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis_title="$Frequency \ (Hz)$",
+                       yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                       title={'text': 'Collision-Gyro Frequencies' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig1.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
     fig1.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1761,7 +1761,7 @@ def plot_heating_rates(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
-                      xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Heating Rates' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1794,7 +1794,7 @@ def plot_conductivities(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
-                      xaxis_title="$(S/m)$", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="$(S/m)$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Conductivities' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1829,7 +1829,7 @@ def plot_currents(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
-                      xaxis_title="$(A/m^{2})$", yaxis_title="$Altitude (km)$", width=900, height=750,
+                      xaxis_title="$(A/m^{2})$", yaxis_title="$Altitude \ (km)$", width=900, height=750,
                       title={'text': 'Perpendicular Currents' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1864,7 +1864,7 @@ def plot_cross_sections(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, x_range + x_range/4]),
-                      xaxis_title="$(m^{2})$", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="$(m^{2})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Cross Sections' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1899,7 +1899,7 @@ def plot_collisions_error(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                      xaxis_title="Frequency (Hz)", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="$Frequency \ (Hz)$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Collision Frequencies Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1943,7 +1943,7 @@ def plot_collisions_rel_error(lat_value, lon_value, min_alt, max_alt):
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt], tickmode='array',
-                      tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Collision Frequencies Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1995,7 +1995,7 @@ def plot_collisions_contr(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis_title="",
-                      yaxis_title="$Altitude (km)$", width=800, height=650,
+                      yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Collision Frequencies Relative Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center',
                              'yanchor': 'top'})
 
@@ -2029,7 +2029,7 @@ def plot_heating_rates_error(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                      xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Heating Rates Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2067,7 +2067,7 @@ def plot_heating_rates_rel_error(lat_value, lon_value, min_alt, max_alt):
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', xaxis=dict(range=[0.05, 0.4], tickmode='array'),
                       yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                      xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Heating Rates Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2129,7 +2129,7 @@ def plot_heating_rates_contr(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig1.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                        tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                       xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude (km)$", width=800, height=650,
+                       xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                        title={'text': 'Ohmic Heating Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig1.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2173,7 +2173,7 @@ def plot_heating_rates_contr(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig2.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                        tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                       xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
+                       xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                        title={'text': 'Frictional Heating Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig2.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2209,7 +2209,7 @@ def plot_heating_rates_contr(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig3.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', xaxis=dict(range=[0, 0.4]),
                        yaxis=dict(range=[min_alt, max_alt], tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis_title="",
-                       yaxis_title="$Altitude (km)$", width=800, height=650,
+                       yaxis_title="$Altitude \ (km)$", width=800, height=650,
                        title={'text': 'Joule Heating Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig3.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2241,7 +2241,7 @@ def plot_conductivities_error(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                      xaxis_title="$(S/m)$", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="$(S/m)$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Conductivities Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2278,7 +2278,7 @@ def plot_conductivities_rel_error(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                      xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Conductivities Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2331,7 +2331,7 @@ def plot_conductivities_contr(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig1.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                        tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                       xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
+                       xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                        title={'text': 'Pedersen Conductivity Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig1.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2372,7 +2372,7 @@ def plot_conductivities_contr(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig2.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                        tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                       xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
+                       xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                        title={'text': 'Hall Conductivity Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig2.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2409,7 +2409,7 @@ def plot_currents_error(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, x_range + x_range/8]),
-                      xaxis_title="$(A/m^{2})$", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="$(A/m^{2})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Perpendicular Currents Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2449,7 +2449,7 @@ def plot_currents_rel_error(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                      xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Perpendicular Currents Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2514,7 +2514,7 @@ def plot_currents_contr(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig1.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                        tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, 0.4]),
-                       xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
+                       xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                        title={'text': 'Ohmic Current Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig1.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2550,7 +2550,7 @@ def plot_currents_contr(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig2.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                        tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, 0.4]),
-                       xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
+                       xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                        title={'text': 'Densities Current Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig2.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2585,7 +2585,7 @@ def plot_csections_error(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, max(C_Op_error[lat, lon, :-1])]),
-                      xaxis_title="$(m^{2})$", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="$(m^{2})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Cross Sections Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2625,7 +2625,7 @@ def plot_csections_rel_error(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                      xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Cross Sections Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2668,7 +2668,7 @@ def plot_csections_contr(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                      xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
+                      xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Average Ion Csection Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -3625,7 +3625,8 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Pedersen
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], pedersen_con_error[:, lon, :-1] / pedersen_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], pedersen_con_error[:, lon, :-1] / pedersen_con[:, lon, :-1], cmap=cm.batlow,
+                       interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
@@ -3647,7 +3648,8 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Parallel Conductivity
     plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(heights_la[:-1], glat_in[:], parallel_con_error[:, lon, :-1] / parallel_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], parallel_con_error[:, lon, :-1] / parallel_con[:, lon, :-1], cmap=cm.batlow,
+                       interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')

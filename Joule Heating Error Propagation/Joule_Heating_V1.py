@@ -344,6 +344,7 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
             for lon in range(lon_start, lon_range):
 
                 heights[lat, lon, lev] = zgmid_in[timer, lev, lat, lon] / 1e5  # altitude in km
+                print(heights[lat, lon, lev])
 
                 # Average heights for Lat - Alt map
                 temp_height = temp_height + heights[lat, lon, lev]
@@ -3849,8 +3850,8 @@ def gui():
             [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error", key="-CR_mapla_error-")]]
 
     templay1 = [[Sg.Text("min altitude(km)", pad=((30, 0), (15, 0))), Sg.Text("max altitude(km)", pad=((30, 10), (15, 0)))],
-                [Sg.InputCombo(values=[i for i in range(0, 601, 10)], pad=((40, 0), (10, 20)), size=(10, 1), default_value="110", key="-min_alt-"),
-                 Sg.InputCombo(values=[i for i in range(0, 601, 10)], pad=((45, 0), (10, 20)), size=(11, 1), default_value="200", key="-max_alt-")],
+                [Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((40, 0), (10, 20)), size=(10, 1), default_value="110", key="-min_alt-"),
+                 Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((45, 0), (10, 20)), size=(11, 1), default_value="200", key="-max_alt-")],
                 [Sg.Text("Products", pad=((30, 0), (0, 0))), Sg.Text("Errors", pad=((200, 0), (0, 0)))],
                 [Sg.Text("_"*15, pad=((20, 0), (0, 0))), Sg.Text("_"*30, pad=((105, 0), (0, 0)))],
                 [Sg.Column(col2, pad=((0, 0), (0, 100)), scrollable=False), Sg.Column(col1, size=(350, 250), pad=((10, 0), (0, 0)), scrollable=True)]]
@@ -3860,8 +3861,8 @@ def gui():
                 [Sg.Column(col3, scrollable=False), Sg.Column(col4, scrollable=False)]]
 
     templay3 = [[Sg.Text("min altitude(km)", pad=((30, 0), (15, 0))), Sg.Text("max altitude(km)", pad=((30, 10), (15, 0)))],
-                [Sg.InputCombo(values=[i for i in range(0, 601, 10)], pad=((40, 0), (10, 20)), size=(10, 1), default_value="110", key="-min_alt_la-"),
-                 Sg.InputCombo(values=[i for i in range(0, 601, 10)], pad=((45, 0), (10, 20)), size=(11, 1), default_value="200", key="-max_alt_la-")],
+                [Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((40, 0), (10, 20)), size=(10, 1), default_value="110", key="-min_alt_la-"),
+                 Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((45, 0), (10, 20)), size=(11, 1), default_value="200", key="-max_alt_la-")],
                 [Sg.Text("Products", pad=((30, 0), (30, 0))), Sg.Text("Errors", pad=((200, 0), (30, 0)))],
                 [Sg.Text("_"*15, pad=((20, 0), (0, 0))), Sg.Text("_"*30, pad=((105, 0), (0, 0)))],
                 [Sg.Column(col5, scrollable=False), Sg.Column(col6, scrollable=False)]]

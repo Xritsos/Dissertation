@@ -5,7 +5,6 @@ Daedalus Science Study
 """
 
 import datetime
-import sys
 import warnings
 import time
 import pyglow
@@ -14,6 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
 from netCDF4 import Dataset
+from cmcrameri import cm
 from mpl_toolkits.basemap import Basemap
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
@@ -28,7 +28,7 @@ mNO = mN + mO  # Nitric oxide mass in g/mol
 
 boltzmann = 1.380645852 * 10 ** (-16)  # Boltzmann's constant in cm^2 * g * s^(-2) * K^(-1)
 nAvogadro = 6.02214086 * 10 ** 23      # Avogadro's constant in mol^(-1)
-fb = 1.5  # Burnside Factor, the factor that connect theoretical and practical estimations of O+
+fb = 1.5  # Burnside Factor, the factor that connects theoretical and practical estimations of O+
 
 # Masses in kg
 mkO = mO / (nAvogadro * 1000)
@@ -41,6 +41,9 @@ ccm = 10 ** 6  # constant to convert cm^(-3) to m^(-3)
 
 # Altitudes
 heights = np.zeros((72, 144, 57), order='F')
+
+# Altitude used in Lat - Alt plot
+heights_la = np.zeros(57, order='F')
 
 # Magnetic field
 Bx = np.zeros((72, 144, 57), order='F')
@@ -109,6 +112,10 @@ nuOp_error = np.zeros((72, 144, 57), order='F')
 nuO2p_error = np.zeros((72, 144, 57), order='F')
 nuNOp_error = np.zeros((72, 144, 57), order='F')
 nue_error = np.zeros((72, 144, 57), order='F')
+
+# Gyro-frequencies
+Omega_ion = np.zeros((72, 144, 57), order='F')
+Omega_e = np.zeros((72, 144, 57), order='F')
 
 # Conductivities error
 pedersen_con_error = np.zeros((72, 144, 57), order='F')
@@ -256,7 +263,7 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
     global map_time
 
     # Get TIE-GCM file from gui
-    tiegcm_file = file_name
+    tiegcm_file = "TIEGCM_FILES_LIFETIME_2015/" + file_name
 
     # Open TIE-GCM file
     tiegcm = Dataset(tiegcm_file)
@@ -292,7 +299,7 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
     tiegcm.close()
 
     timeg = time_in[timer]
-    time_IGRF = datetime.datetime(2015, 1, 1, 0, 0, 0)  # first time step of the TIE-GCM run
+    time_IGRF = datetime.datetime(2015, 1, 1, 0, 0, 0)         # first time step of the TIE-GCM run
     real_time = time_IGRF + datetime.timedelta(minutes=timeg)  # time user defined with time-step
 
     # Distinguish Map from Vertical profile
@@ -303,12 +310,11 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
     lev_start = 0
     lat_start = 0
     lon_start = 0
-    title = 0
 
     # Lat - Alt map profile
     if lat_value == -1 and pressure_level == -1:
         lev_range = len(glev_in) - 1
-        lat_range = len(glat_in) - 1
+        lat_range = len(glat_in)
         lon_start = lon_value
         lon_range = lon_start + 1
         title = ' Lon: ' + str(glon_in[lon_value]) + ' ,' + str(real_time)
@@ -318,8 +324,8 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
     if lat_value == -1 and lon_value == -1:
         lev_start = pressure_level
         lev_range = lev_start + 1
-        lat_range = len(glat_in) - 1
-        lon_range = len(glon_in) - 1
+        lat_range = len(glat_in)
+        lon_range = len(glon_in)
         title = ' Pressure level:' + str(glev_in[pressure_level]) + ' , ' + str(real_time)
         map_time = real_time
 
@@ -333,10 +339,15 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
         title = ' Lat: ' + str(glat_in[lat_value]) + ' ,' + ' Lon: ' + str(glon_in[lon_value]) + ' , ' + str(real_time)
 
     for lev in range(lev_start, lev_range):
+        temp_height = 0
         for lat in range(lat_start, lat_range):
             for lon in range(lon_start, lon_range):
 
                 heights[lat, lon, lev] = zgmid_in[timer, lev, lat, lon] / 1e5  # altitude in km
+
+                # Average heights for Lat - Alt map
+                temp_height = temp_height + heights[lat, lon, lev]
+                heights_la[lev] = round(temp_height / lat_range)
 
                 # Run I-GRF model using pyglow to get magnetic field
                 # Create pyglow point
@@ -404,6 +415,7 @@ def products(lat_value=-1, lon_value=-1, pressure_level=-1):
     lev_start = 0
     lat_start = 0
     lon_start = 0
+    max_bar = 0
 
     # Lat - Alt map profile
     if lat_value == -1 and pressure_level == -1:
@@ -430,18 +442,18 @@ def products(lat_value=-1, lon_value=-1, pressure_level=-1):
         lev_range = len(glev_in) - 1
         max_bar = lev_range
 
-        # Create loading bar
-        layout = [[Sg.Text('Calculating Products.....')], [Sg.ProgressBar(max_bar, orientation='h', size=(50, 20), key='progressbar')]]
+    # Create loading bar
+    layout = [[Sg.Text('Calculating Products.....')], [Sg.ProgressBar(max_bar, orientation='h', size=(50, 20), key='progressbar')]]
 
-        window = Sg.Window(title=title, keep_on_top=True).Layout(layout)
-        progress_bar = window.FindElement('progressbar')
-        event, values = window.Read(timeout=1)
+    window = Sg.Window(title=title, keep_on_top=True).Layout(layout)
+    progress_bar = window.FindElement('progressbar')
+    event, values = window.Read(timeout=1)
 
     for lev in range(lev_start, lev_range):
         for lat in range(lat_start, lat_range):
             for lon in range(lon_start, lon_range):
                 # progress bar index
-                if max_bar == 56:
+                if max_bar == lev_range:
                     i = lev
                 else:
                     i = lat
@@ -493,6 +505,9 @@ def products(lat_value=-1, lon_value=-1, pressure_level=-1):
                 omega_O2p = (qe * Bnorm) / mkO2
                 omega_NOp = (qe * Bnorm) / mkNO
                 omega_e = (qe * Bnorm) / me
+
+                Omega_ion[lat, lon, lev] = (omega_Op + omega_O2p + omega_NOp) / 3
+                Omega_e[lat, lon, lev] = omega_e
                 # ################## RATIOS ##################
                 # dimensionless
                 r_Op = nu_Op_sum[lat, lon, lev] / omega_Op
@@ -589,7 +604,7 @@ def products(lat_value=-1, lon_value=-1, pressure_level=-1):
                                 (Bnorm * (nu_NOp_sum[lat, lon, lev] ** 2 + omega_NOp ** 2))
                 Vi_NOp_star_y = (nu_NOp_sum[lat, lon, lev] * omega_NOp * Estar[1] + omega_NOp ** 2 * EstarXbunit[1]) / \
                                 (Bnorm * (nu_NOp_sum[lat, lon, lev] ** 2 + omega_NOp ** 2))
-                Vi_NOp_star_z = (nu_NOp_sum[lat, lon, lev] * omega_NOp * Estar[2] +omega_NOp ** 2 * EstarXbunit[2]) / \
+                Vi_NOp_star_z = (nu_NOp_sum[lat, lon, lev] * omega_NOp * Estar[2] + omega_NOp ** 2 * EstarXbunit[2]) / \
                                 (Bnorm * (nu_NOp_sum[lat, lon, lev] ** 2 + omega_NOp ** 2))
 
                 # Changing frame from neutral το ECEF frame(not star)
@@ -721,6 +736,7 @@ def products(lat_value=-1, lon_value=-1, pressure_level=-1):
                 J_dens[lat, lon, lev] = np.sqrt(J_denx ** 2 + J_deny ** 2 + J_denz ** 2)
 
                 progress_bar.UpdateBar(i)
+
     time.sleep(3)
     window.close()
     Sg.popup("_" * 50, "Products calculated in : " + str(time.time() - start_time) + " sec!", "_" * 50, title="Finished", keep_on_top=True)
@@ -748,11 +764,12 @@ def error(B_error=-1, E_error=-1, NO_error=-1, NO2_error=-1, NN2_error=-1, NOp_e
     lev_start = 0
     lat_start = 0
     lon_start = 0
+    max_bar = 0
 
     # Lat - Alt map profile
     if lat_value == -1 and pressure_level == -1:
         lev_range = len(glev_in) - 1
-        lat_range = len(glat_in) - 1
+        lat_range = len(glat_in)
         lon_start = lon_value
         lon_range = lon_start + 1
         max_bar = lev_range
@@ -761,8 +778,8 @@ def error(B_error=-1, E_error=-1, NO_error=-1, NO2_error=-1, NN2_error=-1, NOp_e
     if lat_value == -1 and lon_value == -1:
         lev_start = pressure_level
         lev_range = lev_start + 1
-        lat_range = len(glat_in) - 1
-        lon_range = len(glon_in) - 1
+        lat_range = len(glat_in)
+        lon_range = len(glon_in)
         max_bar = lat_range
 
     # Vertical profile
@@ -774,18 +791,18 @@ def error(B_error=-1, E_error=-1, NO_error=-1, NO2_error=-1, NN2_error=-1, NOp_e
         lev_range = len(glev_in) - 1
         max_bar = lev_range
 
-        # Create loading bar
-        layout = [[Sg.Text('Calculating Error.....')], [Sg.ProgressBar(max_bar, orientation='h', size=(50, 20), key='progressbar')]]
+    # Create loading bar
+    layout = [[Sg.Text('Calculating Error.....')], [Sg.ProgressBar(max_bar, orientation='h', size=(50, 20), key='progressbar')]]
 
-        window = Sg.Window(title=title, keep_on_top=True).Layout(layout)
-        progress_bar = window.FindElement('progressbar')
-        event, values = window.Read(timeout=1)
+    window = Sg.Window(title=title, keep_on_top=True).Layout(layout)
+    progress_bar = window.FindElement('progressbar')
+    event, values = window.Read(timeout=1)
 
     for lev in range(lev_start, lev_range):
         for lat in range(lat_start, lat_range):
             for lon in range(lon_start, lon_range):
                 # progress bar index
-                if max_bar==56:
+                if max_bar == 56:
                     i = lev
                 else:
                     i = lat
@@ -802,18 +819,18 @@ def error(B_error=-1, E_error=-1, NO_error=-1, NO2_error=-1, NN2_error=-1, NOp_e
                 # ############################### ASSIGNING ERRORS ###############################
                 # distinguish percentage from real errors (=-1 if real error else its percentage)
                 # percentage errors, squared
-                # dBx = ((B_error / 100) * B[0]) ** 2
-                # dBy = ((B_error / 100) * B[1]) ** 2
-                # dBz = ((B_error / 100) * B[2]) ** 2
-                dBx = (5 * 10 ** (-9)) ** 2
-                dBy = (5 * 10 ** (-9)) ** 2
-                dBz = (5 * 10 ** (-9)) ** 2
-                # dEx = ((E_error / 100) * E[0]) ** 2
-                # dEy = ((E_error / 100) * E[1]) ** 2
-                # dEz = ((E_error / 100) * E[2]) ** 2
-                dEx = (2 * 10 ** (-3)) ** 2
-                dEy = (2 * 10 ** (-3)) ** 2
-                dEz = (2 * 10 ** (-3)) ** 2
+                dBx = ((B_error / 100) * B[0]) ** 2
+                dBy = ((B_error / 100) * B[1]) ** 2
+                dBz = ((B_error / 100) * B[2]) ** 2
+                # dBx = (5 * 10 ** (-9)) ** 2
+                # dBy = (5 * 10 ** (-9)) ** 2
+                # dBz = (5 * 10 ** (-9)) ** 2
+                dEx = ((E_error / 100) * E[0]) ** 2
+                dEy = ((E_error / 100) * E[1]) ** 2
+                dEz = ((E_error / 100) * E[2]) ** 2
+                # dEx = (2 * 10 ** (-3)) ** 2
+                # dEy = (2 * 10 ** (-3)) ** 2
+                # dEz = (2 * 10 ** (-3)) ** 2
                 # ################### N in cm^(-3) ####################
                 dNO = ((NO_error / 100) * NO[lat, lon, lev]) ** 2
                 dNO2 = ((NO2_error / 100) * NO2[lat, lon, lev]) ** 2
@@ -1677,7 +1694,7 @@ def error(B_error=-1, E_error=-1, NO_error=-1, NO2_error=-1, NN2_error=-1, NOp_e
 
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ PLOTS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# ############################ Vertical profile plots ############################
+# ############################ Vertical Profile Plots ############################
 def plot_collisions(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
@@ -1687,6 +1704,8 @@ def plot_collisions(lat_value, lon_value, min_alt, max_alt):
     min_alt = min_alt
     max_alt = max_alt
 
+    mean_ion_collisions = (nu_Op_sum[lat, lon, :-1] + nu_O2p_sum[lat, lon, :-1] + nu_NOp_sum[lat, lon, :-1]) / 3
+
     fig1 = go.Figure()
 
     # adding the various plots
@@ -1695,13 +1714,19 @@ def plot_collisions(lat_value, lon_value, min_alt, max_alt):
     fig1.add_trace(go.Scatter(x=nu_O2p_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{O2^{+}}$", mode='lines',
                               line=dict(shape='spline', color='blue')))
     fig1.add_trace(go.Scatter(x=nu_NOp_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{NO^{+}}$", mode='lines',
-                              line=dict(shape='spline', color='green')))
-    fig1.add_trace(go.Scatter(x=nu_e_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{e}$", mode='lines',
+                              line=dict(shape='spline', color='yellow')))
+    fig1.add_trace(go.Scatter(x=mean_ion_collisions, y=heights[lat, lon, :-1], name="$ν_{in}$", mode='lines',
+                              line=dict(shape='spline', color='orange')))
+    fig1.add_trace(go.Scatter(x=nu_e_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{en}$", mode='lines',
                               line=dict(shape='spline', color='purple')))
+    fig1.add_trace(go.Scatter(x=Omega_ion[lat, lon, :-1], y=heights[lat, lon, :-1], name="$Ω_{i}$", mode='lines',
+                              line=dict(shape='spline', color='brown')))
+    fig1.add_trace(go.Scatter(x=Omega_e[lat, lon, :-1], y=heights[lat, lon, :-1], name="$Ω_{e}$", mode='lines',
+                              line=dict(shape='spline', color='black')))
 
     # updating the layout of the figure
     fig1.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)), xaxis_title="Frequency (Hz)", yaxis_title="Altitude (km)",
+                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis_title="Frequency (Hz)", yaxis_title="$Altitude (km)$",
                        width=800, height=650,
                        title={'text': 'Collision Frequencies' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
@@ -1731,11 +1756,11 @@ def plot_heating_rates(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='blue')))
     fig.add_trace(go.Scatter(x=Joule_Heating[lat, lon, :-1], y=heights[lat, lon, :-1], name="Joule Heating", mode='lines',
                              line=dict(shape='spline', color='green')))
-
+    x_range = max(Joule_Heating[lat, lon, :-1])
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="$(W/m^{3})$", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
+                      xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Heating Rates' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1758,17 +1783,17 @@ def plot_conductivities(lat_value, lon_value, min_alt, max_alt):
     fig = go.Figure()
 
     # adding the various plots
-    fig.add_trace(go.Scatter(x=pedersen_con[lat, lon, :-1], y=heights[lat, lon, :-1], name="ΣPedersen", mode='lines',
+    fig.add_trace(go.Scatter(x=pedersen_con[lat, lon, :-1], y=heights[lat, lon, :-1], name="σPedersen", mode='lines',
                              line=dict(shape='spline', color='red')))
-    fig.add_trace(go.Scatter(x=hall_con[lat, lon, :-1], y=heights[lat, lon, :-1], name="ΣHall", mode='lines',
+    fig.add_trace(go.Scatter(x=hall_con[lat, lon, :-1], y=heights[lat, lon, :-1], name="σHall", mode='lines',
                              line=dict(shape='spline', color='blue')))
-    fig.add_trace(go.Scatter(x=parallel_con[lat, lon, :-1], y=heights[lat, lon, :-1], name="ΣParallel", mode='lines',
-                             line=dict(shape='spline', color='green')))
-
+    fig.add_trace(go.Scatter(x=parallel_con[lat, lon, :-1], y=heights[lat, lon, :-1], name="σParallel", mode='lines',
+                             line=dict(shape='spline', color='green'), visible="legendonly"))
+    x_range = max(hall_con[lat, lon, :-1])
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="$(S/m)$", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
+                      xaxis_title="$(S/m)$", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Conductivities' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1799,11 +1824,11 @@ def plot_currents(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='green')))
     fig.add_trace(go.Scatter(x=J_dens[lat, lon, :-1], y=heights[lat, lon, :-1], name="Densities Current", mode='lines',
                              line=dict(shape='spline', color='black')))
-
+    x_range = max(J_ohmic[lat, lon, :-1])
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="$(A/m^{2})$", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
+                      xaxis_title="$(A/m^{2})$", yaxis_title="$Altitude (km)$", width=900, height=750,
                       title={'text': 'Perpendicular Currents' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1826,19 +1851,19 @@ def plot_cross_sections(lat_value, lon_value, min_alt, max_alt):
     fig = go.Figure()
 
     # adding the various plots
-    fig.add_trace(go.Scatter(x=C_Op[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O^{+}$ cross section", mode='lines',
+    fig.add_trace(go.Scatter(x=C_Op[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O^{+}$", mode='lines',
                              line=dict(shape='spline', color='red')))
-    fig.add_trace(go.Scatter(x=C_O2p[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O_{2}^{+}$ cross section", mode='lines',
+    fig.add_trace(go.Scatter(x=C_O2p[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O_{2}^{+}$", mode='lines',
                              line=dict(shape='spline', color='blue')))
-    fig.add_trace(go.Scatter(x=C_NOp[lat, lon, :-1], y=heights[lat, lon, :-1], name="$NO^{+}$ cross section", mode='lines',
+    fig.add_trace(go.Scatter(x=C_NOp[lat, lon, :-1], y=heights[lat, lon, :-1], name="$NO^{+}$", mode='lines',
                              line=dict(shape='spline', color='green')))
-    fig.add_trace(go.Scatter(x=C_ion[lat, lon, :-1], y=heights[lat, lon, :-1], name="Average Ion cross section", mode='lines',
+    fig.add_trace(go.Scatter(x=C_ion[lat, lon, :-1], y=heights[lat, lon, :-1], name="$Avg$", mode='lines',
                              line=dict(shape='spline', color='black')))
-
+    x_range = max(C_Op[lat, lon, :-1])
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="$(m^{2})$", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, x_range + x_range/4]),
+                      xaxis_title="$(m^{2})$", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Cross Sections' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1871,9 +1896,9 @@ def plot_collisions_error(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='purple')))
 
     # updating the layout of the figure
-    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="Frequency (Hz)", yaxis_title="Altitude (km)", width=800, height=650,
+    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="Frequency (Hz)", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Collision Frequencies Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1917,7 +1942,7 @@ def plot_collisions_rel_error(lat_value, lon_value, min_alt, max_alt):
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt], tickmode='array',
-                      tickvals=np.arange(min_alt, max_alt + 5 , 5)), xaxis_title="", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Collision Frequencies Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1952,26 +1977,24 @@ def plot_collisions_contr(lat_value, lon_value, min_alt, max_alt):
     fig = go.Figure()
 
     # adding the various plots
-    fig.add_trace(go.Scatter(x=nuion_rel, y=heights[lat, lon, :-1], name="$ν_{ion}$ relative error", mode='lines',
+    fig.add_trace(go.Scatter(x=nuion_rel, y=heights[lat, lon, :-1], name="νion error", mode='lines',
                              line=dict(shape='spline', color='red')))
-    fig.add_trace(go.Scatter(x=dnui_Tn, y=heights[lat, lon, :-1], name="$ν_{ion}$ dTn", mode='lines',
+    fig.add_trace(go.Scatter(x=dnui_Tn, y=heights[lat, lon, :-1], name="dTn(i)", mode='lines',
                              line=dict(shape='spline', dash="dot", color='red')))
-    fig.add_trace(go.Scatter(x=dnui_Ti, y=heights[lat, lon, :-1], name="$ν_{ion}$ dTi", mode='lines',
+    fig.add_trace(go.Scatter(x=dnui_Ti, y=heights[lat, lon, :-1], name="dTi(i)", mode='lines',
                              line=dict(shape='spline', dash="dash", color='red')))
-    fig.add_trace(go.Scatter(x=dnui_Nn, y=heights[lat, lon, :-1], name="$ν_{ion}$ dNn", mode='lines',
+    fig.add_trace(go.Scatter(x=dnui_Nn, y=heights[lat, lon, :-1], name="dNn(i)", mode='lines',
                              line=dict(shape='spline', dash="dot", color='brown')))
 
-    fig.add_trace(go.Scatter(x=nue_rel, y=heights[lat, lon, :-1], name="$ν_{e}$ relative error", mode='lines',
-                             line=dict(shape='spline', color='blue')))
-    fig.add_trace(go.Scatter(x=dnu_e_Te, y=heights[lat, lon, :-1], name="$ν_{e}$ dTe", mode='lines',
-                             line=dict(shape='spline', dash="dot", color='blue')))
-    fig.add_trace(go.Scatter(x=dnu_e_Nneutral, y=heights[lat, lon, :-1], name="$ν_{e}$ dNn", mode='lines',
+    fig.add_trace(go.Scatter(x=nue_rel, y=heights[lat, lon, :-1], name="νe error", mode='lines', line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=dnu_e_Te, y=heights[lat, lon, :-1], name="dTe(e)", mode='lines', line=dict(shape='spline', dash="dot", color='blue')))
+    fig.add_trace(go.Scatter(x=dnu_e_Nneutral, y=heights[lat, lon, :-1], name="dNn(e)", mode='lines',
                              line=dict(shape='spline', dash="dash", color='blue')))
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)), xaxis_title="",
-                      yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis_title="",
+                      yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Collision Frequencies Relative Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center',
                              'yanchor': 'top'})
 
@@ -2004,8 +2027,8 @@ def plot_heating_rates_error(lat_value, lon_value, min_alt, max_alt):
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="$(W/m^{3})$", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Heating Rates Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2042,8 +2065,8 @@ def plot_heating_rates_rel_error(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', xaxis=dict(range=[0.05, 0.4], tickmode='array'),
                       yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Heating Rates Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2081,31 +2104,31 @@ def plot_heating_rates_contr(lat_value, lon_value, min_alt, max_alt):
     # adding the various plots
     fig1.add_trace(go.Scatter(x=Ohmic_rel, y=heights[lat, lon, :-1], name="Ohmic Heating error", mode='lines',
                               line=dict(shape='spline', color='red')))
-    fig1.add_trace(go.Scatter(x=dOhm_dB, y=heights[lat, lon, :-1], name="Ohmic Heating dB", mode='lines',
+    fig1.add_trace(go.Scatter(x=dOhm_dB, y=heights[lat, lon, :-1], name="dB", mode='lines',
                               line=dict(shape='spline', dash="dot", color='red')))
-    fig1.add_trace(go.Scatter(x=dOhm_dE, y=heights[lat, lon, :-1], name="Ohmic Heating dE", mode='lines',
+    fig1.add_trace(go.Scatter(x=dOhm_dE, y=heights[lat, lon, :-1], name="dE", mode='lines',
                               line=dict(shape='spline', dash="dash", color='red')))
-    fig1.add_trace(go.Scatter(x=dOhm_dNneutral, y=heights[lat, lon, :-1], name="Ohmic Heating dNn", mode='lines',
+    fig1.add_trace(go.Scatter(x=dOhm_dNneutral, y=heights[lat, lon, :-1], name="dNn", mode='lines',
                               line=dict(shape='spline', dash="dash", color='lightcoral')))
-    fig1.add_trace(go.Scatter(x=dOhm_dNion, y=heights[lat, lon, :-1], name="Ohmic Heating dNion", mode='lines',
+    fig1.add_trace(go.Scatter(x=dOhm_dNion, y=heights[lat, lon, :-1], name="dNion", mode='lines',
                               line=dict(shape='spline', dash="dot", color='red')))
-    fig1.add_trace(go.Scatter(x=dOhm_dUn, y=heights[lat, lon, :-1], name="Ohmic Heating dUn", mode='lines',
+    fig1.add_trace(go.Scatter(x=dOhm_dUn, y=heights[lat, lon, :-1], name="dUn", mode='lines',
                               line=dict(shape='spline', dash="dot", color='maroon')))
-    fig1.add_trace(go.Scatter(x=dOhm_dNe, y=heights[lat, lon, :-1], name="Ohmic Heating dNe", mode='lines',
+    fig1.add_trace(go.Scatter(x=dOhm_dNe, y=heights[lat, lon, :-1], name="dNe", mode='lines',
                               line=dict(shape='spline', dash="dash", color='maroon')))
-    fig1.add_trace(go.Scatter(x=dOhm_dTe, y=heights[lat, lon, :-1], name="Ohmic Heating dTe", mode='lines',
+    fig1.add_trace(go.Scatter(x=dOhm_dTe, y=heights[lat, lon, :-1], name="dTe", mode='lines',
                               line=dict(shape='spline', dash="dot", color='sienna')))
-    fig1.add_trace(go.Scatter(x=dOhm_dTi, y=heights[lat, lon, :-1], name="Ohmic Heating dTi", mode='lines',
+    fig1.add_trace(go.Scatter(x=dOhm_dTi, y=heights[lat, lon, :-1], name="dTi", mode='lines',
                               line=dict(shape='spline', dash="dash", color='sienna')))
-    fig1.add_trace(go.Scatter(x=dOhm_dTn, y=heights[lat, lon, :-1], name="Ohmic Heating dTn", mode='lines',
+    fig1.add_trace(go.Scatter(x=dOhm_dTn, y=heights[lat, lon, :-1], name="dTn", mode='lines',
                               line=dict(shape='spline', dash="dot", color='rosybrown')))
-    fig1.add_trace(go.Scatter(x=dOhm_dsp, y=heights[lat, lon, :-1], name="Ohmic Heating dsPedersen", mode='lines',
+    fig1.add_trace(go.Scatter(x=dOhm_dsp, y=heights[lat, lon, :-1], name="dσPedersen", mode='lines',
                               line=dict(shape='spline', dash="dash", color='rosybrown')))
 
     # updating the layout of the figure
     fig1.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                       xaxis_title="$(W/m^{3})$", yaxis_title="Altitude (km)", width=800, height=650,
+                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                       xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude (km)$", width=800, height=650,
                        title={'text': 'Ohmic Heating Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig1.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2130,26 +2153,26 @@ def plot_heating_rates_contr(lat_value, lon_value, min_alt, max_alt):
 
     fig2.add_trace(go.Scatter(x=Frict_rel, y=heights[lat, lon, :-1], name="Frictional Heating error", mode='lines',
                               line=dict(shape='spline', color='blue')))
-    fig2.add_trace(go.Scatter(x=dFric_dB, y=heights[lat, lon, :-1], name="Frictional Heating dB", mode='lines',
+    fig2.add_trace(go.Scatter(x=dFric_dB, y=heights[lat, lon, :-1], name="dB", mode='lines',
                               line=dict(shape='spline', dash="dot", color='blue')))
-    fig2.add_trace(go.Scatter(x=dFric_dNneutral, y=heights[lat, lon, :-1], name="Frictional Heating dNn", mode='lines',
+    fig2.add_trace(go.Scatter(x=dFric_dNneutral, y=heights[lat, lon, :-1], name="dNn", mode='lines',
                               line=dict(shape='spline', dash="dash", color='blue')))
-    fig2.add_trace(go.Scatter(x=dFric_dNion, y=heights[lat, lon, :-1], name="Frictional Heating dNion", mode='lines',
+    fig2.add_trace(go.Scatter(x=dFric_dNion, y=heights[lat, lon, :-1], name="dNion", mode='lines',
                               line=dict(shape='spline', dash="dot", color='turquoise')))
-    fig2.add_trace(go.Scatter(x=dFric_dUn, y=heights[lat, lon, :-1], name="Frictional Heating dUn", mode='lines',
+    fig2.add_trace(go.Scatter(x=dFric_dUn, y=heights[lat, lon, :-1], name="dUn", mode='lines',
                               line=dict(shape='spline', dash="dash", color='turquoise')))
-    fig2.add_trace(go.Scatter(x=dFric_dVi, y=heights[lat, lon, :-1], name="Frictional Heating dVi", mode='lines',
+    fig2.add_trace(go.Scatter(x=dFric_dVi, y=heights[lat, lon, :-1], name="dVi", mode='lines',
                               line=dict(shape='spline', dash="dot", color='darkslategrey')))
-    fig2.add_trace(go.Scatter(x=dFric_dTn, y=heights[lat, lon, :-1], name="Frictional Heating dTn", mode='lines',
+    fig2.add_trace(go.Scatter(x=dFric_dTn, y=heights[lat, lon, :-1], name="dTn", mode='lines',
                               line=dict(shape='spline', dash="dash", color='darkslategrey')))
-    fig2.add_trace(go.Scatter(x=dFric_dTi, y=heights[lat, lon, :-1], name="Frictional Heating dTi", mode='lines',
+    fig2.add_trace(go.Scatter(x=dFric_dTi, y=heights[lat, lon, :-1], name="dTi", mode='lines',
                               line=dict(shape='spline', dash="dot", color='steelblue')))
-    fig2.add_trace(go.Scatter(x=dFric_dnu, y=heights[lat, lon, :-1], name="Frictional Heating dν", mode='lines',
+    fig2.add_trace(go.Scatter(x=dFric_dnu, y=heights[lat, lon, :-1], name="dν", mode='lines',
                               line=dict(shape='spline', dash="dash", color='steelblue')))
     # updating the layout of the figure
     fig2.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                       xaxis_title="", yaxis_title="Altitude (km)", width=800, height=650,
+                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                       xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
                        title={'text': 'Frictional Heating Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig2.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2171,21 +2194,21 @@ def plot_heating_rates_contr(lat_value, lon_value, min_alt, max_alt):
 
     fig3.add_trace(go.Scatter(x=Joule_rel, y=heights[lat, lon, :-1], name="Joule Heating error", mode='lines',
                               line=dict(shape='spline', color='green')))
-    fig3.add_trace(go.Scatter(x=dJoule_dB, y=heights[lat, lon, :-1], name="Joule Heating dB", mode='lines',
+    fig3.add_trace(go.Scatter(x=dJoule_dB, y=heights[lat, lon, :-1], name="dB", mode='lines',
                               line=dict(shape='spline', dash="dot", color='green')))
-    fig3.add_trace(go.Scatter(x=dJoule_dE, y=heights[lat, lon, :-1], name="Joule Heating dE", mode='lines',
+    fig3.add_trace(go.Scatter(x=dJoule_dE, y=heights[lat, lon, :-1], name="dE", mode='lines',
                               line=dict(shape='spline', dash="dash", color='green')))
-    fig3.add_trace(go.Scatter(x=dJoule_dVi, y=heights[lat, lon, :-1], name="Joule Heating dVi", mode='lines',
+    fig3.add_trace(go.Scatter(x=dJoule_dVi, y=heights[lat, lon, :-1], name="dVi", mode='lines',
                               line=dict(shape='spline', dash="dot", color='lime')))
-    fig3.add_trace(go.Scatter(x=dJoule_dUn, y=heights[lat, lon, :-1], name="Joule Heating dUn", mode='lines',
+    fig3.add_trace(go.Scatter(x=dJoule_dUn, y=heights[lat, lon, :-1], name="dUn", mode='lines',
                               line=dict(shape='spline', dash="dash", color='lime')))
-    fig3.add_trace(go.Scatter(x=dJoule_dNe, y=heights[lat, lon, :-1], name="Joule Heating dNe", mode='lines',
+    fig3.add_trace(go.Scatter(x=dJoule_dNe, y=heights[lat, lon, :-1], name="dNe", mode='lines',
                               line=dict(shape='spline', dash="dot", color='springgreen')))
 
     # updating the layout of the figure
     fig3.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', xaxis=dict(range=[0, 0.4]),
-                       yaxis=dict(range=[min_alt, max_alt], tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)), xaxis_title="",
-                       yaxis_title="Altitude (km)", width=800, height=650,
+                       yaxis=dict(range=[min_alt, max_alt], tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis_title="",
+                       yaxis_title="$Altitude (km)$", width=800, height=650,
                        title={'text': 'Joule Heating Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig3.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2208,17 +2231,16 @@ def plot_conductivities_error(lat_value, lon_value, min_alt, max_alt):
     fig = go.Figure()
 
     # adding the various plots
-    fig.add_trace(go.Scatter(x=pedersen_con_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="ΣPedersen error", mode='lines',
+    fig.add_trace(go.Scatter(x=pedersen_con_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="σPedersen error", mode='lines',
                              line=dict(shape='spline', color='red')))
-    fig.add_trace(go.Scatter(x=hall_con_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="ΣHall error", mode='lines',
+    fig.add_trace(go.Scatter(x=hall_con_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="σHall error", mode='lines',
                              line=dict(shape='spline', color='blue')))
-    fig.add_trace(go.Scatter(x=parallel_con_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="ΣParallel error",
-                             mode='lines', line=dict(shape='spline', color='green')))
-
+    fig.add_trace(go.Scatter(x=parallel_con_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="σParallel error",
+                             mode='lines', line=dict(shape='spline', color='green'), visible="legendonly"))
     # updating the layout of the figure
-    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="$(S/m)$", yaxis_title="Altitude (km)", width=800, height=650,
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="$(S/m)$", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Conductivities Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2245,16 +2267,17 @@ def plot_conductivities_rel_error(lat_value, lon_value, min_alt, max_alt):
     fig = go.Figure()
 
     # adding the various plots
-    fig.add_trace(go.Scatter(x=pedersen_rel, y=heights[lat, lon, :-1], name="ΣPedersen error", mode='lines',
+    fig.add_trace(go.Scatter(x=pedersen_rel, y=heights[lat, lon, :-1], name="σPedersen error", mode='lines',
                              line=dict(shape='spline', color='red')))
-    fig.add_trace(go.Scatter(x=hall_rel, y=heights[lat, lon, :-1], name="ΣHall error", mode='lines', line=dict(shape='spline', color='blue')))
-    fig.add_trace(go.Scatter(x=parallel_rel, y=heights[lat, lon, :-1], name="ΣParallel error", mode='lines',
+    fig.add_trace(go.Scatter(x=hall_rel, y=heights[lat, lon, :-1], name="σHall error", mode='lines', line=dict(shape='spline', color='blue'),
+                             visible="legendonly"))
+    fig.add_trace(go.Scatter(x=parallel_rel, y=heights[lat, lon, :-1], name="σParallel error", mode='lines',
                              line=dict(shape='spline', color='green')))
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Conductivities Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2287,27 +2310,27 @@ def plot_conductivities_contr(lat_value, lon_value, min_alt, max_alt):
     fig1 = go.Figure()
 
     # adding the various plots
-    fig1.add_trace(go.Scatter(x=pedersen_rel, y=heights[lat, lon, :-1], name="ΣPedersen error", mode='lines',
+    fig1.add_trace(go.Scatter(x=pedersen_rel, y=heights[lat, lon, :-1], name="σPedersen error", mode='lines',
                               line=dict(shape='spline', color='red')))
-    fig1.add_trace(go.Scatter(x=dped_dB, y=heights[lat, lon, :-1], name="ΣPedersen dB", mode='lines',
+    fig1.add_trace(go.Scatter(x=dped_dB, y=heights[lat, lon, :-1], name="dB", mode='lines',
                               line=dict(shape='spline', dash='dot', color='red')))
-    fig1.add_trace(go.Scatter(x=dped_dTe, y=heights[lat, lon, :-1], name="ΣPedersen dTe", mode='lines',
+    fig1.add_trace(go.Scatter(x=dped_dTe, y=heights[lat, lon, :-1], name="dTe", mode='lines',
                               line=dict(shape='spline', dash='dot', color='gold')))
-    fig1.add_trace(go.Scatter(x=dped_dTn, y=heights[lat, lon, :-1], name="ΣPedersen dTn", mode='lines',
+    fig1.add_trace(go.Scatter(x=dped_dTn, y=heights[lat, lon, :-1], name="dTn", mode='lines',
                               line=dict(shape='spline', dash='dash', color='coral')))
-    fig1.add_trace(go.Scatter(x=dped_dTi, y=heights[lat, lon, :-1], name="ΣPedersen dTi", mode='lines',
+    fig1.add_trace(go.Scatter(x=dped_dTi, y=heights[lat, lon, :-1], name="dTi", mode='lines',
                               line=dict(shape='spline', dash='dot', color='sienna')))
-    fig1.add_trace(go.Scatter(x=dped_dNion, y=heights[lat, lon, :-1], name="ΣPedersen dNion", mode='lines',
+    fig1.add_trace(go.Scatter(x=dped_dNion, y=heights[lat, lon, :-1], name="dNion", mode='lines',
                               line=dict(shape='spline', dash='dash', color='brown')))
-    fig1.add_trace(go.Scatter(x=dped_dNneutral, y=heights[lat, lon, :-1], name="ΣPedersen dNn", mode='lines',
+    fig1.add_trace(go.Scatter(x=dped_dNneutral, y=heights[lat, lon, :-1], name="dNn", mode='lines',
                               line=dict(shape='spline', dash='dot', color='tan')))
-    fig1.add_trace(go.Scatter(x=dped_dNe, y=heights[lat, lon, :-1], name="ΣPedersen dNe", mode='lines',
+    fig1.add_trace(go.Scatter(x=dped_dNe, y=heights[lat, lon, :-1], name="dNe", mode='lines',
                               line=dict(shape='spline', dash='dash', color='peru')))
 
     # updating the layout of the figure
     fig1.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                       xaxis_title="", yaxis_title="Altitude (km)", width=800, height=650,
+                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                       xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
                        title={'text': 'Pedersen Conductivity Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig1.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2329,26 +2352,26 @@ def plot_conductivities_contr(lat_value, lon_value, min_alt, max_alt):
 
     fig2 = go.Figure()
 
-    fig2.add_trace(go.Scatter(x=hall_rel, y=heights[lat, lon, :-1], name="ΣHall error", mode='lines', line=dict(shape='spline', color='blue')))
-    fig2.add_trace(go.Scatter(x=dhall_dB, y=heights[lat, lon, :-1], name="ΣHall dB", mode='lines',
+    fig2.add_trace(go.Scatter(x=hall_rel, y=heights[lat, lon, :-1], name="σHall error", mode='lines', line=dict(shape='spline', color='blue')))
+    fig2.add_trace(go.Scatter(x=dhall_dB, y=heights[lat, lon, :-1], name="dB", mode='lines',
                               line=dict(shape='spline', dash="dot", color='blue')))
-    fig2.add_trace(go.Scatter(x=dhall_dTe, y=heights[lat, lon, :-1], name="ΣHall dTe", mode='lines',
+    fig2.add_trace(go.Scatter(x=dhall_dTe, y=heights[lat, lon, :-1], name="dTe", mode='lines',
                               line=dict(shape='spline', dash="dash", color='blue')))
-    fig2.add_trace(go.Scatter(x=dhall_dTi, y=heights[lat, lon, :-1], name="ΣHall dTi", mode='lines',
+    fig2.add_trace(go.Scatter(x=dhall_dTi, y=heights[lat, lon, :-1], name="dTi", mode='lines',
                               line=dict(shape='spline', dash="dot", color='dodgerblue')))
-    fig2.add_trace(go.Scatter(x=dhall_dTn, y=heights[lat, lon, :-1], name="ΣHall dTn", mode='lines',
+    fig2.add_trace(go.Scatter(x=dhall_dTn, y=heights[lat, lon, :-1], name="dTn", mode='lines',
                               line=dict(shape='spline', dash="dash", color='dodgerblue')))
-    fig2.add_trace(go.Scatter(x=dhall_Nion, y=heights[lat, lon, :-1], name="ΣHall dNion", mode='lines',
+    fig2.add_trace(go.Scatter(x=dhall_Nion, y=heights[lat, lon, :-1], name="dNion", mode='lines',
                               line=dict(shape='spline', dash="dot", color='deepskyblue')))
-    fig2.add_trace(go.Scatter(x=dhall_dNe, y=heights[lat, lon, :-1], name="ΣHall dNe", mode='lines',
+    fig2.add_trace(go.Scatter(x=dhall_dNe, y=heights[lat, lon, :-1], name="dNe", mode='lines',
                               line=dict(shape='spline', dash="dash", color='deepskyblue')))
-    fig2.add_trace(go.Scatter(x=dhall_dNneutral, y=heights[lat, lon, :-1], name="ΣHall dNn", mode='lines',
+    fig2.add_trace(go.Scatter(x=dhall_dNneutral, y=heights[lat, lon, :-1], name="dNn", mode='lines',
                               line=dict(shape='spline', dash="dash", color='indigo')))
 
     # updating the layout of the figure
     fig2.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                       xaxis_title="", yaxis_title="Altitude (km)", width=800, height=650,
+                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                       xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
                        title={'text': 'Hall Conductivity Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig2.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2380,10 +2403,12 @@ def plot_currents_error(lat_value, lon_value, min_alt, max_alt):
     fig.add_trace(go.Scatter(x=J_dens_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="Densities current error", mode='lines',
                              line=dict(shape='spline', color='black')))
 
+    x_range = max(J_dens_error[lat, lon, :-1])
+
     # updating the layout of the figure
-    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="$(A/m^{2})$", yaxis_title="Altitude (km)", width=800, height=650,
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, x_range + x_range/8]),
+                      xaxis_title="$(A/m^{2})$", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Perpendicular Currents Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2422,8 +2447,8 @@ def plot_currents_rel_error(lat_value, lon_value, min_alt, max_alt):
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Perpendicular Currents Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2462,33 +2487,33 @@ def plot_currents_contr(lat_value, lon_value, min_alt, max_alt):
     # adding the various plots
     fig1.add_trace(go.Scatter(x=Johmic_rel, y=heights[lat, lon, :-1], name="Ohmic current error", mode='lines',
                               line=dict(shape='spline', color='green')))
-    fig1.add_trace(go.Scatter(x=dJohm_dB, y=heights[lat, lon, :-1], name="Ohmic current dB", mode='lines',
+    fig1.add_trace(go.Scatter(x=dJohm_dB, y=heights[lat, lon, :-1], name="dB", mode='lines',
                               line=dict(shape='spline', dash="dot", color='green')))
-    fig1.add_trace(go.Scatter(x=dJohm_dE, y=heights[lat, lon, :-1], name="Ohmic current dE", mode='lines',
+    fig1.add_trace(go.Scatter(x=dJohm_dE, y=heights[lat, lon, :-1], name="dE", mode='lines',
                               line=dict(shape='spline', dash="dot", color='coral')))
-    fig1.add_trace(go.Scatter(x=dJohm_dUn, y=heights[lat, lon, :-1], name="Ohmic current dUn", mode='lines',
+    fig1.add_trace(go.Scatter(x=dJohm_dUn, y=heights[lat, lon, :-1], name="dUn", mode='lines',
                               line=dict(shape='spline', dash="dash", color='coral')))
-    fig1.add_trace(go.Scatter(x=dJohm_dsp, y=heights[lat, lon, :-1], name="Ohmic current dΣP", mode='lines',
+    fig1.add_trace(go.Scatter(x=dJohm_dsp, y=heights[lat, lon, :-1], name="dσP", mode='lines',
                               line=dict(shape='spline', dash="dash", color='sienna')))
-    fig1.add_trace(go.Scatter(x=dJohm_dsh, y=heights[lat, lon, :-1], name="Ohmic current dΣH", mode='lines',
+    fig1.add_trace(go.Scatter(x=dJohm_dsh, y=heights[lat, lon, :-1], name="dσH", mode='lines',
                               line=dict(shape='spline', dash="dot", color='gold')))
-    fig1.add_trace(go.Scatter(x=dJohm_dTi, y=heights[lat, lon, :-1], name="Ohmic current dTi", mode='lines',
+    fig1.add_trace(go.Scatter(x=dJohm_dTi, y=heights[lat, lon, :-1], name="dTi", mode='lines',
                               line=dict(shape='spline', dash="dot", color='orange')))
-    fig1.add_trace(go.Scatter(x=dJohm_dTn, y=heights[lat, lon, :-1], name="Ohmic current dTn", mode='lines',
+    fig1.add_trace(go.Scatter(x=dJohm_dTn, y=heights[lat, lon, :-1], name="dTn", mode='lines',
                               line=dict(shape='spline', dash="dash", color='orange')))
-    fig1.add_trace(go.Scatter(x=dJohm_dTe, y=heights[lat, lon, :-1], name="Ohmic current dTe", mode='lines',
+    fig1.add_trace(go.Scatter(x=dJohm_dTe, y=heights[lat, lon, :-1], name="dTe", mode='lines',
                               line=dict(shape='spline', dash="dash", color='crimson')))
-    fig1.add_trace(go.Scatter(x=dJohm_dNe, y=heights[lat, lon, :-1], name="Ohmic current dNe", mode='lines',
+    fig1.add_trace(go.Scatter(x=dJohm_dNe, y=heights[lat, lon, :-1], name="dNe", mode='lines',
                               line=dict(shape='spline', dash="dot", color='crimson')))
-    fig1.add_trace(go.Scatter(x=dJohm_dNn, y=heights[lat, lon, :-1], name="Ohmic current dNn", mode='lines',
+    fig1.add_trace(go.Scatter(x=dJohm_dNn, y=heights[lat, lon, :-1], name="dNn", mode='lines',
                               line=dict(shape='spline', dash="dot", color='mediumblue')))
-    fig1.add_trace(go.Scatter(x=dJohm_dNion, y=heights[lat, lon, :-1], name="Ohmic current dNion", mode='lines',
+    fig1.add_trace(go.Scatter(x=dJohm_dNion, y=heights[lat, lon, :-1], name="dNion", mode='lines',
                               line=dict(shape='spline', dash="dash", color='mediumblue')))
 
     # updating the layout of the figure
     fig1.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                       xaxis_title="", yaxis_title="Altitude (km)", width=800, height=650,
+                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, 0.4]),
+                       xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
                        title={'text': 'Ohmic Current Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig1.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2510,21 +2535,21 @@ def plot_currents_contr(lat_value, lon_value, min_alt, max_alt):
 
     fig2.add_trace(go.Scatter(x=Jdens_rel, y=heights[lat, lon, :-1], name="Densities current error", mode='lines',
                               line=dict(shape='spline', color='black')))
-    fig2.add_trace(go.Scatter(x=Jdens_dB, y=heights[lat, lon, :-1], name="Densities current dB", mode='lines',
+    fig2.add_trace(go.Scatter(x=Jdens_dB, y=heights[lat, lon, :-1], name="dB", mode='lines',
                               line=dict(shape='spline', dash="dot", color='gold')))
-    fig2.add_trace(go.Scatter(x=Jdens_dE, y=heights[lat, lon, :-1], name="Densities current dE", mode='lines',
+    fig2.add_trace(go.Scatter(x=Jdens_dE, y=heights[lat, lon, :-1], name="dE", mode='lines',
                               line=dict(shape='spline', dash="dash", color='gold')))
-    fig2.add_trace(go.Scatter(x=Jdens_dVi, y=heights[lat, lon, :-1], name="Densities current dVi", mode='lines',
+    fig2.add_trace(go.Scatter(x=Jdens_dVi, y=heights[lat, lon, :-1], name="dVi", mode='lines',
                               line=dict(shape='spline', dash="dot", color='red')))
-    fig2.add_trace(go.Scatter(x=Jdens_dUn, y=heights[lat, lon, :-1], name="Densities current dUn", mode='lines',
+    fig2.add_trace(go.Scatter(x=Jdens_dUn, y=heights[lat, lon, :-1], name="dUn", mode='lines',
                               line=dict(shape='spline', dash="dash", color='red')))
-    fig2.add_trace(go.Scatter(x=Jdens_dNe, y=heights[lat, lon, :-1], name="Densities current dNe", mode='lines',
+    fig2.add_trace(go.Scatter(x=Jdens_dNe, y=heights[lat, lon, :-1], name="dNe", mode='lines',
                               line=dict(shape='spline', dash="dash", color='coral')))
 
     # updating the layout of the figure
     fig2.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                       xaxis_title="", yaxis_title="Altitude (km)", width=800, height=650,
+                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, 0.4]),
+                       xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
                        title={'text': 'Densities Current Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig2.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2547,19 +2572,19 @@ def plot_csections_error(lat_value, lon_value, min_alt, max_alt):
     fig = go.Figure()
 
     # adding the various plots
-    fig.add_trace(go.Scatter(x=C_Op_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O^{+}$ CSection error", mode='lines',
+    fig.add_trace(go.Scatter(x=C_Op_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O^{+}$", mode='lines',
                              line=dict(shape='spline', color='red')))
-    fig.add_trace(go.Scatter(x=C_O2p_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O_{2}^{+}$ CSection error", mode='lines',
+    fig.add_trace(go.Scatter(x=C_O2p_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O_{2}^{+}$", mode='lines',
                              line=dict(shape='spline', color='blue')))
-    fig.add_trace(go.Scatter(x=C_NOp_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="$NO^{+}$ CSection error", mode='lines',
+    fig.add_trace(go.Scatter(x=C_NOp_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="$NO^{+}$", mode='lines',
                              line=dict(shape='spline', color='green')))
-    fig.add_trace(go.Scatter(x=C_ion_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="Avg Ion CSection error", mode='lines',
+    fig.add_trace(go.Scatter(x=C_ion_error[lat, lon, :-1], y=heights[lat, lon, :-1], name="$Avg$", mode='lines',
                              line=dict(shape='spline', color='black')))
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="$(m^{2})$", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, max(C_Op_error[lat, lon, :-1])]),
+                      xaxis_title="$(m^{2})$", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Cross Sections Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2579,7 +2604,7 @@ def plot_csections_rel_error(lat_value, lon_value, min_alt, max_alt):
     min_alt = min_alt
     max_alt = max_alt
 
-    COp_rel = C_Op_error[lat, lon, :-1] / C_Op[lat, lon,:-1]
+    COp_rel = C_Op_error[lat, lon, :-1] / C_Op[lat, lon, :-1]
     CO2p_rel = C_O2p_error[lat, lon, :-1] / C_O2p[lat, lon, :-1]
     CNOp_rel = C_NOp_error[lat, lon, :-1] / C_NOp[lat, lon, :-1]
     Cion_rel = C_ion_error[lat, lon, :-1] / C_ion[lat, lon, :-1]
@@ -2587,19 +2612,19 @@ def plot_csections_rel_error(lat_value, lon_value, min_alt, max_alt):
     fig = go.Figure()
 
     # adding the various plots
-    fig.add_trace(go.Scatter(x=COp_rel, y=heights[lat, lon, :-1], name="$O^{+}$ CSection error", mode='lines',
+    fig.add_trace(go.Scatter(x=COp_rel, y=heights[lat, lon, :-1], name="$O^{+}$", mode='lines',
                              line=dict(shape='spline', color='red')))
-    fig.add_trace(go.Scatter(x=CO2p_rel, y=heights[lat, lon, :-1], name="$O_{2}^{+}$ CSection error", mode='lines',
+    fig.add_trace(go.Scatter(x=CO2p_rel, y=heights[lat, lon, :-1], name="$O_{2}^{+}$", mode='lines',
                              line=dict(shape='spline', color='blue')))
-    fig.add_trace(go.Scatter(x=CNOp_rel, y=heights[lat, lon, :-1], name="$NO^{+}$ CSection error", mode='lines',
+    fig.add_trace(go.Scatter(x=CNOp_rel, y=heights[lat, lon, :-1], name="$NO^{+}$", mode='lines',
                              line=dict(shape='spline', color='green')))
-    fig.add_trace(go.Scatter(x=Cion_rel, y=heights[lat, lon, :-1], name="Avg Ion CSection error", mode='lines',
+    fig.add_trace(go.Scatter(x=Cion_rel, y=heights[lat, lon, :-1], name="$Avg$", mode='lines',
                              line=dict(shape='spline', color='black')))
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Cross Sections Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2628,21 +2653,21 @@ def plot_csections_contr(lat_value, lon_value, min_alt, max_alt):
     fig = go.Figure()
 
     # adding the various plots
-    fig.add_trace(go.Scatter(x=Cion_rel, y=heights[lat, lon, :-1], name="Avg Ion SCection error", mode='lines',
+    fig.add_trace(go.Scatter(x=Cion_rel, y=heights[lat, lon, :-1], name="Avg Ion Csection error", mode='lines',
                              line=dict(shape='spline', color='red')))
-    fig.add_trace(go.Scatter(x=Cion_dTi, y=heights[lat, lon, :-1], name="Avg Ion Csection dTi", mode='lines',
+    fig.add_trace(go.Scatter(x=Cion_dTi, y=heights[lat, lon, :-1], name="dTi", mode='lines',
                              line=dict(shape='spline', dash="dot", color='blue')))
-    fig.add_trace(go.Scatter(x=Cion_dTn, y=heights[lat, lon, :-1], name="Avg Ion Csection dTn", mode='lines',
+    fig.add_trace(go.Scatter(x=Cion_dTn, y=heights[lat, lon, :-1], name="dTn", mode='lines',
                              line=dict(shape='spline', dash="dash", color='green')))
-    fig.add_trace(go.Scatter(x=Cion_dnu, y=heights[lat, lon, :-1], name="Avg Ion Csection dν", mode='lines',
+    fig.add_trace(go.Scatter(x=Cion_dnu, y=heights[lat, lon, :-1], name="dν", mode='lines',
                              line=dict(shape='spline', dash="dot", color='green')))
-    fig.add_trace(go.Scatter(x=Cion_dNn, y=heights[lat, lon, :-1], name="Avg Ion Csection dNn", mode='lines',
+    fig.add_trace(go.Scatter(x=Cion_dNn, y=heights[lat, lon, :-1], name="dNn", mode='lines',
                              line=dict(shape='spline', dash="dash", color='blue')))
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5 , 5)),
-                      xaxis_title="", yaxis_title="Altitude (km)", width=800, height=650,
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="", yaxis_title="$Altitude (km)$", width=800, height=650,
                       title={'text': 'Average Ion Csection Error Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2667,7 +2692,7 @@ def mapll_heating_rates_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(Joule_Heating[:, :, lev], cmap='jet', interpolation='bicubic')
+    sc1 = m1.imshow(Joule_Heating[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -2677,8 +2702,8 @@ def mapll_heating_rates_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Joule Heating' + title)
 
@@ -2694,7 +2719,7 @@ def mapll_heating_rates_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(Ohmic_Heating[:, :, lev], cmap='jet', interpolation='bicubic')
+    sc2 = m2.imshow(Ohmic_Heating[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -2704,8 +2729,8 @@ def mapll_heating_rates_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Ohmic Heating' + title)
 
@@ -2721,7 +2746,7 @@ def mapll_heating_rates_plot(pressure_level, night_shade):
     m3 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m3.drawcoastlines()
 
-    sc3 = m3.imshow(Frictional_Heating[:, :, lev], cmap='jet', interpolation='bicubic')
+    sc3 = m3.imshow(Frictional_Heating[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m3.nightshade(map_time, alpha=0.3)
@@ -2731,8 +2756,8 @@ def mapll_heating_rates_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Frictional Heating' + title)
 
@@ -2750,8 +2775,6 @@ def mapll_collisions_plot(pressure_level, night_shade):
 
     lev = pressure_level
 
-    nu_ion_avg = (nu_Op_sum[:, :, lev] + nu_O2p_sum[:, :, lev] + nu_NOp_sum[:, :, lev]) / 3
-
     # Average Ion Collision Frequency
     fig1 = plt.figure(figsize=(13, 13))
     ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
@@ -2759,7 +2782,7 @@ def mapll_collisions_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(nu_ion_avg, cmap='jet', interpolation='bicubic')
+    sc1 = m1.imshow((nu_Op_sum[:, :, lev] + nu_O2p_sum[:, :, lev] + nu_NOp_sum[:, :, lev]) / 3, cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -2769,8 +2792,8 @@ def mapll_collisions_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Average Ion Collision Frequency' + title)
 
@@ -2786,7 +2809,7 @@ def mapll_collisions_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(nu_e_sum[:, :, lev], cmap='jet', interpolation='bicubic')
+    sc2 = m2.imshow(nu_e_sum[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -2796,8 +2819,8 @@ def mapll_collisions_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Electron Collision Frequency' + title)
 
@@ -2822,7 +2845,7 @@ def mapll_conductivities_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(pedersen_con[:, :, lev], cmap='jet', interpolation='bicubic')
+    sc1 = m1.imshow(pedersen_con[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -2832,8 +2855,8 @@ def mapll_conductivities_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Pedersen Conductivity' + title)
 
@@ -2849,7 +2872,7 @@ def mapll_conductivities_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(hall_con[:, :, lev], cmap='jet', interpolation='bicubic')
+    sc2 = m2.imshow(hall_con[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -2859,8 +2882,8 @@ def mapll_conductivities_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Hall Conductivity' + title)
 
@@ -2876,7 +2899,7 @@ def mapll_conductivities_plot(pressure_level, night_shade):
     m3 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m3.drawcoastlines()
 
-    sc3 = m3.imshow(parallel_con[:, :, lev], cmap='jet', interpolation='bicubic')
+    sc3 = m3.imshow(parallel_con[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m3.nightshade(map_time, alpha=0.3)
@@ -2886,8 +2909,8 @@ def mapll_conductivities_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Parallel Conductivity' + title)
 
@@ -2912,7 +2935,7 @@ def mapll_currents_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(J_ohmic[:, :, lev], cmap='jet', interpolation='bicubic')
+    sc1 = m1.imshow(J_ohmic[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -2922,8 +2945,8 @@ def mapll_currents_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Ohmic Current' + title)
 
@@ -2939,7 +2962,7 @@ def mapll_currents_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(J_dens[:, :, lev], cmap='jet', interpolation='bicubic')
+    sc2 = m2.imshow(J_dens[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -2949,8 +2972,8 @@ def mapll_currents_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Densities Current' + title)
 
@@ -2974,7 +2997,7 @@ def mapll_csection_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(C_ion[:, :, lev], cmap='jet', interpolation='bicubic')
+    sc1 = m1.imshow(C_ion[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -2984,8 +3007,8 @@ def mapll_csection_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Average Ion Cross Section' + title)
 
@@ -3004,15 +3027,13 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
     lev = pressure_level
 
     # Joule Heating
-    Joule_rel = Joule_Heating_error[:, :, lev] / Joule_Heating[:, :, lev]
-
     fig1 = plt.figure(figsize=(13, 13))
     ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
 
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(Joule_rel, cmap='jet', interpolation='bicubic')
+    sc1 = m1.imshow(Joule_Heating_error[:, :, lev] / Joule_Heating[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -3022,8 +3043,8 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Joule Heating Relative Error' + title)
 
@@ -3032,15 +3053,13 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
     plt.colorbar(sc1, cax=cax1)
 
     # Ohmic Heating
-    Ohmic_rel = Ohmic_Heating_error[:, :, lev] / Ohmic_Heating[:, :, lev]
-
     fig2 = plt.figure(figsize=(13, 13))
     ax2 = fig2.add_subplot(1, 1, 1, aspect='equal')
 
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(Ohmic_rel, cmap='jet', interpolation='bicubic')
+    sc2 = m2.imshow(Ohmic_Heating_error[:, :, lev] / Ohmic_Heating[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -3050,8 +3069,8 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Ohmic Heating Relative Error' + title)
 
@@ -3068,7 +3087,7 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
     m3 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m3.drawcoastlines()
 
-    sc3 = m3.imshow(Fric_rel, cmap='jet', interpolation='bicubic')
+    sc3 = m3.imshow(Frictional_Heating_error[:, :, lev] / Frictional_Heating[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m3.nightshade(map_time, alpha=0.3)
@@ -3078,8 +3097,8 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Frictional Heating Relative Error' + title)
 
@@ -3096,11 +3115,6 @@ def mapll_collisions_rel_error_plot(pressure_level, night_shade):
 
     lev = pressure_level
 
-    nu_ion = (nu_Op_sum[:, :, lev] + nu_O2p_sum[:, :, lev] + nu_NOp_sum[:, :, lev]) / 3
-    nuion_error = (nuOp_error[:, :, lev] + nuO2p_error[:, :, lev] + nuNOp_error[:, :, lev]) / 3
-    nuion_rel = nuion_error / nu_ion
-    nue_rel = nue_error[:, :, lev] / nu_e_sum[:, :, lev]
-
     # Average Ion Collisions Relative Error
     fig1 = plt.figure(figsize=(13, 13))
     ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
@@ -3108,7 +3122,9 @@ def mapll_collisions_rel_error_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(nuion_rel, cmap='jet', interpolation='bicubic')
+    sc1 = m1.imshow(((nuOp_error[:, :, lev] + nuO2p_error[:, :, lev] + nuNOp_error[:, :, lev]) / 3) /
+                    ((nu_Op_sum[:, :, lev] + nu_O2p_sum[:, :, lev] + nu_NOp_sum[:, :, lev]) / 3),
+                    cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -3118,8 +3134,8 @@ def mapll_collisions_rel_error_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Average Ion Collision Frequency Relative Error' + title)
 
@@ -3134,7 +3150,7 @@ def mapll_collisions_rel_error_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(nue_rel, cmap='jet', interpolation='bicubic')
+    sc2 = m2.imshow(nue_error[:, :, lev] / nu_e_sum[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -3144,8 +3160,8 @@ def mapll_collisions_rel_error_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Electron Collision Frequency Relative Error' + title)
 
@@ -3163,15 +3179,13 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
     lev = pressure_level
 
     # Pedersen Conductivity
-    pedersen_rel = pedersen_con_error[:, :, lev] / pedersen_con[:, :, lev]
-
     fig1 = plt.figure(figsize=(13, 13))
     ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
 
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(pedersen_rel, cmap='jet', interpolation='bicubic')
+    sc1 = m1.imshow(pedersen_con_error[:, :, lev] / pedersen_con[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -3181,8 +3195,8 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Pedersen Conductivity Relative Error' + title)
 
@@ -3191,15 +3205,13 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
     plt.colorbar(sc1, cax=cax1)
 
     # Hall Conductivity
-    hall_rel = hall_con_error[:, :, lev] / hall_con[:, :, lev]
-
     fig2 = plt.figure(figsize=(13, 13))
     ax2 = fig2.add_subplot(1, 1, 1, aspect='equal')
 
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(hall_rel, cmap='jet', interpolation='bicubic')
+    sc2 = m2.imshow(hall_con_error[:, :, lev] / hall_con[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -3209,8 +3221,8 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Hall Conductivity Relative Error' + title)
 
@@ -3219,15 +3231,13 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
     plt.colorbar(sc2, cax=cax2)
 
     # Parallel Conductivity
-    parallel_rel = parallel_con_error[:, :, lev] / parallel_con[:, :, lev]
-
     fig3 = plt.figure(figsize=(13, 13))
     ax3 = fig3.add_subplot(1, 1, 1, aspect='equal')
 
     m3 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m3.drawcoastlines()
 
-    sc3 = m3.imshow(parallel_rel, cmap='jet', interpolation='bicubic')
+    sc3 = m3.imshow(parallel_con_error[:, :, lev] / parallel_con[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m3.nightshade(map_time, alpha=0.3)
@@ -3237,8 +3247,8 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Parallel Conductivity Relative Error' + title)
 
@@ -3256,15 +3266,13 @@ def mapll_currents_rel_error_plot(pressure_level, night_shade):
     lev = pressure_level
 
     # Ohmic Current
-    Johmic_rel = J_ohmic_error[:, :, lev] / J_ohmic[:, :, lev]
-
     fig1 = plt.figure(figsize=(13, 13))
     ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
 
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(Johmic_rel, cmap='jet', interpolation='bicubic')
+    sc1 = m1.imshow(J_ohmic_error[:, :, lev] / J_ohmic[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -3274,8 +3282,8 @@ def mapll_currents_rel_error_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Ohmic Current Relative Error' + title)
 
@@ -3284,15 +3292,13 @@ def mapll_currents_rel_error_plot(pressure_level, night_shade):
     plt.colorbar(sc1, cax=cax1)
 
     # Densities Current
-    Jdens_rel = J_dens_error[:, :, lev] / J_dens[:, :, lev]
-
     fig2 = plt.figure(figsize=(13, 13))
     ax2 = fig2.add_subplot(1, 1, 1, aspect='equal')
 
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(Jdens_rel, cmap='jet', interpolation='bicubic')
+    sc2 = m2.imshow(J_dens_error[:, :, lev] / J_dens[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -3302,8 +3308,8 @@ def mapll_currents_rel_error_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Densities Current Relative Error' + title)
 
@@ -3320,15 +3326,13 @@ def mapll_csection_rel_error_plot(pressure_level, night_shade):
 
     lev = pressure_level
 
-    C_rel = C_ion_error[:, :, lev] / C_ion[:, :, lev]
-
     fig1 = plt.figure(figsize=(13, 13))
     ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
 
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(C_rel, cmap='jet', interpolation='bicubic')
+    sc1 = m1.imshow(C_ion_error[:, :, lev] / C_ion[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -3338,8 +3342,8 @@ def mapll_csection_rel_error_plot(pressure_level, night_shade):
 
     plt.xticks(np.arange(-180., 181., 60.))
     plt.yticks(np.arange(-90., 91., 30.))
-    plt.xlabel('Lon (deg)')
-    plt.ylabel('Lat (deg)')
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Average Ion Cross Section Relative Error' + title)
 
@@ -3350,38 +3354,43 @@ def mapll_csection_rel_error_plot(pressure_level, night_shade):
     plt.show()
 
 
-# ####################################### Lat - Pressure plots #######################################
-def mapla_Heating_Rates_plot(lon_value):
+# ####################################### Lat - Alt Profile Plots #######################################
+def mapla_heating_rates_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
 
     lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
 
     # Joule Heating
-    fig1=plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(glev_in[:-1], glat_in[:], Joule_Heating[:, lon, :-1], cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], Joule_Heating[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Joule Heating' + title)
     cbar = plt.colorbar(cp1)
     cbar.set_label(label='$(W/m^{3})$', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Ohmic Heating
-    fig2 = plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(glev_in[:-1], glat_in[:], Ohmic_Heating[:, lon, :-1], cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], Ohmic_Heating[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Ohmic Heating' + title)
     cbar = plt.colorbar(cp2)
     cbar.set_label(label='$(W/m^{3})$', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Frictional Heating
-    fig3 = plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(glev_in[:-1], glat_in[:], Frictional_Heating[:, lon, :-1], cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], Frictional_Heating[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Frictional Heating' + title)
     cbar = plt.colorbar(cp3)
@@ -3390,29 +3399,32 @@ def mapla_Heating_Rates_plot(lon_value):
     plt.show()
 
 
-def mapla_collisions_plot(lon_value):
+def mapla_collisions_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
 
     lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
 
     # Ion Average Collision Frequency
-    nu_ion = (nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3
-
-    fig1 = plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(glev_in[:-1], glat_in[:], nu_ion, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], (nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3, cmap=cm.batlow,
+                       interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Average Ion Collision Frequency' + title)
     cbar = plt.colorbar(cp1)
     cbar.set_label(label='$(Hz)$', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Electron Collision Frequency
-    fig2 = plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(glev_in[:-1], glat_in[:], nu_e_sum[:, lon, :-1], cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], nu_e_sum[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Electron Collision Frequency' + title)
     cbar = plt.colorbar(cp2)
@@ -3421,37 +3433,42 @@ def mapla_collisions_plot(lon_value):
     plt.show()
 
 
-def mapla_conductivities_plot(lon_value):
+def mapla_conductivities_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
 
     lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
 
     # Pedersen
-    fig1 = plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(glev_in[:-1], glat_in[:], pedersen_con[:, lon, :-1], cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], pedersen_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Lattitude \ (deg)$')
 
     plt.title('Pedersen Conductivity' + title)
     cbar = plt.colorbar(cp1)
     cbar.set_label(label='$(S/m)$', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Hall Conductivity
-    fig2 = plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(glev_in[:-1], glat_in[:], hall_con[:, lon, :-1], cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], hall_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Hall Conductivity' + title)
     cbar = plt.colorbar(cp2)
     cbar.set_label(label='$(S/m)$', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Parallel Conductivity
-    fig3 = plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(glev_in[:-1], glat_in[:], parallel_con[:, lon, :-1], cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], parallel_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Parallel Conductivity' + title)
     cbar = plt.colorbar(cp3)
@@ -3460,27 +3477,31 @@ def mapla_conductivities_plot(lon_value):
     plt.show()
 
 
-def mapla_currents_plot(lon_value):
+def mapla_currents_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
 
     lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
 
     # Ohmic Current
-    fig1 = plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(glev_in[:-1], glat_in[:], J_ohmic[:, lon, :-1], cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], J_ohmic[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Ohmic Current' + title)
     cbar = plt.colorbar(cp1)
     cbar.set_label(label='$(A/m^{2})$', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Densities Current
-    fig2 = plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(glev_in[:-1], glat_in[:], J_dens[:, lon, :-1], cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], J_dens[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Densities Current' + title)
     cbar = plt.colorbar(cp2)
@@ -3489,17 +3510,20 @@ def mapla_currents_plot(lon_value):
     plt.show()
 
 
-def mapla_cross_section_plot(lon_value):
+def mapla_cross_section_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
 
     lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
 
     # Average Ion Cross Section
-    fig1 = plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(glev_in[:-1], glat_in[:], C_ion[:, lon, :-1], cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], C_ion[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Average Ion Cross Section' + title)
     cbar = plt.colorbar(cp1)
@@ -3508,43 +3532,45 @@ def mapla_cross_section_plot(lon_value):
     plt.show()
 
 
-def mapla_Heating_Rates_rel_error_plot(lon_value):
+def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
 
     lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
 
     # Joule Heating
-    Joule_rel = Joule_Heating_error[:, lon, :-1] / Joule_Heating[:, lon, :-1]
-
-    fig1=plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(glev_in[:-1], glat_in[:], Joule_rel, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], Joule_Heating_error[:, lon, :-1] / Joule_Heating[:, lon, :-1], cmap=cm.batlow,
+                       interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Joule Heating Relative Error' + title)
     cbar = plt.colorbar(cp1)
     cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Ohmic Heating
-    Ohmic_rel = Ohmic_Heating_error[:, lon, :-1] / Ohmic_Heating[:, lon, :-1]
-
-    fig2 = plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(glev_in[:-1], glat_in[:], Ohmic_rel, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], Ohmic_Heating_error[:, lon, :-1] / Ohmic_Heating[:, lon, :-1], cmap=cm.batlow,
+                       interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Ohmic Heating Relative Error' + title)
     cbar = plt.colorbar(cp2)
     cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Frictional Heating
-    Fric_rel = Frictional_Heating_error[:, lon, :-1] / Frictional_Heating[:, lon, :-1]
-
-    fig3 = plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(glev_in[:-1], glat_in[:], Fric_rel, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], Frictional_Heating_error[:, lon, :-1] / Frictional_Heating[:, lon, :-1], cmap=cm.batlow,
+                       interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Frictional Heating Relative Error' + title)
     cbar = plt.colorbar(cp3)
@@ -3553,32 +3579,33 @@ def mapla_Heating_Rates_rel_error_plot(lon_value):
     plt.show()
 
 
-def mapla_collisions_rel_error_plot(lon_value):
+def mapla_collisions_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
 
     lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
 
     # Ion Average Collision Frequency
-    nu_ion = (nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3
-    nuion_error = (nuOp_error[:, lon, :-1] + nuO2p_error[:, lon, :-1] + nuNOp_error[:, lon, :-1]) / 3
-    nuion_rel = nuion_error / nu_ion
-    nue_rel = nue_error[:, lon, :-1] / nu_e_sum[:, lon, :-1]
-
-    fig1 = plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(glev_in[:-1], glat_in[:], nuion_rel, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], ((nuOp_error[:, lon, :-1] + nuO2p_error[:, lon, :-1] + nuNOp_error[:, lon, :-1]) / 3) /
+                                                    ((nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3),
+                       cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Average Ion Collision Frequency Relative Error' + title)
     cbar = plt.colorbar(cp1)
     cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Electron Collision Frequency
-    fig2 = plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(glev_in[:-1], glat_in[:], nue_rel, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], nue_error[:, lon, :-1] / nu_e_sum[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Electron Collision Frequency Relative Error' + title)
     cbar = plt.colorbar(cp2)
@@ -3587,43 +3614,42 @@ def mapla_collisions_rel_error_plot(lon_value):
     plt.show()
 
 
-def mapla_conductivities_rel_error_plot(lon_value):
+def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
 
     lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
 
     # Pedersen
-    pedersen_rel = pedersen_con_error[:, lon, :-1] / pedersen_con[:, lon, :-1]
-
-    fig1 = plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(glev_in[:-1], glat_in[:], pedersen_rel, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], pedersen_con_error[:, lon, :-1] / pedersen_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Pedersen Conductivity Relative Error' + title)
     cbar = plt.colorbar(cp1)
     cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Hall Conductivity
-    hall_rel = hall_con_error[:, lon, :-1] / hall_con[:, lon, :-1]
-
-    fig2 = plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(glev_in[:-1], glat_in[:], hall_rel, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], hall_con_error[:, lon, :-1] / hall_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Hall Conductivity Relative Error' + title)
     cbar = plt.colorbar(cp2)
     cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Parallel Conductivity
-    parallel_rel = parallel_con_error[:, lon, :-1] / parallel_con[:, lon, :-1]
-
-    fig3 = plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(glev_in[:-1], glat_in[:], parallel_rel, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], parallel_con_error[:, lon, :-1] / parallel_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Parallel Conductivity Relative Error' + title)
     cbar = plt.colorbar(cp3)
@@ -3632,31 +3658,31 @@ def mapla_conductivities_rel_error_plot(lon_value):
     plt.show()
 
 
-def mapla_currents_rel_error_plot(lon_value):
+def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
 
     lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
 
     # Ohmic Current
-    Johmic_rel = J_ohmic_error[:, lon, :-1] / J_ohmic[:, lon, :-1]
-
-    fig1 = plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(glev_in[:-1], glat_in[:], Johmic_rel, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], J_ohmic_error[:, lon, :-1] / J_ohmic[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Ohmic Current Relative Error' + title)
     cbar = plt.colorbar(cp1)
     cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Densities Current
-    Jdens_rel = J_dens_error[:, lon, :-1] / J_dens[:, lon, :-1]
-
-    fig2 = plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(glev_in[:-1], glat_in[:], Jdens_rel, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], J_dens_error[:, lon, :-1] / J_dens[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Densities Current Relative Error' + title)
     cbar = plt.colorbar(cp2)
@@ -3665,19 +3691,20 @@ def mapla_currents_rel_error_plot(lon_value):
     plt.show()
 
 
-def mapla_cross_section_rel_error_plot(lon_value):
+def mapla_cross_section_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
 
     lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
 
     # Average Ion Cross Section
-    Cion_rel = C_ion_error[:, lon, :-1] / C_ion[:, lon, :-1]
-
-    fig1 = plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(glev_in[:-1], glat_in[:], Cion_rel, cmap='jet', interpolation='bicubic')
-    plt.xlabel('Pressure Level')
-    plt.ylabel('Lat (deg)')
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], C_ion_error[:, lon, :-1] / C_ion[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Average Ion Cross Section Relative Error' + title)
     cbar = plt.colorbar(cp1)
@@ -3753,13 +3780,15 @@ def gui():
 
     # layout for wind - velocity frame
     win_vel_layout = [[Sg.Text("U\u2099", pad=((80, 0), (10, 0)), tooltip="Neutral wind"), Sg.Text("V\u1d62", pad=((110, 0), (10, 0)),
-                       tooltip="Ion velocity")], [Sg.Spin(pad=(70, 0), size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5,
-                       key="-Un-"), Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-Vi-")]]
+                       tooltip="Ion velocity")], [Sg.Spin(pad=(70, 0), size=(3, 3), values=[i for i in range(0, 101, 5)],
+                                                  initial_value=5, key="-Un-"),
+                      Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-Vi-")]]
 
     # layout for electric and magnetic field frame
     fields_layout = [[Sg.Text("E", pad=((80, 0), (10, 0)), tooltip="Electric field"), Sg.Text("B", pad=((120, 0), (10, 0)),
-                      tooltip="Magnetic field")], [Sg.Spin(pad=(70, 0), size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-E-"),
-                      Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-B-")]]
+                      tooltip="Magnetic field")], [Sg.Spin(pad=(70, 0), size=(3, 3), values=[i for i in range(0, 101, 5)],
+                                                   initial_value=5, key="-E-"),
+                     Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-B-")]]
 
     # used in plotting choices frame
     col1 = [[Sg.Checkbox("Plot Heating Rates Absolute Error", default=False, tooltip="Plots heating rates absolute error", key="-HR_abs-")],
@@ -3800,7 +3829,8 @@ def gui():
     col4 = [[Sg.Checkbox("Plot Heating Rates Relative Error", default=False, tooltip="Plots heating rates relative error", key="-HR_mapll_error-")],
             [Sg.Checkbox("Plot Collision Frequencies Relative Error", default=False, tooltip="Plots collision frequencies relative error",
              key="-COL_mapll_error-")],
-            [Sg.Checkbox("Plot Conductivities Relative Error", default=False, tooltip="Plots conductivities relative error", key="-CON_mapll_error-")],
+            [Sg.Checkbox("Plot Conductivities Relative Error", default=False, tooltip="Plots conductivities relative error",
+                          key="-CON_mapll_error-")],
             [Sg.Checkbox("Plot Currents Relative Error", default=False, tooltip="Plots currents relative error", key="-CUR_mapll_error-")],
             [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error", key="-CR_mapll_error-")]]
 
@@ -3818,7 +3848,7 @@ def gui():
             [Sg.Checkbox("Plot Currents Relative Error", default=False, tooltip="Plots currents relative error", key="-CUR_mapla_error-")],
             [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error", key="-CR_mapla_error-")]]
 
-    templay1 = [[Sg.Text("min altitude(Km)", pad=((30, 0), (15, 0))), Sg.Text("max altitude(Km)", pad=((30, 10), (15, 0)))],
+    templay1 = [[Sg.Text("min altitude(km)", pad=((30, 0), (15, 0))), Sg.Text("max altitude(km)", pad=((30, 10), (15, 0)))],
                 [Sg.InputCombo(values=[i for i in range(0, 601, 10)], pad=((40, 0), (10, 20)), size=(10, 1), default_value="110", key="-min_alt-"),
                  Sg.InputCombo(values=[i for i in range(0, 601, 10)], pad=((45, 0), (10, 20)), size=(11, 1), default_value="200", key="-max_alt-")],
                 [Sg.Text("Products", pad=((30, 0), (0, 0))), Sg.Text("Errors", pad=((200, 0), (0, 0)))],
@@ -3829,12 +3859,15 @@ def gui():
                 [Sg.Text("_"*15, pad=((20, 0), (0, 0))), Sg.Text("_"*30, pad=((105, 0), (0, 0)))],
                 [Sg.Column(col3, scrollable=False), Sg.Column(col4, scrollable=False)]]
 
-    templay3 = [[Sg.Text("Products", pad=((30, 0), (30, 0))), Sg.Text("Errors", pad=((200, 0), (30, 0)))],
+    templay3 = [[Sg.Text("min altitude(km)", pad=((30, 0), (15, 0))), Sg.Text("max altitude(km)", pad=((30, 10), (15, 0)))],
+                [Sg.InputCombo(values=[i for i in range(0, 601, 10)], pad=((40, 0), (10, 20)), size=(10, 1), default_value="110", key="-min_alt_la-"),
+                 Sg.InputCombo(values=[i for i in range(0, 601, 10)], pad=((45, 0), (10, 20)), size=(11, 1), default_value="200", key="-max_alt_la-")],
+                [Sg.Text("Products", pad=((30, 0), (30, 0))), Sg.Text("Errors", pad=((200, 0), (30, 0)))],
                 [Sg.Text("_"*15, pad=((20, 0), (0, 0))), Sg.Text("_"*30, pad=((105, 0), (0, 0)))],
                 [Sg.Column(col5, scrollable=False), Sg.Column(col6, scrollable=False)]]
 
     templay4 = [[Sg.TabGroup([[Sg.Tab("Vertical Profile Plots", templay1), Sg.Tab("Map Profile (Lat-Lon) Plots", templay2),
-                                  Sg.Tab("Map Profile (Lat-Pres) Plots", templay3)]], key="-TABGROUP1-")]]
+                                  Sg.Tab("Map Profile (Lat-Alt) Plots", templay3)]], key="-TABGROUP1-")]]
 
     # frame used in densities
     den_frame = [Sg.Frame("Densities error(%)", densities_layout, pad=((0, 0), (15, 10)))]
@@ -3860,8 +3893,8 @@ def gui():
                   "-10.0", "-7.5", "-5.0", "-2.5", "0.0", "2.5", "5.0", "7.5", "10.0", "12.5", "15.0", "17.5", "20.0", "22.5", "25.0", "27.5", "30.0",
                   "32.5", "35.0", "37.5", "40.0", "42.5", "45.0", "47.5", "50.0", "52.5", "55.0", "57.5", "60.0", "62.5", "65.0", "67.5", "70.0",
                   "72.5", "75.0", "77.5", "80.0", "82.5", "85.0", "87.5", "90.0", "92.5", "95.0", "97.5", "100.0", "102.5", "105.0", "107.5", "110.0",
-                  "112.5","115.0", "117.5", "120.0", "122.5", "125.0", "127.5", "130.0", "132.5","135.0", "137.5", "140.0", "142.5", "145.0", "147.5",
-                  "150.0", "152.5", "155.0", "157.5", "160.0", "162.5", "165.0", "167.5", "170.0", "172.5", "175.0", "177.5"]
+                  "112.5", "115.0", "117.5", "120.0", "122.5", "125.0", "127.5", "130.0", "132.5", "135.0", "137.5", "140.0", "142.5", "145.0",
+                  "147.5", "150.0", "152.5", "155.0", "157.5", "160.0", "162.5", "165.0", "167.5", "170.0", "172.5", "175.0", "177.5"]
 
     # ############################################ VERTICAL PROFILE LAYOUT #############################################
     # ##################################################################################################################
@@ -3877,7 +3910,7 @@ def gui():
     # ##################################################################################################################
     map_layout = [[Sg.Text("Timestep", pad=((40, 20), (30, 0))), Sg.Text("Pressure level", pad=((30, 20), (30, 0)))],
                   [Sg.InputCombo(values=[i for i in range(0, 60)], pad=((45, 0), (0, 20)), size=(7, 1), default_value="9", key="-TIME_map-"),
-                   Sg.InputCombo(values=[i for i in range(0, 57)], pad=((40, 0), (0, 20)), size=(11, 1), default_value="7", key="-Pr_level-")],
+                   Sg.InputCombo(values=[i for i in range(0, 56)], pad=((40, 0), (0, 20)), size=(11, 1), default_value="7", key="-Pr_level-")],
                   [Sg.Checkbox("Add nightshade", default=True, tooltip="Adds night region on map", key="-NIGHT-")]]
 
     map2_latout = [[Sg.Text("Timestep", pad=((40, 20), (30, 0))), Sg.Text("Longitude", pad=((30, 20), (30, 0)))],
@@ -3897,7 +3930,7 @@ def gui():
                     Sg.Frame("Choose plots", templay4, pad=((0, 0), (40, 30)))],
                    [Sg.Text("Choose Profile")],
                    [Sg.TabGroup([[Sg.Tab("Vertical Profile", vert_layout), Sg.Tab("Map Profile (Lat-Lon)", map_layout),
-                                  Sg.Tab("Map Profile (Lat-Pres)", map2_latout)]], key="-TABGROUP-")],
+                                  Sg.Tab("Map Profile (Lat-Alt)", map2_latout)]], key="-TABGROUP-")],
                    [button("Calculate Products", "Click to start calculation"), button("Calculate Error", "Click to start calculation"),
                     button("Help", "Click for info"),
                     button("Exit", "Click to exit program")]]
@@ -4007,23 +4040,25 @@ def gui():
                     mapll_currents_plot(pressure_level=user_lev, night_shade=night_shade)
                 if values["-CR_mapll-"]:
                     mapll_csection_plot(pressure_level=user_lev, night_shade=night_shade)
-        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Pres)":
+        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
             user_lon = values["-Lon_map2-"]
             user_time = values["-TIME_map2-"]
+            min_alt_la = values["-min_alt_la-"]
+            max_alt_la = values["-max_alt_la-"]
             models_input(file_name=user_file_name, timer=user_time, lon_value=lon_dictionary[user_lon])
             products(lon_value=lon_dictionary[user_lon])
             prod_calculated = True
-            if values["-TABGROUP1-"] == "Map Profile (Lat-Pres) Plots":
+            if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
                 if values["-HR_mapla-"]:
-                    mapla_Heating_Rates_plot(lon_value=lon_dictionary[user_lon])
+                    mapla_heating_rates_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
                 if values["-COL_mapla-"]:
-                    mapla_collisions_plot(lon_value=lon_dictionary[user_lon])
+                    mapla_collisions_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
                 if values["-CON_mapla-"]:
-                    mapla_conductivities_plot(lon_value=lon_dictionary[user_lon])
+                    mapla_conductivities_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
                 if values["-CUR_mapla-"]:
-                    mapla_currents_plot(lon_value=lon_dictionary[user_lon])
+                    mapla_currents_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
                 if values["-CR_mapla-"]:
-                    mapla_cross_section_plot(lon_value=lon_dictionary[user_lon])
+                    mapla_cross_section_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
         if event == "Calculate Error" and values["-TABGROUP-"] == 'Vertical Profile':
             if prod_calculated:
                 user_lat = values["-LAT-"]
@@ -4095,22 +4130,24 @@ def gui():
                     mapll_currents_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
                 if values["-CR_mapll_error-"]:
                     mapll_csection_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Pres)":
+        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
             user_lon = values["-Lon_map2-"]
+            min_alt_la = values["-min_alt_la-"]
+            max_alt_la = values["-max_alt_la-"]
             error(B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error, NOp_error=nop_error,
                   NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error, Tn_error=tn_error,
                   Un_error=un_error, Vi_error=vi_error, lon_value=lon_dictionary[user_lon])
-            if values["-TABGROUP1-"] == "Map Profile (Lat-Pres) Plots":
+            if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
                 if values["-HR_mapla_error-"]:
-                    mapla_Heating_Rates_rel_error_plot(lon_value=lon_dictionary[user_lon])
+                    mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
                 if values["-COL_mapla_error-"]:
-                    mapla_collisions_rel_error_plot(lon_dictionary[user_lon])
+                    mapla_collisions_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
                 if values["-CON_mapla_error-"]:
-                    mapla_conductivities_rel_error_plot(lon_dictionary[user_lon])
+                    mapla_conductivities_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
                 if values["-CUR_mapla_error-"]:
-                    mapla_currents_rel_error_plot(lon_dictionary[user_lon])
+                    mapla_currents_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
                 if values["-CR_mapla_error-"]:
-                    mapla_cross_section_rel_error_plot(lon_dictionary[user_lon])
+                    mapla_cross_section_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
             else:
                 Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
         if event == "Help":
@@ -4119,6 +4156,9 @@ def gui():
     window.close()
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GUI CREATION END $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+# Run gui
 gui()
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ END OF PROGRAM @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

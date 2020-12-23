@@ -3079,8 +3079,6 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
     plt.colorbar(sc2, cax=cax2)
 
     # Frictional Heating
-    Fric_rel = Frictional_Heating_error[:, :, lev] / Frictional_Heating[:, :, lev]
-
     fig3 = plt.figure(figsize=(13, 13))
     ax3 = fig3.add_subplot(1, 1, 1, aspect='equal')
 
@@ -3862,8 +3860,10 @@ def gui():
                 [Sg.Column(col3, scrollable=False), Sg.Column(col4, scrollable=False)]]
 
     templay3 = [[Sg.Text("min altitude(km)", pad=((30, 0), (15, 0))), Sg.Text("max altitude(km)", pad=((30, 10), (15, 0)))],
-                [Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((40, 0), (10, 20)), size=(10, 1), default_value="110", key="-min_alt_la-"),
-                 Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((45, 0), (10, 20)), size=(11, 1), default_value="200", key="-max_alt_la-")],
+                [Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((40, 0), (10, 20)), size=(10, 1), default_value="110",
+                 key="-min_alt_la-"),
+                 Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((45, 0), (10, 20)), size=(11, 1), default_value="200",
+                 key="-max_alt_la-")],
                 [Sg.Text("Products", pad=((30, 0), (30, 0))), Sg.Text("Errors", pad=((200, 0), (30, 0)))],
                 [Sg.Text("_"*15, pad=((20, 0), (0, 0))), Sg.Text("_"*30, pad=((105, 0), (0, 0)))],
                 [Sg.Column(col5, scrollable=False), Sg.Column(col6, scrollable=False)]]

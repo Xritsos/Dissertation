@@ -1788,13 +1788,12 @@ def plot_conductivities(lat_value, lon_value, min_alt, max_alt):
     fig.add_trace(go.Scatter(x=hall_con[lat, lon, :-1], y=heights[lat, lon, :-1], name="σHall", mode='lines',
                              line=dict(shape='spline', color='blue')))
     fig.add_trace(go.Scatter(x=parallel_con[lat, lon, :-1], y=heights[lat, lon, :-1], name="σParallel", mode='lines',
-                             line=dict(shape='spline', color='green'), visible="legendonly"))
-    x_range = max(hall_con[lat, lon, :-1])
+                             line=dict(shape='spline', color='green')))
+
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
-                      xaxis_title="$(S/m)$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
-                      title={'text': 'Conductivities' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis_title="$(S/m)$", yaxis_title="$Altitude \ (km)$",
+                      width=800, height=650, title={'text': 'Conductivities' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
     fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')

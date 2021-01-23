@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
 from netCDF4 import Dataset
+from matplotlib import ticker
 from cmcrameri import cm
 from mpl_toolkits.basemap import Basemap
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -3406,8 +3407,8 @@ def mapla_collisions_plot(lon_value, min_alt, max_alt):
 
     # Ion Average Collision Frequency
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], (nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3, cmap=cm.batlow,
-                       interpolation='bicubic')
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:-1], (nu_Op_sum[:-1, lon, :-1] + nu_O2p_sum[:-1, lon, :-1] + nu_NOp_sum[:-1, lon, :-1]) / 3,
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
@@ -3418,7 +3419,7 @@ def mapla_collisions_plot(lon_value, min_alt, max_alt):
 
     # Electron Collision Frequency
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], nu_e_sum[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:-1], nu_e_sum[:-1, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
@@ -3443,7 +3444,7 @@ def mapla_conductivities_plot(lon_value, min_alt, max_alt):
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], pedersen_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
-    plt.ylabel('$Lattitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Pedersen Conductivity' + title)
     cbar = plt.colorbar(cp1)
@@ -3462,11 +3463,10 @@ def mapla_conductivities_plot(lon_value, min_alt, max_alt):
 
     # Parallel Conductivity
     plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(heights_la[:-1], glat_in[:], parallel_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:-1], parallel_con[:-1, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
-
     plt.title('Parallel Conductivity' + title)
     cbar = plt.colorbar(cp3)
     cbar.set_label(label='$(S/m)$', size='large', weight='bold', rotation=270, labelpad=30)

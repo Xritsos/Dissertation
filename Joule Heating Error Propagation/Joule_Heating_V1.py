@@ -1862,7 +1862,7 @@ def plot_cross_sections(lat_value, lon_value, min_alt, max_alt):
     x_range = max(C_Op[lat, lon, :-1])
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, x_range + x_range/4]),
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
                       xaxis_title="$(m^{2})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Cross Sections' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
@@ -3463,7 +3463,8 @@ def mapla_conductivities_plot(lon_value, min_alt, max_alt):
 
     # Parallel Conductivity
     plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(heights_la[:-1], glat_in[:-1], parallel_con[:-1, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:-1], parallel_con[:-1, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')

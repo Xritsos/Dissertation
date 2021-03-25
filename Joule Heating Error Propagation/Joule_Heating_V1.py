@@ -376,6 +376,7 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
                 Un_n_temp = Un_north_in[timer, lev, lat, lon]
                 Un_u_temp = Un_up_in[timer, lev, lat, lon]
                 Unx[lat, lon, lev], Uny[lat, lon, lev], Unz[lat, lon, lev] = enu_ecef(glat_in[lat], glon_in[lon], Un_e_temp, Un_n_temp, Un_u_temp)
+
                 # Assign densities (in cm^(-3))
                 NO[lat, lon, lev] = O_in[timer, lev, lat, lon]
                 NO2[lat, lon, lev] = O2_in[timer, lev, lat, lon]
@@ -383,6 +384,7 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
                 NOp[lat, lon, lev] = Op_in[timer, lev, lat, lon]
                 NO2p[lat, lon, lev] = O2p_in[timer, lev, lat, lon]
                 NNOp[lat, lon, lev] = NOp_in[timer, lev, lat, lon]
+
                 # Force charge neutrality ignoring other minor ion densities
                 Ne[lat, lon, lev] = NOp[lat, lon, lev] + NO2p[lat, lon, lev] + NNOp[lat, lon, lev]
 
@@ -421,7 +423,7 @@ def products(lat_value=-1, lon_value=-1, pressure_level=-1):
     # Lat - Alt map profile
     if lat_value == -1 and pressure_level == -1:
         lev_range = len(glev_in) - 1
-        lat_range = len(glat_in) - 1
+        lat_range = len(glat_in)
         lon_start = lon_value
         lon_range = lon_start + 1
         max_bar = lev_range
@@ -430,8 +432,8 @@ def products(lat_value=-1, lon_value=-1, pressure_level=-1):
     if lat_value == -1 and lon_value == -1:
         lev_start = pressure_level
         lev_range = lev_start + 1
-        lat_range = len(glat_in) - 1
-        lon_range = len(glon_in) - 1
+        lat_range = len(glat_in)
+        lon_range = len(glon_in)
         max_bar = lat_range
 
     # Vertical profile
@@ -749,9 +751,8 @@ def products(lat_value=-1, lon_value=-1, pressure_level=-1):
 
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ CALCULATE ERROR $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-def error(B_error=-1, E_error=-1, NO_error=-1, NO2_error=-1, NN2_error=-1, NOp_error=-1, NO2p_error=-1, NNOp_error=-1,
-          Ne_error=-1, Te_error=-1, Ti_error=-1, Tn_error=-1, Un_error=-1, Vi_error=-1, lat_value=-1, lon_value=-1,
-          pressure_level=-1):
+def error(error_flag, B_error, E_error, NO_error, NO2_error, NN2_error, NOp_error, NO2p_error, NNOp_error, Ne_error, Te_error, Ti_error, Tn_error,
+          Un_error, Vi_error, lat_value=-1, lon_value=-1, pressure_level=-1):
 
     start_time = time.time()
     print('Calculating Error.....')
@@ -810,6 +811,9 @@ def error(B_error=-1, E_error=-1, NO_error=-1, NO2_error=-1, NN2_error=-1, NOp_e
 
                 # Magnetic field vector(in tesla)
                 B = [Bx[lat, lon, lev], By[lat, lon, lev], Bz[lat, lon, lev]]
+                # Magnetic field norm and unit vector
+                Bnorm = np.sqrt(B[0] ** 2 + B[1] ** 2 + B[2] ** 2)
+                bunit = [B[0] / Bnorm, B[1] / Bnorm, B[2] / Bnorm]
                 # Electric field vector(in volt/meter)
                 E = [Ex[lat, lon, lev], Ey[lat, lon, lev], Ez[lat, lon, lev]]
                 # Neutral wind vector(in meter/sec)
@@ -817,39 +821,78 @@ def error(B_error=-1, E_error=-1, NO_error=-1, NO2_error=-1, NN2_error=-1, NOp_e
                 # Ion velocity vector(in meter/sec)
                 # Vi_vert ≡ Vi as mentioned in products function above
                 Vi_vert = [Vi_vertx[lat, lon, lev], Vi_verty[lat, lon, lev], Vi_vertz[lat, lon, lev]]
+
                 # ############################### ASSIGNING ERRORS ###############################
-                # distinguish percentage from real errors (=-1 if real error else its percentage)
-                # percentage errors, squared
-                dBx = ((B_error / 100) * B[0]) ** 2
-                dBy = ((B_error / 100) * B[1]) ** 2
-                dBz = ((B_error / 100) * B[2]) ** 2
-                # dBx = (5 * 10 ** (-9)) ** 2
-                # dBy = (5 * 10 ** (-9)) ** 2
-                # dBz = (5 * 10 ** (-9)) ** 2
-                dEx = ((E_error / 100) * E[0]) ** 2
-                dEy = ((E_error / 100) * E[1]) ** 2
-                dEz = ((E_error / 100) * E[2]) ** 2
-                # dEx = (2 * 10 ** (-3)) ** 2
-                # dEy = (2 * 10 ** (-3)) ** 2
-                # dEz = (2 * 10 ** (-3)) ** 2
-                # ################### N in cm^(-3) ####################
-                dNO = ((NO_error / 100) * NO[lat, lon, lev]) ** 2
-                dNO2 = ((NO2_error / 100) * NO2[lat, lon, lev]) ** 2
-                dNN2 = ((NN2_error / 100) * NN2[lat, lon, lev]) ** 2
-                dNOp = ((NOp_error / 100) * NOp[lat, lon, lev]) ** 2
-                dNO2p = ((NO2p_error / 100) * NO2p[lat, lon, lev]) ** 2
-                dNNOp = ((NNOp_error / 100) * NNOp[lat, lon, lev]) ** 2
-                dNe = ((Ne_error / 100) * Ne[lat, lon, lev]) ** 2
-                # #####################################################
-                dTe = ((Te_error / 100) * Te[lat, lon, lev]) ** 2
-                dTi = ((Ti_error / 100) * Ti[lat, lon, lev]) ** 2
-                dTn = ((Tn_error / 100) * Tn[lat, lon, lev]) ** 2
-                dUnx = ((Un_error / 100) * Un[0]) ** 2
-                dUny = ((Un_error / 100) * Un[1]) ** 2
-                dUnz = ((Un_error / 100) * Un[2]) ** 2
-                dVix = ((Vi_error / 100) * Vi_vert[0]) ** 2
-                dViy = ((Vi_error / 100) * Vi_vert[1]) ** 2
-                dViz = ((Vi_error / 100) * Vi_vert[2]) ** 2
+                # distinguish percentage from real errors
+                if not error_flag:
+                    # percentage errors, squared
+                    dBx = ((B_error / 100) * B[0]) ** 2
+                    dBy = ((B_error / 100) * B[1]) ** 2
+                    dBz = ((B_error / 100) * B[2]) ** 2
+                    # |theta_|B| / theta_Bx|^2
+                    thB_Bx = (B[0] / Bnorm) ** 2
+                    # |theta_|B| / theta_By|^2
+                    thB_By = (B[1] / Bnorm) ** 2
+                    # |theta_|B| / theta_Bz|^2
+                    thB_Bz = (B[2] / Bnorm) ** 2
+                    # d|B|^2
+                    dB = thB_Bx * dBx + thB_By * dBy + thB_Bz * dBz
+                    dEx = ((E_error / 100) * E[0]) ** 2
+                    dEy = ((E_error / 100) * E[1]) ** 2
+                    dEz = ((E_error / 100) * E[2]) ** 2
+                    # ################### N in cm^(-3) ####################
+                    dNO = ((NO_error / 100) * NO[lat, lon, lev]) ** 2
+                    dNO2 = ((NO2_error / 100) * NO2[lat, lon, lev]) ** 2
+                    dNN2 = ((NN2_error / 100) * NN2[lat, lon, lev]) ** 2
+                    dNOp = ((NOp_error / 100) * NOp[lat, lon, lev]) ** 2
+                    dNO2p = ((NO2p_error / 100) * NO2p[lat, lon, lev]) ** 2
+                    dNNOp = ((NNOp_error / 100) * NNOp[lat, lon, lev]) ** 2
+                    dNe = ((Ne_error / 100) * Ne[lat, lon, lev]) ** 2
+                    # #####################################################
+                    dTe = ((Te_error / 100) * Te[lat, lon, lev]) ** 2
+                    dTi = ((Ti_error / 100) * Ti[lat, lon, lev]) ** 2
+                    dTn = ((Tn_error / 100) * Tn[lat, lon, lev]) ** 2
+                    dUnx = ((Un_error / 100) * Un[0]) ** 2
+                    dUny = ((Un_error / 100) * Un[1]) ** 2
+                    dUnz = ((Un_error / 100) * Un[2]) ** 2
+                    dVix = ((Vi_error / 100) * Vi_vert[0]) ** 2
+                    dViy = ((Vi_error / 100) * Vi_vert[1]) ** 2
+                    dViz = ((Vi_error / 100) * Vi_vert[2]) ** 2
+                elif error_flag:
+                    # real errors, squared
+                    dBx = () ** 2
+                    dBy = () ** 2
+                    dBz = () ** 2
+                    # |theta_|B| / theta_Bx|^2
+                    thB_Bx = (B[0] / Bnorm) ** 2
+                    # |theta_|B| / theta_By|^2
+                    thB_By = (B[1] / Bnorm) ** 2
+                    # |theta_|B| / theta_Bz|^2
+                    thB_Bz = (B[2] / Bnorm) ** 2
+                    # d|B|^2
+                    dB = thB_Bx * dBx + thB_By * dBy + thB_Bz * dBz
+
+                    dEx = () ** 2
+                    dEy = () ** 2
+                    dEz = () ** 2
+                    # ################### N in cm^(-3) ####################
+                    dNO = () ** 2
+                    dNO2 = () ** 2
+                    dNN2 = () ** 2
+                    dNOp = () ** 2
+                    dNO2p = () ** 2
+                    dNNOp = () ** 2
+                    dNe = () ** 2
+                    # #####################################################
+                    dTe = () ** 2
+                    dTi = () ** 2
+                    dTn = () ** 2
+                    dUnx = () ** 2
+                    dUny = () ** 2
+                    dUnz = () ** 2
+                    dVix = () ** 2
+                    dViy = () ** 2
+                    dViz = () ** 2
 
                 # ################# COLLISION FREQUENCIES ERROR #################
                 # ######################### O+ #########################
@@ -959,8 +1002,6 @@ def error(B_error=-1, E_error=-1, NO_error=-1, NO2_error=-1, NN2_error=-1, NOp_e
                 dnue_Nneutral[lat, lon, lev] = the_O_NO * dNO + the_O2_NO2 * dNO2 + the_N2_NN2 * dNN2
                 # ########################################################################################################
                 # ###################### OMEGAS ERROR ######################
-                Bnorm = np.sqrt(B[0] ** 2 + B[1] ** 2 + B[2] ** 2)
-                bunit = [B[0] / Bnorm, B[1] / Bnorm, B[2] / Bnorm]
 
                 # qe(in coulomb), mk(masses in kg), omegas(in Hz)
                 omega_Op = (qe * Bnorm) / mkO
@@ -968,14 +1009,6 @@ def error(B_error=-1, E_error=-1, NO_error=-1, NO2_error=-1, NN2_error=-1, NOp_e
                 omega_NOp = (qe * Bnorm) / mkNO
                 omega_e = (qe * Bnorm) / me
 
-                # |theta_|B| / theta_Bx|^2
-                thB_Bx = (B[0] / Bnorm) ** 2
-                # |theta_|B| / theta_By|^2
-                thB_By = (B[1] / Bnorm) ** 2
-                # |theta_|B| / theta_Bz|^2
-                thB_Bz = (B[2] / Bnorm) ** 2
-                # |d|B||^2
-                dB = thB_Bx * dBx + thB_By * dBy + thB_Bz * dBz
                 # ############## O+ ##############
                 # |theta_omegaOp / theta_B|^2
                 th_omOp_B = (qe / mkO) ** 2
@@ -1757,7 +1790,9 @@ def plot_heating_rates(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='blue')))
     fig.add_trace(go.Scatter(x=Joule_Heating[lat, lon, :-1], y=heights[lat, lon, :-1], name="Joule Heating", mode='lines',
                              line=dict(shape='spline', color='green')))
+
     x_range = max(Joule_Heating[lat, lon, :-1])
+
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
@@ -1859,7 +1894,9 @@ def plot_cross_sections(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='green')))
     fig.add_trace(go.Scatter(x=C_ion[lat, lon, :-1], y=heights[lat, lon, :-1], name="$Avg$", mode='lines',
                              line=dict(shape='spline', color='black')))
+
     x_range = max(C_Op[lat, lon, :-1])
+
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
@@ -2063,9 +2100,8 @@ def plot_heating_rates_rel_error(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='green')))
 
     # updating the layout of the figure
-    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', xaxis=dict(range=[0.05, 0.4], tickmode='array'),
-                      yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', xaxis=dict(range=[0, 0.4]),
+                      yaxis=dict(range=[min_alt, max_alt], tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
                       xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Heating Rates Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
@@ -2512,7 +2548,7 @@ def plot_currents_contr(lat_value, lon_value, min_alt, max_alt):
 
     # updating the layout of the figure
     fig1.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, 0.4]),
+                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
                        xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                        title={'text': 'Ohmic Current Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
@@ -2547,8 +2583,9 @@ def plot_currents_contr(lat_value, lon_value, min_alt, max_alt):
                               line=dict(shape='spline', dash="dash", color='coral')))
 
     # updating the layout of the figure
-    fig2.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, 0.4]),
+    fig2.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', xaxis=dict(range=[0, 0.4]),
+                       yaxis=dict(range=[min_alt, max_alt],
+                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
                        xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                        title={'text': 'Densities Current Contributions' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
@@ -3407,7 +3444,7 @@ def mapla_collisions_plot(lon_value, min_alt, max_alt):
 
     # Ion Average Collision Frequency
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:-1], (nu_Op_sum[:-1, lon, :-1] + nu_O2p_sum[:-1, lon, :-1] + nu_NOp_sum[:-1, lon, :-1]) / 3,
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], (nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3,
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
@@ -3419,7 +3456,7 @@ def mapla_collisions_plot(lon_value, min_alt, max_alt):
 
     # Electron Collision Frequency
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:-1], nu_e_sum[:-1, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], nu_e_sum[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
@@ -3463,7 +3500,7 @@ def mapla_conductivities_plot(lon_value, min_alt, max_alt):
 
     # Parallel Conductivity
     plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(heights_la[:-1], glat_in[:-1], parallel_con[:-1, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], parallel_con[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
                        interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
@@ -3540,8 +3577,8 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Joule Heating
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], Joule_Heating_error[:, lon, :-1] / Joule_Heating[:, lon, :-1], cmap=cm.batlow,
-                       interpolation='bicubic')
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], Joule_Heating_error[:, lon, :-1] / Joule_Heating[:, lon, :-1], locator=ticker.LogLocator(),
+                       cmap=cm.batlow, interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
@@ -3552,8 +3589,8 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Ohmic Heating
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], Ohmic_Heating_error[:, lon, :-1] / Ohmic_Heating[:, lon, :-1], cmap=cm.batlow,
-                       interpolation='bicubic')
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], Ohmic_Heating_error[:, lon, :-1] / Ohmic_Heating[:, lon, :-1], locator=ticker.LogLocator(),
+                       cmap=cm.batlow, interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
@@ -3564,8 +3601,8 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Frictional Heating
     plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(heights_la[:-1], glat_in[:], Frictional_Heating_error[:, lon, :-1] / Frictional_Heating[:, lon, :-1], cmap=cm.batlow,
-                       interpolation='bicubic')
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], Frictional_Heating_error[:, lon, :-1] / Frictional_Heating[:, lon, :-1],
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
@@ -3634,7 +3671,8 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Hall Conductivity
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], hall_con_error[:, lon, :-1] / hall_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], hall_con_error[:, lon, :-1] / hall_con[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
@@ -3668,7 +3706,8 @@ def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Ohmic Current
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], J_ohmic_error[:, lon, :-1] / J_ohmic[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], J_ohmic_error[:, lon, :-1] / J_ohmic[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
@@ -3679,7 +3718,8 @@ def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Densities Current
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], J_dens_error[:, lon, :-1] / J_dens[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], J_dens_error[:, lon, :-1] / J_dens[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
@@ -3701,7 +3741,8 @@ def mapla_cross_section_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Average Ion Cross Section
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], C_ion_error[:, lon, :-1] / C_ion[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], C_ion_error[:, lon, :-1] / C_ion[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
     plt.xlim(min_alt, max_alt)
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
@@ -3763,32 +3804,32 @@ def gui():
                          Sg.Text("e\u207b", pad=((25, 0), (10, 0)), tooltip="Electron"), Sg.Text("O", pad=((30, 0), (10, 0)),
                          tooltip="Atomic Oxygen Neutral"), Sg.Text("O\u2082", pad=((30, 0), (10, 0)), tooltip="Molecular Oxygen Neutral"),
                          Sg.Text("N\u2082", pad=((30, 0), (10, 0)), tooltip="Molecular Nitrogen Neutral")],
-                        [Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-O+-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-NO+-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-O2+-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-e-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-O-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 100, 5)], initial_value=5, key="-O2-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-N2-")]]
+                        [Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-O+-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-NO+-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-O2+-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-e-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-O-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-O2-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-N2-")]]
 
     # layout for temperatures frame
     temp_layout = [[Sg.Text("T\u1d62", pad=((40, 0), (10, 0)), tooltip="Ion Temperature"), Sg.Text("T\u2099", pad=((85, 0), (10, 0)),
                     tooltip="Neutral Temperature"), Sg.Text("T\u2091", pad=((85, 0), (10, 0)), tooltip="Electron Temperature")],
-                   [Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 5)], initial_value=5, key="-Ti-"),
-                    Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 5)], initial_value=5, key="-Tn-"),
-                    Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 5)], initial_value=5, key="-Te-")]]
+                   [Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 2)], initial_value=4, key="-Ti-"),
+                    Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 2)], initial_value=4, key="-Tn-"),
+                    Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 2)], initial_value=4, key="-Te-")]]
 
     # layout for wind - velocity frame
     win_vel_layout = [[Sg.Text("U\u2099", pad=((80, 0), (10, 0)), tooltip="Neutral wind"), Sg.Text("V\u1d62", pad=((110, 0), (10, 0)),
-                       tooltip="Ion velocity")], [Sg.Spin(pad=(70, 0), size=(3, 3), values=[i for i in range(0, 101, 5)],
-                                                  initial_value=5, key="-Un-"),
-                      Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-Vi-")]]
+                       tooltip="Ion velocity")], [Sg.Spin(pad=(70, 0), size=(3, 3), values=[i for i in range(0, 101, 2)],
+                                                  initial_value=4, key="-Un-"),
+                      Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-Vi-")]]
 
     # layout for electric and magnetic field frame
     fields_layout = [[Sg.Text("E", pad=((80, 0), (10, 0)), tooltip="Electric field"), Sg.Text("B", pad=((120, 0), (10, 0)),
-                      tooltip="Magnetic field")], [Sg.Spin(pad=(70, 0), size=(3, 3), values=[i for i in range(0, 101, 5)],
-                                                   initial_value=5, key="-E-"),
-                     Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 5)], initial_value=5, key="-B-")]]
+                      tooltip="Magnetic field")], [Sg.Spin(pad=(70, 0), size=(3, 3), values=[i for i in range(0, 101, 2)],
+                                                   initial_value=4, key="-E-"),
+                     Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-B-")]]
 
     # used in plotting choices frame
     col1 = [[Sg.Checkbox("Plot Heating Rates Absolute Error", default=False, tooltip="Plots heating rates absolute error", key="-HR_abs-")],
@@ -3930,6 +3971,7 @@ def gui():
                     default_value="tiegcm2.0_res2.5_3years_sech_014_JH_QD_AllVars.nc", key="-FILE-")],
                    [Sg.Frame("Percentage Errors", perc_errors_layout, pad=((0, 0), (10, 4))),
                     Sg.Frame("Choose plots", templay4, pad=((0, 0), (40, 30)))],
+                   [Sg.Checkbox("Science study errors", default=True, tooltip="True errors", pad=((0, 800), (0, 10)), key="-ERROR-")],
                    [Sg.Text("Choose Profile")],
                    [Sg.TabGroup([[Sg.Tab("Vertical Profile", vert_layout), Sg.Tab("Map Profile (Lat-Lon)", map_layout),
                                   Sg.Tab("Map Profile (Lat-Alt)", map2_latout)]], key="-TABGROUP-")],
@@ -3987,20 +4029,22 @@ def gui():
             break
 
         user_file_name = values["-FILE-"]
-        b_error = values["-B-"]
-        e_error = values["-E-"]
-        no_error = values["-O-"]
-        no2_error = values["-O2-"]
-        nn2_error = values["-N2-"]
-        nop_error = values["-O+-"]
-        no2p_error = values["-O2+-"]
-        nnop_error = values["-NO+-"]
-        ne_error = values["-e-"]
-        te_error = values["-Te-"]
-        ti_error = values["-Ti-"]
-        tn_error = values["-Tn-"]
-        un_error = values["-Un-"]
-        vi_error = values["-Vi-"]
+        b_error = float(values["-B-"])
+        e_error = float(values["-E-"])
+        no_error = float(values["-O-"])
+        no2_error = float(values["-O2-"])
+        nn2_error = float(values["-N2-"])
+        nop_error = float(values["-O+-"])
+        no2p_error = float(values["-O2+-"])
+        nnop_error = float(values["-NO+-"])
+        ne_error = float(values["-e-"])
+        te_error = float(values["-Te-"])
+        ti_error = float(values["-Ti-"])
+        tn_error = float(values["-Tn-"])
+        un_error = float(values["-Un-"])
+        vi_error = float(values["-Vi-"])
+
+        ERROR_FLAG = values["-ERROR-"]
         if event == "Calculate Products" and values["-TABGROUP-"] == "Vertical Profile":
             user_lat = values["-LAT-"]
             user_lon = values["-LON-"]
@@ -4065,9 +4109,9 @@ def gui():
             if prod_calculated:
                 user_lat = values["-LAT-"]
                 user_lon = values["-LON-"]
-                error(B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error, NOp_error=nop_error,
-                      NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error, Tn_error=tn_error,
-                      Un_error=un_error, Vi_error=vi_error, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
+                      NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
+                      Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
                 if values["-TABGROUP1-"] == "Vertical Profile Plots":
                     min_alt = values["-min_alt-"]
                     max_alt = values["-max_alt-"]
@@ -4114,9 +4158,9 @@ def gui():
                         plot_csections_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
         if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
             user_lev = values["-Pr_level-"]
-            error(B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error, NOp_error=nop_error,
-                  NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error, Tn_error=tn_error,
-                  Un_error=un_error, Vi_error=vi_error, pressure_level=user_lev)
+            error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
+                  NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
+                  Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, pressure_level=user_lev)
             if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
                 user_lev = values["-Pr_level-"]
                 night_shade = False
@@ -4136,9 +4180,9 @@ def gui():
             user_lon = values["-Lon_map2-"]
             min_alt_la = values["-min_alt_la-"]
             max_alt_la = values["-max_alt_la-"]
-            error(B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error, NOp_error=nop_error,
-                  NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error, Tn_error=tn_error,
-                  Un_error=un_error, Vi_error=vi_error, lon_value=lon_dictionary[user_lon])
+            error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
+                  NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
+                  Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, lon_value=lon_dictionary[user_lon])
             if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
                 if values["-HR_mapla_error-"]:
                     mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)

@@ -860,9 +860,9 @@ def error(error_flag, B_error, E_error, NO_error, NO2_error, NN2_error, NOp_erro
                     dViz = ((Vi_error / 100) * Vi_vert[2]) ** 2
                 elif error_flag:
                     # real errors, squared
-                    dBx = () ** 2
-                    dBy = () ** 2
-                    dBz = () ** 2
+                    dBx = (5 * 10 ** (-9)) ** 2
+                    dBy = (5 * 10 ** (-9)) ** 2
+                    dBz = (5 * 10 ** (-9)) ** 2
                     # |theta_|B| / theta_Bx|^2
                     thB_Bx = (B[0] / Bnorm) ** 2
                     # |theta_|B| / theta_By|^2
@@ -872,27 +872,31 @@ def error(error_flag, B_error, E_error, NO_error, NO2_error, NN2_error, NOp_erro
                     # d|B|^2
                     dB = thB_Bx * dBx + thB_By * dBy + thB_Bz * dBz
 
-                    dEx = () ** 2
-                    dEy = () ** 2
-                    dEz = () ** 2
+                    dEx = (2 * 10 ** (-3)) ** 2
+                    dEy = (2 * 10 ** (-3)) ** 2
+                    dEz = (2 * 10 ** (-3)) ** 2
                     # ################### N in cm^(-3) ####################
-                    dNO = () ** 2
-                    dNO2 = () ** 2
-                    dNN2 = () ** 2
-                    dNOp = () ** 2
-                    dNO2p = () ** 2
-                    dNNOp = () ** 2
-                    dNe = () ** 2
+                    dNO = ((20 / 100) * NO[lat, lon, lev]) ** 2
+                    dNO2 = ((20 / 100) * NO2[lat, lon, lev]) ** 2
+                    dNN2 = ((20 / 100) * NN2[lat, lon, lev]) ** 2
+                    dNOp = ((10 / 100) * NOp[lat, lon, lev]) ** 2
+                    dNO2p = ((10 / 100) * NO2p[lat, lon, lev]) ** 2
+                    dNNOp = ((10 / 100) * NNOp[lat, lon, lev]) ** 2
+                    dNe = ((10 / 100) * Ne[lat, lon, lev]) ** 2
                     # #####################################################
-                    dTe = () ** 2
-                    dTi = () ** 2
-                    dTn = () ** 2
-                    dUnx = () ** 2
-                    dUny = () ** 2
-                    dUnz = () ** 2
-                    dVix = () ** 2
-                    dViy = () ** 2
-                    dViz = () ** 2
+                    dTe = ((10 / 100) * Te[lat, lon, lev]) ** 2
+                    dTi = ((10 / 100) * Ti[lat, lon, lev]) ** 2
+                    dTn = ((20 / 100) * Tn[lat, lon, lev]) ** 2
+                    H_wind = 20
+                    V_wind = 10
+                    dUnx = V_wind ** 2
+                    dUny = H_wind ** 2
+                    dUnz = V_wind ** 2
+                    H_drift = 100
+                    V_drift = 100
+                    dVix = V_drift ** 2
+                    dViy = H_drift ** 2
+                    dViz = V_drift ** 2
 
                 # ################# COLLISION FREQUENCIES ERROR #################
                 # ######################### O+ #########################

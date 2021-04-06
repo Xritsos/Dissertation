@@ -160,8 +160,6 @@ J_ohmic_noisy = np.zeros((72, 144, 57), order='F')
 J_dens_noisy = np.zeros((72, 144, 57), order='F')
 
 
-def insert_noise(accuracy):
-
 # Convert east north up to earth centered earth fixed
 # lat,lon from TIE-GCM correspond to perfect sphere(spherical latitude and longitude)
 def enu_ecef(lat_phi, lon_lmd, Fe, Fn, Fup):
@@ -183,18 +181,12 @@ def enu_ecef(lat_phi, lon_lmd, Fe, Fn, Fup):
 
     return Fx, Fy, Fz
 
+
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GET INPUT FROM TIE-GCM AND I-GRF $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1):
     warnings.filterwarnings("ignore")
     start_time = time.time()
-
-    # Create loading bar
-    layout = [[Sg.Text('Getting data from models........')], [Sg.ProgressBar(210, orientation='h', size=(50, 20), key='progressbar')]]
-
-    window = Sg.Window('Progress', keep_on_top=True).Layout(layout)
-    progress_bar = window.FindElement('progressbar')
-    event, values = window.Read(timeout=1)
 
     print('Getting data from models........')
 
@@ -214,20 +206,17 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
     zgmid_in = tiegcm.variables['ZGMID'][:]  # geometric height at midpoints
     glat_in = tiegcm.variables['lat'][:]     # geographic latitude in deg(earth as perfect sphere)
     glon_in = tiegcm.variables['lon'][:]     # geographic longitude in deg(earth as perfect sphere)
-    progress_bar.UpdateBar(0, 30)
     glev_in = tiegcm.variables['lev'][:]     # midpoint levels
     time_in = tiegcm.variables['time'][:]    # minutes since 2015-1-1 0:0:0
     O_in = tiegcm.variables['O_CM3'][:]      # atomic oxygen density (neutral) in cm^(-3)
     O2_in = tiegcm.variables['O2_CM3'][:]    # molecular oxygen density (neutral) in cm^(-3)
     N2_in = tiegcm.variables['N2_CM3'][:]    # molecular nitrogen density (neutral) in cm^(-3)
-    progress_bar.UpdateBar(30, 80)
     Op_in = tiegcm.variables['OP'][:]        # atomic oxygen density (ion) in cm^(-3)
     O2p_in = tiegcm.variables['O2P'][:]      # molecular oxygen density (ion) in cm^(-3)
     NOp_in = tiegcm.variables['NOP_LAM'][:]  # nitric oxide density (ion) in cm^(-3)
     Te_in = tiegcm.variables['TE'][:]        # electron temperature in kelvin
     Tn_in = tiegcm.variables['TN'][:]        # neutral temperature in kelvin
     Ti_in = tiegcm.variables['TI'][:]        # ion temperature in kelvin
-    progress_bar.UpdateBar(80, 140)
     Un_north_in = tiegcm.variables['VN_si'][:]  # neutral meridional wind (+north) in m/sec
     Un_east_in = tiegcm.variables['UN_si'][:]   # neutral zonal wind (+east) in m/sec
     Un_up_in = tiegcm.variables['WN_si'][:]     # neutral vertical wind (+up) in m/sec
@@ -235,7 +224,6 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
     Ee_in = tiegcm.variables['EEX_si'][:]  # electric field (+east) in V/m
     En_in = tiegcm.variables['EEY_si'][:]  # electric field (+north) in V/m
     Eu_in = tiegcm.variables['EEZ_si'][:]  # electric field (+up) in V/m
-    progress_bar.UpdateBar(140, 180)
 
     # Close TIE-GCM file
     tiegcm.close()
@@ -345,7 +333,7 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
                 Tr = (Ti[lat, lon, lev] + Tn[lat, lon, lev]) / 2  # in kelvin
                 nu_Op_O = fb * (3.67 * NO[lat, lon, lev] * 10 ** (-11) * Tr ** (1 / 2) * (1 - 0.064 * np.log10(Tr)) ** 2)
 
-                nu_Op_sum = nu_Op_N2 + nu_Op_O2 + nu_Op_O
+                nu_Op_sum_temp = nu_Op_N2 + nu_Op_O2 + nu_Op_O
 
                 # nu-O2p = nu(O2p-N2) + nu(O2p-O) + nu(O2p-O2) (in Hz)
                 # densities in cm^(-3)
@@ -353,7 +341,7 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
                 nu_O2p_O = 2.31 * NO[lat, lon, lev] * 10 ** (-10)
                 nu_O2p_O2 = 2.59 * NO2[lat, lon, lev] * 10 ** (-11) * Tr ** (1 / 2) * (1 - 0.073 * np.log10(Tr)) ** 2
 
-                nu_O2p_sum = nu_O2p_N2 + nu_O2p_O + nu_O2p_O2
+                nu_O2p_sum_temp = nu_O2p_N2 + nu_O2p_O + nu_O2p_O2
 
                 # nu-NOp = nu(NOp-N2) + nu(NOp-O) + nu(NOp-O2) (in Hz)
                 # densities in cm^(-3)
@@ -361,7 +349,7 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
                 nu_NOp_O = 2.44 * NO[lat, lon, lev] * 10 ** (-10)
                 nu_NOp_O2 = 4.27 * NO2[lat, lon, lev] * 10 ** (-10)
 
-                nu_NOp_sum = nu_NOp_N2 + nu_NOp_O + nu_NOp_O2
+                nu_NOp_sum_temp = nu_NOp_N2 + nu_NOp_O + nu_NOp_O2
 
                 # ################ GYRO-FREQUENCIES(OMEGAS) ################
                 # Magnetic field vector (in tesla)
@@ -423,26 +411,26 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
                 # Ion velocities vectors(in meter/sec) (in neutral frame, star) perpendicular to magnetic field
                 # extracted from ion momentum equation
                 # ############# O+ #############
-                Vi_Op_star_x = (nu_Op_sum * omega_Op * Estar[0] + omega_Op ** 2 * EstarXbunit[0]) / \
-                               (Bnorm * (nu_Op_sum ** 2 + omega_Op ** 2))
-                Vi_Op_star_y = (nu_Op_sum * omega_Op * Estar[1] + omega_Op ** 2 * EstarXbunit[1]) / \
-                               (Bnorm * (nu_Op_sum ** 2 + omega_Op ** 2))
-                Vi_Op_star_z = (nu_Op_sum * omega_Op * Estar[2] + omega_Op ** 2 * EstarXbunit[2]) / \
-                               (Bnorm * (nu_Op_sum ** 2 + omega_Op ** 2))
+                Vi_Op_star_x = (nu_Op_sum_temp * omega_Op * Estar[0] + omega_Op ** 2 * EstarXbunit[0]) / \
+                               (Bnorm * (nu_Op_sum_temp ** 2 + omega_Op ** 2))
+                Vi_Op_star_y = (nu_Op_sum_temp * omega_Op * Estar[1] + omega_Op ** 2 * EstarXbunit[1]) / \
+                               (Bnorm * (nu_Op_sum_temp ** 2 + omega_Op ** 2))
+                Vi_Op_star_z = (nu_Op_sum_temp * omega_Op * Estar[2] + omega_Op ** 2 * EstarXbunit[2]) / \
+                               (Bnorm * (nu_Op_sum_temp ** 2 + omega_Op ** 2))
                 # ############# O2+ #############
-                Vi_O2p_star_x = (nu_O2p_sum * omega_O2p * Estar[0] + omega_O2p ** 2 * EstarXbunit[0]) / \
-                                (Bnorm * (nu_O2p_sum ** 2 + omega_O2p ** 2))
-                Vi_O2p_star_y = (nu_O2p_sum * omega_O2p * Estar[1] + omega_O2p ** 2 * EstarXbunit[1]) / \
-                                (Bnorm * (nu_O2p_sum ** 2 + omega_O2p ** 2))
-                Vi_O2p_star_z = (nu_O2p_sum * omega_O2p * Estar[2] + omega_O2p ** 2 * EstarXbunit[2]) / \
-                                (Bnorm * (nu_O2p_sum ** 2 + omega_O2p ** 2))
+                Vi_O2p_star_x = (nu_O2p_sum_temp * omega_O2p * Estar[0] + omega_O2p ** 2 * EstarXbunit[0]) / \
+                                (Bnorm * (nu_O2p_sum_temp ** 2 + omega_O2p ** 2))
+                Vi_O2p_star_y = (nu_O2p_sum_temp * omega_O2p * Estar[1] + omega_O2p ** 2 * EstarXbunit[1]) / \
+                                (Bnorm * (nu_O2p_sum_temp ** 2 + omega_O2p ** 2))
+                Vi_O2p_star_z = (nu_O2p_sum_temp * omega_O2p * Estar[2] + omega_O2p ** 2 * EstarXbunit[2]) / \
+                                (Bnorm * (nu_O2p_sum_temp ** 2 + omega_O2p ** 2))
                 # ############ NO+ ############
-                Vi_NOp_star_x = (nu_NOp_sum * omega_NOp * Estar[0] + omega_NOp ** 2 * EstarXbunit[0]) / \
-                                (Bnorm * (nu_NOp_sum ** 2 + omega_NOp ** 2))
-                Vi_NOp_star_y = (nu_NOp_sum * omega_NOp * Estar[1] + omega_NOp ** 2 * EstarXbunit[1]) / \
-                                (Bnorm * (nu_NOp_sum ** 2 + omega_NOp ** 2))
-                Vi_NOp_star_z = (nu_NOp_sum * omega_NOp * Estar[2] + omega_NOp ** 2 * EstarXbunit[2]) / \
-                                (Bnorm * (nu_NOp_sum ** 2 + omega_NOp ** 2))
+                Vi_NOp_star_x = (nu_NOp_sum_temp * omega_NOp * Estar[0] + omega_NOp ** 2 * EstarXbunit[0]) / \
+                                (Bnorm * (nu_NOp_sum_temp ** 2 + omega_NOp ** 2))
+                Vi_NOp_star_y = (nu_NOp_sum_temp * omega_NOp * Estar[1] + omega_NOp ** 2 * EstarXbunit[1]) / \
+                                (Bnorm * (nu_NOp_sum_temp ** 2 + omega_NOp ** 2))
+                Vi_NOp_star_z = (nu_NOp_sum_temp * omega_NOp * Estar[2] + omega_NOp ** 2 * EstarXbunit[2]) / \
+                                (Bnorm * (nu_NOp_sum_temp ** 2 + omega_NOp ** 2))
 
                 # Changing frame from neutral το ECEF frame(not star)
                 Vi_Op_x = Vi_Op_star_x + Un_vert[0]
@@ -461,17 +449,462 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
                 Vi_vertx[lat, lon, lev] = (Vi_Op_x + Vi_O2p_x + Vi_NOp_x) / 3
                 Vi_verty[lat, lon, lev] = (Vi_Op_y + Vi_O2p_y + Vi_NOp_y) / 3
                 Vi_vertz[lat, lon, lev] = (Vi_Op_z + Vi_O2p_z + Vi_NOp_z) / 3
-                print(Vi_vertx[lat, lon, lev], Vi_verty[lat, lon, lev], Vi_vertz[lat, lon, lev])
 
-    progress_bar.UpdateBar(180, 210)
-    time.sleep(3)
-    window.close()
-    Sg.popup("_"*40, "Data imported in : " + str(time.time() - start_time) + " sec!", "_"*40, title="Finished", keep_on_top=True)
     print('Data imported in: ', str(time.time() - start_time), ' sec!')
     print(' ')
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF INPUT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
+
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Create Noise $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
+    start_time = time.time()
+    print('Calculating Noise.....')
+    print(' ')
+
+    # Distinguish Map from Vertical profile
+    lev_range = 0
+    lat_range = 0
+    lon_range = 0
+
+    lev_start = 0
+    lat_start = 0
+    lon_start = 0
+
+    # Lat - Alt map profile
+    if lat_value == -1 and pressure_level == -1:
+        lev_range = len(glev_in) - 1
+        lat_range = len(glat_in)
+        lon_start = lon_value
+        lon_range = lon_start + 1
+
+    # Lat - Lon map profile
+    if lat_value == -1 and lon_value == -1:
+        lev_start = pressure_level
+        lev_range = lev_start + 1
+        lat_range = len(glat_in)
+        lon_range = len(glon_in)
+
+    # Vertical profile
+    if lat_value != -1 and lon_value != -1:
+        lat_start = lat_value
+        lon_start = lon_value
+        lat_range = lat_start + 1
+        lon_range = lon_start + 1
+        lev_range = len(glev_in) - 1
+
+    # Assigning Accuracies
+    # Magnetic field
+    Bx_ac = 5 * 10 ** (-9)
+    By_ac = 5 * 10 ** (-9)
+    Bz_ac = 5 * 10 ** (-9)
+
+    # Electric field
+    Ex_ac = 2 * 10 ** (-3)
+    Ey_ac = 2 * 10 ** (-3)
+    Ez_ac = 2 * 10 ** (-3)
+
+    # Neutral densities
+    NO_ac = 20 / 100
+    NO2_ac = 20 / 100
+    NN2_ac = 20 / 100
+
+    # Ion densities
+    NOp_ac = 10 / 100
+    NO2p_ac = 10 / 100
+    NNOp_ac = 10 / 100
+    Ne_ac = 10 / 100
+
+    # Temperatures
+    Ti_ac = 10 / 100
+    Te_ac = 10 / 100
+    Tn_ac = 20 / 100
+
+    # Neutral wind
+    Unx_ac = 10
+    Uny_ac = 20
+    Unz_ac = 10
+
+    # Ion drift
+    Vix_ac = 100
+    Viy_ac = 100
+    Viz_ac = 100
+
+    for lev in range(lev_start, lev_range):
+        for lat in range(lat_start, lat_range):
+            for lon in range(lon_start, lon_range):
+                # Magnetic field
+                noise = np.random.normal(0, Bx_ac)
+                Bx_noisy[lat, lon, lev] = Bx[lat, lon, lev] + noise
+                noise = np.random.normal(0, By_ac)
+                By_noisy[lat, lon, lev] = By[lat, lon, lev] + noise
+                noise = np.random.normal(0, Bz_ac)
+                Bz_noisy[lat, lon, lev] = Bz[lat, lon, lev] + noise
+
+                # Electric field
+                noise = np.random.normal(0, Ex_ac)
+                Ex_noisy[lat, lon, lev] = Ex[lat, lon, lev] + noise
+                noise = np.random.normal(0, Ey_ac)
+                Ey_noisy[lat, lon, lev] = Ey[lat, lon, lev] + noise
+                noise = np.random.normal(0, Ez_ac)
+                Ez_noisy[lat, lon, lev] = Ez[lat, lon, lev] + noise
+
+                # Neutral densities
+                noise = np.random.normal(0, NO_ac)
+                NO_noisy[lat, lon, lev] = NO[lat, lon, lev] + noise
+                noise = np.random.normal(0, NO2_ac)
+                NO2_noisy[lat, lon, lev] = NO2[lat, lon, lev] + noise
+                noise = np.random.normal(0, NN2_ac)
+                NN2_noisy[lat, lon, lev] = NN2[lat, lon, lev] + noise
+
+                # Ion - Electron densities
+                noise = np.random.normal(0, NOp_ac)
+                NOp_noisy[lat, lon, lev] = NOp[lat, lon, lev] + noise
+                noise = np.random.normal(0, NO2p_ac)
+                NO2p_noisy[lat, lon, lev] = NO2p[lat, lon, lev] + noise
+                noise = np.random.normal(0, NNOp_ac)
+                NNOp_noisy[lat, lon,lev] = NNOp[lat, lon, lev] + noise
+                noise = np.random.normal(0, Ne_ac)
+                Ne_noisy[lat, lon, lev] = Ne[lat, lon, lev] + noise
+
+                # Temperatures
+                noise = np.random.normal(0, Ti_ac)
+                Ti_noisy[lat, lon, lev] = Ti[lat, lon, lev] + noise
+                noise = np.random.normal(0, Tn_ac)
+                Tn_noisy[lat, lon, lev] = Tn[lat, lon, lev] + noise
+                noise = np.random.normal(0, Te_ac)
+                Te_noisy[lat, lon, lev] = Te[lat, lon, lev] + noise
+
+                # Neutral wind
+                noise = np.random.normal(0, Unx_ac)
+                Unx_noisy[lat, lon, lev] = Unx[lat, lon, lev] + noise
+                noise = np.random.normal(0, Uny_ac)
+                Uny_noisy[lat, lon, lev] = Uny[lat, lon, lev] + noise
+                noise = np.random.normal(0, Unz_ac)
+                Unz_noisy[lat, lon, lev] = Unz[lat, lon, lev] + noise
+
+                # Ion drift
+                noise = np.random.normal(0, Vix_ac)
+                Vi_vertx_noisy[lat, lon, lev] = Vi_vertx[lat, lon, lev] + noise
+                noise = np.random.normal(0, Viy_ac)
+                Vi_verty_noisy[lat, lon, lev] = Vi_verty[lat, lon, lev] + noise
+                noise = np.random.normal(0, Viz_ac)
+                Vi_vertz_noisy[lat, lon, lev] = Vi_vertz[lat, lon, lev] + noise
+
+    print('Calculated Noise in: ', time.time() - start_time, ' sec !')
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Noise Calculation End $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Calculate Products $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in, Unz_in, Vix_in, Viy_in, Viz_in, NO_in, NO2_in, NN2_in, NOp_in,
+                       NO2p_in, NNOp_in, Ne_in, Ti_in, Te_in, Tn_in, lat_value=-1, lon_value=-1, pressure_level=-1):
+
+    start_time = time.time()
+    print('Calculating Products.....')
+    print(' ')
+
+    # Create temporary variables for output
+    # Collision frequencies
+    nu_Op_sum_temp = np.zeros((72, 144, 57), order='F')
+    nu_O2p_sum_temp = np.zeros((72, 144, 57), order='F')
+    nu_NOp_sum_temp = np.zeros((72, 144, 57), order='F')
+    nu_e_sum_temp = np.zeros((72, 144, 57), order='F')
+
+    # Conductivities
+    pedersen_con_temp = np.zeros((72, 144, 57), order='F')
+    hall_con_temp = np.zeros((72, 144, 57), order='F')
+    parallel_con_temp = np.zeros((72, 144, 57), order='F')
+
+    # Heating rates
+    Joule_Heating_temp = np.zeros((72, 144, 57), order='F')
+    Frictional_Heating_temp = np.zeros((72, 144, 57), order='F')
+    Ohmic_Heating_temp = np.zeros((72, 144, 57), order='F')
+
+    # Cross sections
+    C_Op_temp = np.zeros((72, 144, 57), order='F')
+    C_O2p_temp = np.zeros((72, 144, 57), order='F')
+    C_NOp_temp = np.zeros((72, 144, 57), order='F')
+    C_ion_temp = np.zeros((72, 144, 57), order='F')
+
+    # Perpendicular currents
+    J_pedersen_temp = np.zeros((72, 144, 57), order='F')
+    J_hall_temp = np.zeros((72, 144, 57), order='F')
+    J_ohmic_temp = np.zeros((72, 144, 57), order='F')
+    J_dens_temp = np.zeros((72, 144, 57), order='F')
+
+    # Distinguish Map from Vertical profile
+    lev_range = 0
+    lat_range = 0
+    lon_range = 0
+
+    lev_start = 0
+    lat_start = 0
+    lon_start = 0
+
+    # Lat - Alt map profile
+    if lat_value == -1 and pressure_level == -1:
+        lev_range = len(glev_in) - 1
+        lat_range = len(glat_in)
+        lon_start = lon_value
+        lon_range = lon_start + 1
+
+    # Lat - Lon map profile
+    if lat_value == -1 and lon_value == -1:
+        lev_start = pressure_level
+        lev_range = lev_start + 1
+        lat_range = len(glat_in)
+        lon_range = len(glon_in)
+
+    # Vertical profile
+    if lat_value != -1 and lon_value != -1:
+        lat_start = lat_value
+        lon_start = lon_value
+        lat_range = lat_start + 1
+        lon_range = lon_start + 1
+        lev_range = len(glev_in) - 1
+
+    for lev in range(lev_start, lev_range):
+        for lat in range(lat_start, lat_range):
+            for lon in range(lon_start, lon_range):
+                # ########################## COLLISION FREQUENCIES ##########################
+                # nu-Op = nu(Op-N2) + nu(Op-O2) + nu(Op-O) (in Hz)
+                # densities in cm^(-3)
+                nu_Op_N2 = 6.82 * NN2_in[lat, lon, lev] * 10 ** (-10)
+                nu_Op_O2 = 6.64 * NO2_in[lat, lon, lev] * 10 ** (-10)
+
+                Tr = (Ti_in[lat, lon, lev] + Tn_in[lat, lon, lev]) / 2  # in kelvin
+                nu_Op_O = fb * (3.67 * NO_in[lat, lon, lev] * 10 ** (-11) * Tr ** (1 / 2) * (1 - 0.064 * np.log10(Tr)) ** 2)
+
+                nu_Op_sum_temp[lat, lon, lev] = nu_Op_N2 + nu_Op_O2 + nu_Op_O
+
+                # nu-O2p = nu(O2p-N2) + nu(O2p-O) + nu(O2p-O2) (in Hz)
+                # densities in cm^(-3)
+                nu_O2p_N2 = 4.13 * NN2_in[lat, lon, lev] * 10 ** (-10)
+                nu_O2p_O = 2.31 * NO_in[lat, lon, lev] * 10 ** (-10)
+                nu_O2p_O2 = 2.59 * NO2_in[lat, lon, lev] * 10 ** (-11) * Tr ** (1 / 2) * (1 - 0.073 * np.log10(Tr)) ** 2
+
+                nu_O2p_sum_temp[lat, lon, lev] = nu_O2p_N2 + nu_O2p_O + nu_O2p_O2
+
+                # nu-NOp = nu(NOp-N2) + nu(NOp-O) + nu(NOp-O2) (in Hz)
+                # densities in cm^(-3)
+                nu_NOp_N2 = 4.34 * NN2_in[lat, lon, lev] * 10 ** (-10)
+                nu_NOp_O = 2.44 * NO_in[lat, lon, lev] * 10 ** (-10)
+                nu_NOp_O2 = 4.27 * NO2_in[lat, lon, lev] * 10 ** (-10)
+
+                nu_NOp_sum_temp[lat, lon, lev] = nu_NOp_N2 + nu_NOp_O + nu_NOp_O2
+
+                # nu-e = nu(e-N2) + nu(e-O) + nu(e-O2) (in Hz)
+                # densities in cm^(-3)
+                nu_e_N2 = 2.33 * 10 ** (-11) * NN2_in[lat, lon, lev] * Te_in[lat, lon, lev] * (1 - 1.21 * 10 ** (-4) * Te_in[lat, lon, lev])
+                nu_e_O2 = 1.82 * 10 ** (-10) * NO2_in[lat, lon, lev] * Te_in[lat, lon, lev] ** (1 / 2) * (1 + 3.6 * 10 ** (-2) *
+                                                                                                          Te_in[lat, lon, lev] ** (1 / 2))
+                nu_e_O = 8.9 * 10 ** (-11) * NO_in[lat, lon, lev] * Te_in[lat, lon, lev] ** (1 / 2) * (1 + 5.7 * 10 ** (-4) * Te_in[lat, lon, lev])
+
+                nu_e_sum_temp[lat, lon, lev] = nu_e_N2 + nu_e_O2 + nu_e_O
+                # ################ GYRO-FREQUENCIES(OMEGAS) ################
+                # Magnetic field vector (in tesla)
+                B = [Bx_in[lat, lon, lev], By_in[lat, lon, lev], Bz_in[lat, lon, lev]]
+                # Magnetic field magnitude (in tesla)
+                Bnorm = np.sqrt(B[0] ** 2 + B[1] ** 2 + B[2] ** 2)
+                # Magnetic field unit vector
+                bunit = [B[0] / Bnorm, B[1] / Bnorm, B[2] / Bnorm]
+
+                # qe(in coulomb), mk(masses in kg), omegas(in Hz)
+                omega_Op = (qe * Bnorm) / mkO
+                omega_O2p = (qe * Bnorm) / mkO2
+                omega_NOp = (qe * Bnorm) / mkNO
+                omega_e = (qe * Bnorm) / me
+                # ################## RATIOS ##################
+                # dimensionless
+                r_Op = nu_Op_sum_temp[lat, lon, lev] / omega_Op
+                r_O2p = nu_O2p_sum_temp[lat, lon, lev] / omega_O2p
+                r_NOp = nu_NOp_sum_temp[lat, lon, lev] / omega_NOp
+                r_e = nu_e_sum_temp[lat, lon, lev] / omega_e
+                # ############################# CONDUCTIVITIES #############################
+                # Pedersen conductivity (in siemens/meter)
+                # qe(in coulomb), B_norm(in tesla), N(densities in m^(-3)), ratios(dimensionless)
+                term_a_ped = (Ne_in[lat, lon, lev] * ccm) * (r_e / (1 + r_e ** 2))
+                term_b_ped = (NOp_in[lat, lon, lev] * ccm) * (r_Op / (1 + r_Op ** 2))
+                term_c_ped = (NO2p_in[lat, lon, lev] * ccm) * (r_O2p / (1 + r_O2p ** 2))
+                term_d_ped = (NNOp_in[lat, lon, lev] * ccm) * (r_NOp / (1 + r_NOp ** 2))
+
+                pedersen_con_temp[lat, lon, lev] = (qe / Bnorm) * (term_a_ped + term_b_ped + term_c_ped + term_d_ped)
+
+                # Hall conductivity (in siemens/meter)
+                # qe(in coulomb), B_norm(in tesla), N(densities in m^(-3)), ratios(dimensionless)
+                term_a_hall = (Ne_in[lat, lon, lev] * ccm) / (1 + r_e ** 2)
+                term_b_hall = (NOp_in[lat, lon, lev] * ccm) / (1 + r_Op ** 2)
+                term_c_hall = (NO2p_in[lat, lon, lev] * ccm) / (1 + r_O2p ** 2)
+                term_d_hall = (NNOp_in[lat, lon, lev] * ccm) / (1 + r_NOp ** 2)
+
+                hall_con_temp[lat, lon, lev] = (qe / Bnorm) * (term_a_hall - term_b_hall - term_c_hall - term_d_hall)
+
+                # Parallel conductivity (in siemens/meter)
+                # qe(in coulomb), me(mass in tesla), N(density) (in m^(-3)), collision frequency(in Hz)
+                parallel_con_temp[lat, lon, lev] = (Ne_in[lat, lon, lev] * ccm * qe ** 2) / (me * nu_e_sum_temp[lat, lon, lev])
+
+                # ################################ HEATING RATES ################################
+                # Electric field vector(in volt/meter)
+                E = [Ex_in[lat, lon, lev], Ey_in[lat, lon, lev], Ez_in[lat, lon, lev]]
+
+                # Electric field perpendicular to magnetic field
+                # Evert = E cross bunit
+                Evertx = E[1] * bunit[2] - E[2] * bunit[1]
+                Everty = E[2] * bunit[0] - E[0] * bunit[2]
+                Evertz = E[0] * bunit[1] - E[1] * bunit[0]
+
+                # E vertical vector
+                Evert = [Evertx, Everty, Evertz]
+
+                # Neutral wind vector(in meter/sec)
+                Un = [Unx_in[lat, lon, lev], Uny_in[lat, lon, lev], Unz_in[lat, lon, lev]]
+
+                # Neutral wind perpendicular to magnetic field
+                # Unvert = Un cross bunit
+                Un_vertx = Un[1] * bunit[2] - Un[2] * bunit[1]
+                Un_verty = Un[2] * bunit[0] - Un[0] * bunit[2]
+                Un_vertz = Un[0] * bunit[1] - Un[1] * bunit[0]
+
+                # Un perpendicular to magnetic field vector
+                Un_vert = [Un_vertx, Un_verty, Un_vertz]
+
+                # Unvert cross B vector
+                UnvertXBx = Un_vert[1] * B[2] - Un_vert[2] * B[1]
+                UnvertXBy = Un_vert[2] * B[0] - Un_vert[0] * B[2]
+                UnvertXBz = Un_vert[0] * B[1] - Un_vert[1] * B[0]
+                UnvXB = [UnvertXBx, UnvertXBy, UnvertXBz]
+
+                # Estar: perpendicular electric field in the neutral frame Estar = Evert + Unvert cross B
+                # vector addition
+                Estar_x = Evert[0] + UnvXB[0]
+                Estar_y = Evert[1] + UnvXB[1]
+                Estar_z = Evert[2] + UnvXB[2]
+
+                Estar = [Estar_x, Estar_y, Estar_z]
+
+                # Estar cross bunit
+                x = Estar[1] * bunit[2] - Estar[2] * bunit[1]
+                y = Estar[2] * bunit[0] - Estar[0] * bunit[2]
+                z = Estar[0] * bunit[1] - Estar[1] * bunit[0]
+
+                EstarXbunit = [x, y, z]
+
+                # Vi perpendicular to magnetic field vector
+                Vi_vert = [Vix_in[lat, lon, lev], Viy_in[lat, lon, lev], Viz_in[lat, lon, lev]]
+
+                # ################################## JOULE HEATING ##################################
+                # ###################################################################################
+                # Joule Heating = qeNe(Vi_vert - Un_vert)dot(E_vert + Un_vert cross B)(in watt/m^3)
+                # qe(in coulomb), B(in tesla), E(in volt/meter), Vi,Un(in meter/sec)
+                Joule_Heating_temp[lat, lon, lev] = qe * (Ne_in[lat, lon, lev] * ccm) * \
+                                               (Vi_vert[0] * Estar[0] - Un_vert[0] * Evert[0] +
+                                                Vi_vert[1] * Estar[1] - Un_vert[1] * Evert[1] +
+                                                Vi_vert[2] * Estar[2] - Un_vert[2] * Evert[2])
+                # ################################# OHMIC HEATING ###################################
+                # ###################################################################################
+                # Ohmic Heating = sigmaPedersen * |Evert + Unvert cross B|^2 (in watt/m^3)
+                # sigmaPedersen(in siemens/meter), E(in volt/meter), Un(in meter/sec), B(in tesla)
+                term_ohm_x = (Evert[0] + UnvXB[0]) ** 2
+                term_ohm_y = (Evert[1] + UnvXB[1]) ** 2
+                term_ohm_z = (Evert[2] + UnvXB[2]) ** 2
+                Ohmic_Heating_temp[lat, lon, lev] = pedersen_con_temp[lat, lon, lev] * (term_ohm_x + term_ohm_y + term_ohm_z)
+                # ############################### FRICTIONAL HEATING ################################
+                # ###################################################################################
+                # Frictional Heating = m_ion * nu_ion * N_ion * |Vi_vert - Un_vert|^2 (in watt/m^3)
+                # m_ion(in kg), nu_ion(in Hz), N_ion(in m^(-3)), Vi,Un(in meter/sec)
+                term_fric_x = (Vi_vert[0] - Un_vert[0]) ** 2
+                term_fric_y = (Vi_vert[1] - Un_vert[1]) ** 2
+                term_fric_z = (Vi_vert[2] - Un_vert[2]) ** 2
+                term_Op = mkO * nu_Op_sum_temp[lat, lon, lev] * (NOp_in[lat, lon, lev] * ccm)
+                term_O2p = mkO2 * nu_O2p_sum_temp[lat, lon, lev] * (NO2p_in[lat, lon, lev] * ccm)
+                term_NOp = mkNO * nu_NOp_sum_temp[lat, lon, lev] * (NNOp_in[lat, lon, lev] * ccm)
+                Frictional_Heating_temp[lat, lon, lev] = (term_Op + term_O2p + term_NOp) * (term_fric_x + term_fric_y + term_fric_z)
+
+                # ############################ CROSS SECTIONS ############################
+                # C = (nu_ion / N_neutral) / (sqrt(2 * boltzmann * T_i / m_ion)) (in m^2)
+                # nu(in Hz), N(in m^(-3)), T(in kelvin), mass(in kg)
+                N_neutral = NO_in[lat, lon, lev] + NO2_in[lat, lon, lev] + NN2_in[lat, lon, lev]
+                N_neutral = N_neutral * ccm
+                # ####### O+ #######
+                C_Op_temp[lat, lon, lev] = (nu_Op_sum_temp[lat, lon, lev] / N_neutral) / (np.sqrt(2 * boltzmann * Ti_in[lat, lon, lev] / mkO))
+                # ####### O2+ #######
+                C_O2p_temp[lat, lon, lev] = (nu_O2p_sum_temp[lat, lon, lev] / N_neutral) / (np.sqrt(2 * boltzmann * Ti_in[lat, lon, lev] / mkO2))
+                # ####### NO+ #######
+                C_NOp_temp[lat, lon, lev] = (nu_NOp_sum_temp[lat, lon, lev] / N_neutral) / (np.sqrt(2 * boltzmann * Ti_in[lat, lon, lev] / mkNO))
+                # ####### ION #######
+                nu_ion = nu_Op_sum_temp[lat, lon, lev] + nu_O2p_sum_temp[lat, lon, lev] + nu_NOp_sum_temp[lat, lon, lev]
+                # Average collision frequency
+                nu_ion = nu_ion / 3  # in Hz
+                m_ion = mkO + mkO2 + mkNO
+                # Average mass
+                m_ion = m_ion / 3  # in kg
+                # Because measurements for each species cannot be made we assume an average ion cross section
+                C_ion_temp[lat, lon, lev] = (nu_ion / N_neutral) / (np.sqrt(2 * boltzmann * Ti_in[lat, lon, lev] / m_ion))
+
+                # ################################# PERPENDICULAR CURRENTS ##############################
+                # ###############################  1st Methodology - Ohms law ###########################
+                # Pedersen current = sigmaPedersen * E_star = (Evert + Unvert cross B) (in ampere/meter^2)
+                # sigmaPedersen(in siemens/meter), E(in volt/meter)
+                J_px = pedersen_con_temp[lat, lon, lev] * Estar[0]
+                J_py = pedersen_con_temp[lat, lon, lev] * Estar[1]
+                J_pz = pedersen_con_temp[lat, lon, lev] * Estar[2]
+
+                J_pedersen_temp[lat, lon, lev] = np.sqrt(J_px ** 2 + J_py ** 2 + J_pz ** 2)
+
+                # b_unit cross E_star
+                x1 = bunit[1] * Estar[2] - bunit[2] * Estar[1]
+                y1 = bunit[2] * Estar[0] - bunit[0] * Estar[2]
+                z1 = bunit[0] * Estar[1] - bunit[1] * Estar[0]
+
+                # Hall current = sigmaHall * (b_unit cross E_star) (in ampere/meter^2)
+                # sigmaHall(in siemens/meter), E(in volt/meter)
+                J_hx = hall_con_temp[lat, lon, lev] * x1
+                J_hy = hall_con_temp[lat, lon, lev] * y1
+                J_hz = hall_con_temp[lat, lon, lev] * z1
+
+                J_hall_temp[lat, lon, lev] = np.sqrt(J_hx ** 2 + J_hy ** 2 + J_hz ** 2)
+
+                # Ohmic current = |JPedersen + JHall|
+                J_ohmic_temp[lat, lon, lev] = np.sqrt((J_px + J_hx) ** 2 + (J_py + J_hy) ** 2 + (J_pz + J_hz) ** 2)
+
+                # ####################### 2nd Methodology - Current definition #######################
+                # J_density = qe * Ne * (Vi_vert_star - Ve_vert_star) (in neutral frame) or
+                # J_density = qe * Ne * (Vi_vert - Ve_vert) (in ECEF frame) in ampere/meter^2
+
+                # Ve_vert (electron velocity perpendicular to magnetic field) in meter/sec
+                # Ve_vert_star = (E_star cross B) / |B|^2
+                # Ve_vert = (E_star cross B) / |B|^2 + Un_vert
+                # ####################################################################################
+                # Estar cross B
+                x2 = Estar[1] * B[2] - Estar[2] * B[1]
+                y2 = Estar[2] * B[0] - Estar[0] * B[2]
+                z2 = Estar[0] * B[1] - Estar[1] * B[0]
+
+                x2 = x2 / Bnorm ** 2
+                y2 = y2 / Bnorm ** 2
+                z2 = z2 / Bnorm ** 2
+
+                Ve_vertx = x2 + Un_vert[0]
+                Ve_verty = y2 + Un_vert[1]
+                Ve_vertz = z2 + Un_vert[2]
+
+                Ve_vert = [Ve_vertx, Ve_verty, Ve_vertz]
+
+                # qe(in coulomb), Ne(in m^(-3)), Vi,Ve(in meter/sec)
+                J_denx = qe * (Ne_in[lat, lon, lev] * ccm) * (Vi_vert[0] - Ve_vert[0])
+                J_deny = qe * (Ne_in[lat, lon, lev] * ccm) * (Vi_vert[1] - Ve_vert[1])
+                J_denz = qe * (Ne_in[lat, lon, lev] * ccm) * (Vi_vert[2] - Ve_vert[2])
+                J_dens_temp[lat, lon, lev] = np.sqrt(J_denx ** 2 + J_deny ** 2 + J_denz ** 2)
+
+    print('Products calculated in: ', time.time() - start_time, ' sec!')
+    print(' ')
+
+    return Joule_Heating_temp, Ohmic_Heating_temp, Frictional_Heating_temp, pedersen_con_temp, hall_con_temp, parallel_con_temp, nu_Op_sum_temp, \
+           nu_O2p_sum_temp, nu_NOp_sum_temp, nu_e_sum_temp, C_Op_temp, C_O2p_temp, C_NOp_temp, C_ion_temp, J_pedersen_temp, J_hall_temp, \
+           J_ohmic_temp, J_dens_temp
 
 
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GUI CREATION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$

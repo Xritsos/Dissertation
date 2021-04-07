@@ -454,7 +454,120 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
     print(' ')
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF INPUT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
+    lat = lat_value
+    lon = lon_value
+    snr = 60
 
+    rms_data = np.sqrt(np.mean(Bx[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Bx[lat, lon, :].shape)
+    Bx_noisy[lat, lon, :] = Bx[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(By[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, By[lat, lon, :].shape)
+    By_noisy[lat, lon, :] = By[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Bz[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Bz[lat, lon, :].shape)
+    Bz_noisy[lat, lon, :] = Bz[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Ex[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Ex[lat, lon, :].shape)
+    Ex_noisy[lat, lon, :] = Ex[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Ey[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Ey[lat, lon, :].shape)
+    Ey_noisy[lat, lon, :] = Ey[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Ez[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Ez[lat, lon, :].shape)
+    Ez_noisy[lat, lon, :] = Ez[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Unx[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Unx[lat, lon, :].shape)
+    Unx_noisy[lat, lon, :] = Unx[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Uny[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Uny[lat, lon, :].shape)
+    Uny_noisy[lat, lon, :] = Uny[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Unz[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Unz[lat, lon, :].shape)
+    Unz_noisy[lat, lon, :] = Unz[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Vi_vertx[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Vi_vertx[lat, lon, :].shape)
+    Vi_vertx_noisy[lat, lon, :] = Vi_vertx[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Vi_verty[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Vi_verty[lat, lon, :].shape)
+    Vi_verty_noisy[lat, lon, :] = Vi_verty[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Vi_vertz[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Vi_vertz[lat, lon, :].shape)
+    Vi_vertz_noisy[lat, lon, :] = Vi_vertz[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(NOp[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, NOp[lat, lon, :].shape)
+    NOp_noisy[lat, lon, :] = NOp[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(NO2p[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, NO2p[lat, lon, :].shape)
+    NO2p_noisy[lat, lon, :] = NO2p[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(NNOp[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, NNOp[lat, lon, :].shape)
+    NNOp_noisy[lat, lon, :] = NNOp[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(NO[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, NO[lat, lon, :].shape)
+    NO_noisy[lat, lon, :] = NO[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(NO2[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, NO2[lat, lon, :].shape)
+    NO2_noisy[lat, lon, :] = NO2[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(NN2[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, NN2[lat, lon, :].shape)
+    NN2_noisy[lat, lon, :] = NN2[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Ne[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Ne[lat, lon, :].shape)
+    Ne_noisy[lat, lon, :] = Ne[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Ti[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Ti[lat, lon, :].shape)
+    Ti_noisy[lat, lon, :] = Ti[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Tn[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Tn[lat, lon, :].shape)
+    Tn_noisy[lat, lon, :] = Tn[lat, lon, :] + noise
+
+    rms_data = np.sqrt(np.mean(Te[lat, lon, :] ** 2))
+    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+    noise = np.random.normal(0, rms_noise, Te[lat, lon, :].shape)
+    Te_noisy[lat, lon, :] = Te[lat, lon, :] + noise
 
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Create Noise $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -597,8 +710,8 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Calculate Products $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Calculate Products $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in, Unz_in, Vix_in, Viy_in, Viz_in, NO_in, NO2_in, NN2_in, NOp_in,
                        NO2p_in, NNOp_in, Ne_in, Ti_in, Te_in, Tn_in, lat_value=-1, lon_value=-1, pressure_level=-1):
 
@@ -905,6 +1018,558 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
     return Joule_Heating_temp, Ohmic_Heating_temp, Frictional_Heating_temp, pedersen_con_temp, hall_con_temp, parallel_con_temp, nu_Op_sum_temp, \
            nu_O2p_sum_temp, nu_NOp_sum_temp, nu_e_sum_temp, C_Op_temp, C_O2p_temp, C_NOp_temp, C_ion_temp, J_pedersen_temp, J_hall_temp, \
            J_ohmic_temp, J_dens_temp
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF PRODUCTS CALCULATION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ VERTICAL PROFILE PLOTS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+def plot_heating_rates(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_"*40, "Plotting.....", "_"*40, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=Ohmic_Heating[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ohmic Heating", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=Frictional_Heating[lat, lon, :-1], y=heights[lat, lon, :-1], name="Frictional Heating", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=Joule_Heating[lat, lon, :-1], y=heights[lat, lon, :-1], name="Joule Heating", mode='lines',
+                             line=dict(shape='spline', color='green')))
+
+    x_range = max(Joule_Heating[lat, lon, :-1])
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
+                      xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Heating Rates' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_collisions(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    mean_ion_collisions = (nu_Op_sum[lat, lon, :-1] + nu_O2p_sum[lat, lon, :-1] + nu_NOp_sum[lat, lon, :-1]) / 3
+
+    fig1 = go.Figure()
+
+    # adding the various plots
+    fig1.add_trace(go.Scatter(x=nu_Op_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{O^{+}}$", mode='lines',
+                              line=dict(shape='spline', color='red')))
+    fig1.add_trace(go.Scatter(x=nu_O2p_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{O2^{+}}$", mode='lines',
+                              line=dict(shape='spline', color='blue')))
+    fig1.add_trace(go.Scatter(x=nu_NOp_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{NO^{+}}$", mode='lines',
+                              line=dict(shape='spline', color='yellow')))
+    fig1.add_trace(go.Scatter(x=mean_ion_collisions, y=heights[lat, lon, :-1], name="$ν_{in}$", mode='lines',
+                              line=dict(shape='spline', color='orange')))
+    fig1.add_trace(go.Scatter(x=nu_e_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{en}$", mode='lines',
+                              line=dict(shape='spline', color='purple')))
+
+    # updating the layout of the figure
+    fig1.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis_title="$Frequency \ (Hz)$",
+                       yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                       title={'text': 'Collision-Gyro Frequencies' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig1.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig1.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig1.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig1.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig1.show()
+
+
+def plot_conductivities(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=pedersen_con[lat, lon, :-1], y=heights[lat, lon, :-1], name="σPedersen", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=hall_con[lat, lon, :-1], y=heights[lat, lon, :-1], name="σHall", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=parallel_con[lat, lon, :-1], y=heights[lat, lon, :-1], name="σParallel", mode='lines',
+                             line=dict(shape='spline', color='green')))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis_title="$(S/m)$", yaxis_title="$Altitude \ (km)$",
+                      width=800, height=650, title={'text': 'Conductivities' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_currents(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=J_pedersen[lat, lon, :-1], y=heights[lat, lon, :-1], name="Pedersen Current", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=J_hall[lat, lon, :-1], y=heights[lat, lon, :-1], name="Hall Current", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=J_ohmic[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ohmic Current", mode='lines',
+                             line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=J_dens[lat, lon, :-1], y=heights[lat, lon, :-1], name="Densities Current", mode='lines',
+                             line=dict(shape='spline', color='black')))
+    x_range = max(J_ohmic[lat, lon, :-1])
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
+                      xaxis_title="$(A/m^{2})$", yaxis_title="$Altitude \ (km)$", width=900, height=750,
+                      title={'text': 'Perpendicular Currents' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_cross_sections(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=C_Op[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O^{+}$", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=C_O2p[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O_{2}^{+}$", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=C_NOp[lat, lon, :-1], y=heights[lat, lon, :-1], name="$NO^{+}$", mode='lines',
+                             line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=C_ion[lat, lon, :-1], y=heights[lat, lon, :-1], name="$Avg$", mode='lines',
+                             line=dict(shape='spline', color='black')))
+
+    x_range = max(C_Op[lat, lon, :-1])
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis=dict(range=[0, x_range + x_range/4]),
+                      xaxis_title="$(m^{2})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Cross Sections' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_heating_rates_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=Ohmic_Heating_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ohmic Heating with error", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=Frictional_Heating_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Frictional Heating with error", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=Joule_Heating_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Joule Heating with error", mode='lines',
+                             line=dict(shape='spline', color='green')))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Heating Rates With Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_heating_rates_rel_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    Ohmic_rel = abs((Ohmic_Heating[lat, lon, :-1] - Ohmic_Heating_noisy[lat, lon, :-1]) / Ohmic_Heating[lat, lon, :-1])
+    Frict_rel = abs((Frictional_Heating[lat, lon, :-1] - Frictional_Heating_noisy[lat, lon, :-1]) / Frictional_Heating[lat, lon, :-1])
+    Joule_rel = abs((Joule_Heating[lat, lon, :-1] - Joule_Heating_noisy[lat, lon, :-1]) / Joule_Heating[lat, lon, :-1])
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=Ohmic_rel, y=heights[lat, lon, :-1], name="Ohmic Heating error", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=Frict_rel, y=heights[lat, lon, :-1], name="Frictional Heating error", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=Joule_rel, y=heights[lat, lon, :-1], name="Joule Heating error", mode='lines',
+                             line=dict(shape='spline', color='green')))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', xaxis=dict(range=[0, 0.4]),
+                      yaxis=dict(range=[min_alt, max_alt], tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Heating Rates Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_collisions_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=nu_Op_sum_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{O^{+}}$ with error", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=nu_O2p_sum_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{O2^{+}}$ with error", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=nu_NOp_sum_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{NO^{+}}$ with error", mode='lines',
+                             line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=nu_e_sum_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{e}$ with error", mode='lines',
+                             line=dict(shape='spline', color='purple')))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="$Frequency \ (Hz)$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Collision Frequencies with Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_collisions_rel_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    nuOp_rel = abs((nu_Op_sum[lat, lon, :-1] - nu_Op_sum_noisy[lat, lon, :-1]) / nu_Op_sum[lat, lon, :-1])
+    nuO2p_rel = abs((nu_O2p_sum[lat, lon, :-1] - nu_O2p_sum_noisy[lat, lon, :-1]) / nu_O2p_sum[lat, lon, :-1])
+    nuNOp_rel = abs((nu_NOp_sum[lat, lon, :-1] - nu_NOp_sum_noisy[lat, lon, :-1]) / nu_NOp_sum[lat, lon, :-1])
+    nu_ion = (nu_Op_sum[lat, lon, :-1] + nu_O2p_sum[lat, lon, :-1] + nu_NOp_sum[lat, lon, :-1]) / 3
+    nuion_error = (nu_Op_sum_noisy[lat, lon, :-1] + nu_O2p_sum_noisy[lat, lon, :-1] + nu_NOp_sum_noisy[lat, lon, :-1]) / 3
+    nuion_rel = abs((nu_ion - nuion_error) / nu_ion)
+    nue_rel = abs((nu_e_sum[lat, lon, :-1] - nu_e_sum_noisy[lat, lon, :-1]) / nu_e_sum[lat, lon, :-1])
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=nuOp_rel, y=heights[lat, lon, :-1], name="$ν_{O^{+}}$ error", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=nuO2p_rel, y=heights[lat, lon, :-1], name="$ν_{O2^{+}}$ error", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=nuNOp_rel, y=heights[lat, lon, :-1], name="$ν_{NO^{+}}$ error", mode='lines',
+                             line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=nue_rel, y=heights[lat, lon, :-1], name="$ν_{e}$ error", mode='lines',
+                             line=dict(shape='spline', color='purple')))
+    fig.add_trace(go.Scatter(x=nuion_rel, y=heights[lat, lon, :-1], name="$ν_{ion}$ error", mode='lines',
+                             line=dict(shape='spline', color='yellow')))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt], tickmode='array',
+                      tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Collision Frequencies Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_conductivities_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=pedersen_con_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="σPedersen with error", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=hall_con_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="σHall with error", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=parallel_con_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="σParallel with error",
+                             mode='lines', line=dict(shape='spline', color='green'), visible="legendonly"))
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="$(S/m)$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Conductivities With Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_conductivities_rel_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    pedersen_rel = abs((pedersen_con[lat, lon, :-1] - pedersen_con_noisy[lat, lon, :-1]) / pedersen_con[lat, lon, :-1])
+    hall_rel = abs((hall_con[lat, lon, :-1] - hall_con_noisy[lat, lon, :-1]) / hall_con[lat, lon, :-1])
+    parallel_rel = abs((parallel_con[lat, lon, :-1] - parallel_con_noisy[lat, lon, :-1]) / parallel_con[lat, lon, :-1])
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=pedersen_rel, y=heights[lat, lon, :-1], name="σPedersen error", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=hall_rel, y=heights[lat, lon, :-1], name="σHall error", mode='lines', line=dict(shape='spline', color='blue'),
+                             visible="legendonly"))
+    fig.add_trace(go.Scatter(x=parallel_rel, y=heights[lat, lon, :-1], name="σParallel error", mode='lines',
+                             line=dict(shape='spline', color='green')))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Conductivities Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_currents_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=J_pedersen_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Pedersen Current with error", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=J_hall_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Hall Current with error", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=J_ohmic_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ohmic current with error", mode='lines',
+                             line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=J_dens_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Densities current with error", mode='lines',
+                             line=dict(shape='spline', color='black')))
+
+    x_range = max(J_dens_noisy[lat, lon, :-1])
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, x_range + x_range/8]),
+                      xaxis_title="$(A/m^{2})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Perpendicular Currents Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_currents_rel_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    Jp_rel = abs((J_pedersen[lat, lon, :-1] - J_pedersen_noisy[lat, lon, :-1]) / J_pedersen[lat, lon, :-1])
+    Jh_rel = abs((J_hall[lat, lon, :-1] - J_hall_noisy[lat, lon, :-1]) / J_hall[lat, lon, :-1])
+    Johmic_rel = abs((J_ohmic[lat, lon, :-1] - J_ohmic_noisy[lat, lon, :-1]) / J_ohmic[lat, lon, :-1])
+    Jdens_rel = abs((J_dens[lat, lon, :-1] - J_dens_noisy[lat, lon, :-1]) / J_dens[lat, lon, :-1])
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=Jp_rel, y=heights[lat, lon, :-1], name="Pedersen Current error", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=Jh_rel, y=heights[lat, lon, :-1], name="Hall Current error", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=Johmic_rel, y=heights[lat, lon, :-1], name="Ohmic current error", mode='lines',
+                             line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=Jdens_rel, y=heights[lat, lon, :-1], name="Densities current error", mode='lines',
+                             line=dict(shape='spline', color='black')))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Perpendicular Currents Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_csections_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=C_Op_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O^{+}$", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=C_O2p_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O_{2}^{+}$", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=C_NOp_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="$NO^{+}$", mode='lines',
+                             line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=C_ion_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="$Avg$", mode='lines',
+                             line=dict(shape='spline', color='black')))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, max(C_Op_noisy[lat, lon, :-1])]),
+                      xaxis_title="$(m^{2})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Cross Sections With Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_csections_rel_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    COp_rel = abs((C_Op[lat, lon, :-1] - C_Op_noisy[lat, lon, :-1]) / C_Op[lat, lon, :-1])
+    CO2p_rel = abs((C_O2p[lat, lon, :-1] - C_O2p_noisy[lat, lon, :-1]) / C_O2p[lat, lon, :-1])
+    CNOp_rel = abs((C_NOp[lat, lon, :-1] - C_NOp_noisy[lat, lon, :-1]) / C_NOp[lat, lon, :-1])
+    Cion_rel = abs((C_ion[lat, lon, :-1] - C_ion_noisy[lat, lon, :-1]) / C_ion[lat, lon, :-1])
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=COp_rel, y=heights[lat, lon, :-1], name="$O^{+}$", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=CO2p_rel, y=heights[lat, lon, :-1], name="$O_{2}^{+}$", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=CNOp_rel, y=heights[lat, lon, :-1], name="$NO^{+}$", mode='lines',
+                             line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=Cion_rel, y=heights[lat, lon, :-1], name="$Avg$", mode='lines',
+                             line=dict(shape='spline', color='black')))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Cross Sections Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
 
 
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GUI CREATION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -949,17 +1614,17 @@ def gui():
                       "162.5": 137, "165.0": 138, "167.5": 139, "170.0": 140, "172.5": 141, "175.0": 142, "177.5": 143}
 
     # used in plotting choices frame
-    col1 = [[Sg.Checkbox("Plot Heating Rates Absolute Error", default=False, tooltip="Plots heating rates absolute error", key="-HR_abs-")],
+    col1 = [[Sg.Checkbox("Plot Heating Rates With Error", default=False, tooltip="Plots heating rates with error", key="-HR_abs-")],
             [Sg.Checkbox("Plot Heating Rates Relative Error", default=False, tooltip="Plots heating rates relative error", key="-HR_rel-")],
-            [Sg.Checkbox("Plot Collision Frequencies Absolute Error", default=False, tooltip="Plots collision frequencies absolute error",
-                key="-COL_abs-")],
+            [Sg.Checkbox("Plot Collision Frequencies With Error", default=False, tooltip="Plots collision frequencies with error",
+                         key="-COL_abs-")],
             [Sg.Checkbox("Plot Collision Frequencies Relative Error", default=False, tooltip="Plots collision frequencies relative error",
-                key="-COL_rel-")],
-            [Sg.Checkbox("Plot Conductivities Absolute Error", default=False, tooltip="Plots conductivities absolute error", key="-CON_abs-")],
+                         key="-COL_rel-")],
+            [Sg.Checkbox("Plot Conductivities With Error", default=False, tooltip="Plots conductivities with error", key="-CON_abs-")],
             [Sg.Checkbox("Plot Conductivities Relative Error", default=False, tooltip="Plots conductivities relative error", key="-CON_rel-")],
-            [Sg.Checkbox("Plot Currents Absolute Error", default=False, tooltip="Plots currents absolute error", key="-CUR_abs-")],
+            [Sg.Checkbox("Plot Currents With Error", default=False, tooltip="Plots currents with error", key="-CUR_abs-")],
             [Sg.Checkbox("Plot Currents Relative Error", default=False, tooltip="Plots currents relative error", key="-CUR_rel-")],
-            [Sg.Checkbox("Plot Cross Sections Absolute Error", default=False, tooltip="Plots cross sections absolute error", key="-CR_abs-")],
+            [Sg.Checkbox("Plot Cross Sections With Error", default=False, tooltip="Plots cross sections with error", key="-CR_abs-")],
             [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error", key="-CR_rel-")]]
 
     col2 = [[Sg.Checkbox("Plot Heating Rates", default=False, tooltip="Plots heating rates", key="-HR-")],
@@ -1127,15 +1792,21 @@ def gui():
 
         user_file_name = values["-FILE-"]
 
-        if event=="Calculate Products" and values["-TABGROUP-"]=="Vertical Profile":
+        if event == "Calculate Products" and values["-TABGROUP-"] == "Vertical Profile":
             user_lat = values["-LAT-"]
             user_lon = values["-LON-"]
             min_alt = values["-min_alt-"]
             max_alt = values["-max_alt-"]
             user_time = int(values["-TIME_vert-"])
             models_input(file_name=user_file_name, timer=user_time, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+            Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
+             parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], \
+             C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
+                calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
+                                   Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
+                                   Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
             prod_calculated = True
-            if values["-TABGROUP1-"]=="Vertical Profile Plots":
+            if values["-TABGROUP1-"] == "Vertical Profile Plots":
                 if values["-COL-"]:
                     plot_collisions(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
                 if values["-HR-"]:
@@ -1146,7 +1817,7 @@ def gui():
                     plot_currents(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
                 if values["-CR-"]:
                     plot_cross_sections(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-        if event=="Calculate Products" and values["-TABGROUP-"]=="Map Profile (Lat-Lon)":
+        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
             user_time = values["-TIME_map-"]
             user_lev = values["-Pr_level-"]
             models_input(file_name=user_file_name, timer=user_time, pressure_level=user_lev)
@@ -1184,41 +1855,51 @@ def gui():
                     mapla_currents_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
                 if values["-CR_mapla-"]:
                     mapla_cross_section_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-        if event=="Calculate Error" and values["-TABGROUP-"]=='Vertical Profile':
+        if event == "Calculate Error" and values["-TABGROUP-"] == 'Vertical Profile':
             if prod_calculated:
                 user_lat = values["-LAT-"]
                 user_lon = values["-LON-"]
-                if values["-TABGROUP1-"]=="Vertical Profile Plots":
+                calculate_noise(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
+                 hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :],\
+                 nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
+                 J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
+                    calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
+                                       Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
+                                       Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
+                                       NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
+                                       lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                if values["-TABGROUP1-"] == "Vertical Profile Plots":
                     min_alt = values["-min_alt-"]
                     max_alt = values["-max_alt-"]
                     if values["-COL_abs-"]:
                         plot_collisions_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                            max_alt=max_alt)
+                                              max_alt=max_alt)
                     if values["-COL_rel-"]:
                         plot_collisions_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                            max_alt=max_alt)
+                                                  max_alt=max_alt)
                     if values["-HR_abs-"]:
                         plot_heating_rates_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                            max_alt=max_alt)
+                                                 max_alt=max_alt)
                     if values["-HR_rel-"]:
                         plot_heating_rates_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                            max_alt=max_alt)
+                                                     max_alt=max_alt)
                     if values["-CON_abs-"]:
                         plot_conductivities_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                            max_alt=max_alt)
+                                                  max_alt=max_alt)
                     if values["-CON_rel-"]:
                         plot_conductivities_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                            max_alt=max_alt)
+                                                      max_alt=max_alt)
                     if values["-CUR_abs-"]:
                         plot_currents_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
                     if values["-CUR_rel-"]:
                         plot_currents_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                            max_alt=max_alt)
+                                                max_alt=max_alt)
                     if values["-CR_abs-"]:
                         plot_csections_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
                     if values["-CR_rel-"]:
                         plot_csections_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                            max_alt=max_alt)
+                                                 max_alt=max_alt)
         if event=="Calculate Error" and values["-TABGROUP-"]=="Map Profile (Lat-Lon)":
             user_lev = values["-Pr_level-"]
             if values["-TABGROUP1-"]=="Map Profile (Lat-Lon) Plots":

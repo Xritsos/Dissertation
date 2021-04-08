@@ -664,29 +664,29 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
                 Ez_noisy[lat, lon, lev] = Ez[lat, lon, lev] + noise
 
                 # Neutral densities
-                noise = np.random.normal(0, NO_ac)
+                noise = np.random.normal(0, NO_ac * NO[lat, lon, lev])
                 NO_noisy[lat, lon, lev] = NO[lat, lon, lev] + noise
-                noise = np.random.normal(0, NO2_ac)
+                noise = np.random.normal(0, NO2_ac * NO2[lat, lon, lev])
                 NO2_noisy[lat, lon, lev] = NO2[lat, lon, lev] + noise
-                noise = np.random.normal(0, NN2_ac)
+                noise = np.random.normal(0, NN2_ac * NN2[lat, lon, lev])
                 NN2_noisy[lat, lon, lev] = NN2[lat, lon, lev] + noise
 
                 # Ion - Electron densities
-                noise = np.random.normal(0, NOp_ac)
+                noise = np.random.normal(0, NOp_ac * NOp[lat, lon, lev])
                 NOp_noisy[lat, lon, lev] = NOp[lat, lon, lev] + noise
-                noise = np.random.normal(0, NO2p_ac)
+                noise = np.random.normal(0, NO2p_ac * NO2p[lat, lon, lev])
                 NO2p_noisy[lat, lon, lev] = NO2p[lat, lon, lev] + noise
-                noise = np.random.normal(0, NNOp_ac)
+                noise = np.random.normal(0, NNOp_ac * NNOp[lat, lon, lev])
                 NNOp_noisy[lat, lon,lev] = NNOp[lat, lon, lev] + noise
-                noise = np.random.normal(0, Ne_ac)
+                noise = np.random.normal(0, Ne_ac * Ne[lat, lon, lev])
                 Ne_noisy[lat, lon, lev] = Ne[lat, lon, lev] + noise
 
                 # Temperatures
-                noise = np.random.normal(0, Ti_ac)
+                noise = np.random.normal(0, Ti_ac * Ti[lat, lon, lev])
                 Ti_noisy[lat, lon, lev] = Ti[lat, lon, lev] + noise
-                noise = np.random.normal(0, Tn_ac)
+                noise = np.random.normal(0, Tn_ac * Tn[lat, lon, lev])
                 Tn_noisy[lat, lon, lev] = Tn[lat, lon, lev] + noise
-                noise = np.random.normal(0, Te_ac)
+                noise = np.random.normal(0, Te_ac * Te[lat, lon, lev])
                 Te_noisy[lat, lon, lev] = Te[lat, lon, lev] + noise
 
                 # Neutral wind

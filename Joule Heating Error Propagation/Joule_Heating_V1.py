@@ -1950,6 +1950,49 @@ def plot_collisions_error(lat_value, lon_value, min_alt, max_alt):
     fig.show()
 
 
+def plot_collisions_plus_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=nuOp_error[lat, lon, :-1] + nu_Op_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νO+ +error",
+                             mode='lines', line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=- nuOp_error[lat, lon, :-1] + nu_Op_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νO+ -error",
+                             mode='lines', line=dict(shape='spline', color='red', dash="dash")))
+    fig.add_trace(go.Scatter(x=nuO2p_error[lat, lon, :-1] + nu_O2p_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νO2+ +error",
+                             mode='lines', line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=- nuO2p_error[lat, lon, :-1] + nu_O2p_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νO2+ -error",
+                             mode='lines', line=dict(shape='spline', color='blue', dash="dash")))
+    fig.add_trace(go.Scatter(x=nuNOp_error[lat, lon, :-1] + nu_NOp_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νNO+ +error",
+                             mode='lines', line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=- nuNOp_error[lat, lon, :-1] + nu_NOp_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νNO+ -error",
+                             mode='lines', line=dict(shape='spline', color='green', dash="dash")))
+    fig.add_trace(go.Scatter(x=nue_error[lat, lon, :-1] + nu_e_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νe +error", mode='lines',
+                             line=dict(shape='spline', color='purple')))
+    fig.add_trace(go.Scatter(x=- nue_error[lat, lon, :-1] + nu_e_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νe -error", mode='lines',
+                             line=dict(shape='spline', color='purple', dash="dash")))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="$Frequency \ (Hz)$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Collision Frequencies With Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
 def plot_collisions_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
@@ -2071,6 +2114,45 @@ def plot_heating_rates_error(lat_value, lon_value, min_alt, max_alt):
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
                       xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Heating Rates Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_heating_rates_plus_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=Ohmic_Heating_error[lat, lon, :-1] + Ohmic_Heating[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Ohmic Heating +error", mode='lines', line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=- Ohmic_Heating_error[lat, lon, :-1] + Ohmic_Heating[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Ohmic Heating -error", mode='lines', line=dict(shape='spline', color='red', dash="dash")))
+    fig.add_trace(go.Scatter(x=Frictional_Heating_error[lat, lon, :-1] + Frictional_Heating[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Frictional Heating +error", mode='lines', line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=- Frictional_Heating_error[lat, lon, :-1] + Frictional_Heating[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Frictional Heating -error", mode='lines', line=dict(shape='spline', color='blue', dash="dash")))
+    fig.add_trace(go.Scatter(x=Joule_Heating_error[lat, lon, :-1] + Joule_Heating[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Joule Heating +error", mode='lines', line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=- Joule_Heating_error[lat, lon, :-1] + Joule_Heating[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Joule Heating -error", mode='lines', line=dict(shape='spline', color='green', dash="dash")))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Heating Rates With Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
     fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2291,6 +2373,44 @@ def plot_conductivities_error(lat_value, lon_value, min_alt, max_alt):
     fig.show()
 
 
+def plot_conductivities_plus_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=pedersen_con_error[lat, lon, :-1] + pedersen_con[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="σPedersen +error", mode='lines', line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=- pedersen_con_error[lat, lon, :-1] + pedersen_con[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="σPedersen -error", mode='lines', line=dict(shape='spline', color='red', dash="dash")))
+    fig.add_trace(go.Scatter(x=hall_con_error[lat, lon, :-1] + hall_con[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="σHall +error", mode='lines', line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=- hall_con_error[lat, lon, :-1] + hall_con[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="σHall -error", mode='lines', line=dict(shape='spline', color='blue', dash="dash")))
+    fig.add_trace(go.Scatter(x=parallel_con_error[lat, lon, :-1] + parallel_con[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="σParallel +error", mode='lines', line=dict(shape='spline', color='green'), visible="legendonly"))
+    fig.add_trace(go.Scatter(x=- parallel_con_error[lat, lon, :-1] + parallel_con[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="σParallel -error", mode='lines', line=dict(shape='spline', color='green', dash="dash"), visible="legendonly"))
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="$(S/m)$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Conductivities With Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
 def plot_conductivities_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
     Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
@@ -2450,6 +2570,49 @@ def plot_currents_error(lat_value, lon_value, min_alt, max_alt):
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, x_range + x_range/8]),
                       xaxis_title="$(A/m^{2})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Perpendicular Currents Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_currents_plus_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=J_pedersen_error[lat, lon, :-1] + J_pedersen[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Pedersen Current +error", mode='lines', line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=- J_pedersen_error[lat, lon, :-1] + J_pedersen[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Pedersen Current -error", mode='lines', line=dict(shape='spline', color='red', dash="dash")))
+    fig.add_trace(go.Scatter(x=J_hall_error[lat, lon, :-1] + J_hall[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Hall Current +error", mode='lines', line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=- J_hall_error[lat, lon, :-1] + J_hall[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Hall Current -error", mode='lines', line=dict(shape='spline', color='blue', dash="dash")))
+    fig.add_trace(go.Scatter(x=J_ohmic_error[lat, lon, :-1] + J_ohmic[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Ohmic current +error", mode='lines', line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=- J_ohmic_error[lat, lon, :-1] + J_ohmic[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Ohmic current -error", mode='lines', line=dict(shape='spline', color='green', dash="dash")))
+    fig.add_trace(go.Scatter(x=J_dens_error[lat, lon, :-1] + J_dens[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Densities current +error", mode='lines', line=dict(shape='spline', color='black')))
+    fig.add_trace(go.Scatter(x=- J_dens_error[lat, lon, :-1] + J_dens[lat, lon, :-1], y=heights[lat, lon, :-1],
+                             name="Densities current -error", mode='lines', line=dict(shape='spline', color='black', dash="dash")))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="$(A/m^{2})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Perpendicular Currents With Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
     fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -2627,6 +2790,49 @@ def plot_csections_error(lat_value, lon_value, min_alt, max_alt):
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis=dict(range=[0, max(C_Op_error[lat, lon, :-1])]),
                       xaxis_title="$(m^{2})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Cross Sections Absolute Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_csections_plus_error(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=C_Op_error[lat, lon, :-1] + C_Op[lat, lon, :-1], y=heights[lat, lon, :-1], name="O{+} +error", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=- C_Op_error[lat, lon, :-1] + C_Op[lat, lon, :-1], y=heights[lat, lon, :-1], name="O{+} -error", mode='lines',
+                             line=dict(shape='spline', color='red', dash="dash")))
+    fig.add_trace(go.Scatter(x=C_O2p_error[lat, lon, :-1] + C_O2p[lat, lon, :-1], y=heights[lat, lon, :-1], name="O2{+} +error", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=- C_O2p_error[lat, lon, :-1] + C_O2p[lat, lon, :-1], y=heights[lat, lon, :-1], name="O2{+} -error", mode='lines',
+                             line=dict(shape='spline', color='blue', dash="dash")))
+    fig.add_trace(go.Scatter(x=C_NOp_error[lat, lon, :-1] + C_NOp[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO{+} +error", mode='lines',
+                             line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=- C_NOp_error[lat, lon, :-1] + C_NOp[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO{+} -error", mode='lines',
+                             line=dict(shape='spline', color='green', dash="dash")))
+    fig.add_trace(go.Scatter(x=C_ion_error[lat, lon, :-1] + C_ion[lat, lon, :-1], y=heights[lat, lon, :-1], name="Avg +error", mode='lines',
+                             line=dict(shape='spline', color='black')))
+    fig.add_trace(go.Scatter(x=- C_ion_error[lat, lon, :-1] + C_ion[lat, lon, :-1], y=heights[lat, lon, :-1], name="Avg -error", mode='lines',
+                             line=dict(shape='spline', color='black', dash="dash")))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="$(m^{2})$", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Cross Sections With Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
     fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -3837,24 +4043,30 @@ def gui():
 
     # used in plotting choices frame
     col1 = [[Sg.Checkbox("Plot Heating Rates Absolute Error", default=False, tooltip="Plots heating rates absolute error", key="-HR_abs-")],
+            [Sg.Checkbox("Plot Heating Rates With Error", default=False, tooltip="Plots heating rates with error", key="-HR_plus_error-")],
             [Sg.Checkbox("Plot Heating Rates Relative Error", default=False, tooltip="Plots heating rates relative error", key="-HR_rel-")],
             [Sg.Checkbox("Plot Heating Rates Relative Error Contributions", default=False,
              tooltip="Plots heating rates relative error with contributions", key="-HR_con-")],
             [Sg.Checkbox("Plot Collision Frequencies Absolute Error", default=False, tooltip="Plots collision frequencies absolute error",
              key="-COL_abs-")],
+            [Sg.Checkbox("Plot Collision Frequencies With Error", default=False, tooltip="Plots collision frequencies with error",
+             key="-COL_plus_error-")],
             [Sg.Checkbox("Plot Collision Frequencies Relative Error", default=False, tooltip="Plots collision frequencies relative error",
              key="-COL_rel-")],
             [Sg.Checkbox("Plot Collision Frequencies Relative Error Contributions", default=False,
              tooltip="Plots collision frequencies relative error with contributions", key="-COL_con-")],
             [Sg.Checkbox("Plot Conductivities Absolute Error", default=False, tooltip="Plots conductivities absolute error", key="-CON_abs-")],
+            [Sg.Checkbox("Plot Conductivities With Error", default=False, tooltip="Plots conductivities with error", key="-CON_plus_error-")],
             [Sg.Checkbox("Plot Conductivities Relative Error", default=False, tooltip="Plots conductivities relative error", key="-CON_rel-")],
             [Sg.Checkbox("Plot Conductivities Relative Error Contributions", default=False,
              tooltip="Plots conductivities relative error with contributions", key="-CON_con-")],
             [Sg.Checkbox("Plot Currents Absolute Error", default=False, tooltip="Plots currents absolute error", key="-CUR_abs-")],
+            [Sg.Checkbox("Plot Currents With Error", default=False, tooltip="Plots currents with error", key="-CUR_plus_error-")],
             [Sg.Checkbox("Plot Currents Relative Error", default=False, tooltip="Plots currents relative error", key="-CUR_rel-")],
             [Sg.Checkbox("Plot Currents Relative Contributions", default=False, tooltip="Plots currents relative error with contributions",
              key="-CUR_con-")],
             [Sg.Checkbox("Plot Cross Sections Absolute Error", default=False, tooltip="Plots cross sections absolute error", key="-CR_abs-")],
+            [Sg.Checkbox("Plot Cross Sections With Error", default=False, tooltip="Plots cross sections with error", key="-CR_plus_error-")],
             [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error", key="-CR_rel-")],
             [Sg.Checkbox("Plot Cross Sections Relative Error Contributions", default=False,
              tooltip="Plots cross sections relative error with contributions", key="-CR_con-")]]
@@ -4122,6 +4334,9 @@ def gui():
                     if values["-COL_abs-"]:
                         plot_collisions_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                               max_alt=max_alt)
+                    if values["-COL_plus_error-"]:
+                        plot_collisions_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                   max_alt=max_alt)
                     if values["-COL_rel-"]:
                         plot_collisions_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                                   max_alt=max_alt)
@@ -4131,6 +4346,9 @@ def gui():
                     if values["-HR_abs-"]:
                         plot_heating_rates_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                                  max_alt=max_alt)
+                    if values["-HR_plus_error-"]:
+                        plot_heating_rates_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                      max_alt=max_alt)
                     if values["-HR_rel-"]:
                         plot_heating_rates_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                                      max_alt=max_alt)
@@ -4140,6 +4358,9 @@ def gui():
                     if values["-CON_abs-"]:
                         plot_conductivities_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                                   max_alt=max_alt)
+                    if values["-CON_plus_error-"]:
+                        plot_conductivities_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                       max_alt=max_alt)
                     if values["-CON_rel-"]:
                         plot_conductivities_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                                       max_alt=max_alt)
@@ -4148,6 +4369,9 @@ def gui():
                                                   max_alt=max_alt)
                     if values["-CUR_abs-"]:
                         plot_currents_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                    if values["-CUR_plus_error-"]:
+                        plot_currents_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                 max_alt=max_alt)
                     if values["-CUR_rel-"]:
                         plot_currents_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                                 max_alt=max_alt)
@@ -4155,49 +4379,58 @@ def gui():
                         plot_currents_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
                     if values["-CR_abs-"]:
                         plot_csections_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                    if values["-CR_plus_error-"]:
+                        plot_csections_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                  max_alt=max_alt)
                     if values["-CR_rel-"]:
                         plot_csections_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                                  max_alt=max_alt)
                     if values["-CR_con-"]:
                         plot_csections_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+            else:
+                Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
         if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
             user_lev = values["-Pr_level-"]
-            error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
-                  NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
-                  Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, pressure_level=user_lev)
-            if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
-                user_lev = values["-Pr_level-"]
-                night_shade = False
-                if values["-NIGHT-"]:
-                    night_shade = True
-                if values["-HR_mapll_error-"]:
-                    mapll_heating_rates_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-COL_mapll_error-"]:
-                    mapll_collisions_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CON_mapll_error-"]:
-                    mapll_conductivities_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CUR_mapll_error-"]:
-                    mapll_currents_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CR_mapll_error-"]:
-                    mapll_csection_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+            if prod_calculated:
+                error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
+                      NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
+                      Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, pressure_level=user_lev)
+                if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
+                    user_lev = values["-Pr_level-"]
+                    night_shade = False
+                    if values["-NIGHT-"]:
+                        night_shade = True
+                    if values["-HR_mapll_error-"]:
+                        mapll_heating_rates_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-COL_mapll_error-"]:
+                        mapll_collisions_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CON_mapll_error-"]:
+                        mapll_conductivities_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CUR_mapll_error-"]:
+                        mapll_currents_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CR_mapll_error-"]:
+                        mapll_csection_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+            else:
+                Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
         if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
             user_lon = values["-Lon_map2-"]
             min_alt_la = values["-min_alt_la-"]
             max_alt_la = values["-max_alt_la-"]
-            error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
-                  NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
-                  Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, lon_value=lon_dictionary[user_lon])
-            if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
-                if values["-HR_mapla_error-"]:
-                    mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-COL_mapla_error-"]:
-                    mapla_collisions_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CON_mapla_error-"]:
-                    mapla_conductivities_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CUR_mapla_error-"]:
-                    mapla_currents_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CR_mapla_error-"]:
-                    mapla_cross_section_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+            if prod_calculated:
+                error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
+                      NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
+                      Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, lon_value=lon_dictionary[user_lon])
+                if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
+                    if values["-HR_mapla_error-"]:
+                        mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-COL_mapla_error-"]:
+                        mapla_collisions_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CON_mapla_error-"]:
+                        mapla_conductivities_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CUR_mapla_error-"]:
+                        mapla_currents_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CR_mapla_error-"]:
+                        mapla_cross_section_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
             else:
                 Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
         if event == "Help":

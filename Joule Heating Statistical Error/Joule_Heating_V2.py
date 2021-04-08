@@ -454,122 +454,361 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
     print(' ')
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF INPUT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ AWGN FUNCTION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
+    start_time = time.time()
     lat = lat_value
     lon = lon_value
-    snr = 60
+    lev = pressure_level
+    
+    snr = 45
 
-    rms_data = np.sqrt(np.mean(Bx[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Bx[lat, lon, :].shape)
-    Bx_noisy[lat, lon, :] = Bx[lat, lon, :] + noise
+    # Vertical profile case
+    if lat != -1 and lon != -1:
+        rms_data = np.sqrt(np.mean(Bx[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Bx[lat, lon, :].shape)
+        Bx_noisy[lat, lon, :] = Bx[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(By[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, By[lat, lon, :].shape)
+        By_noisy[lat, lon, :] = By[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Bz[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Bz[lat, lon, :].shape)
+        Bz_noisy[lat, lon, :] = Bz[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Ex[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ex[lat, lon, :].shape)
+        Ex_noisy[lat, lon, :] = Ex[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Ey[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ey[lat, lon, :].shape)
+        Ey_noisy[lat, lon, :] = Ey[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Ez[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ez[lat, lon, :].shape)
+        Ez_noisy[lat, lon, :] = Ez[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Unx[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Unx[lat, lon, :].shape)
+        Unx_noisy[lat, lon, :] = Unx[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Uny[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Uny[lat, lon, :].shape)
+        Uny_noisy[lat, lon, :] = Uny[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Unz[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Unz[lat, lon, :].shape)
+        Unz_noisy[lat, lon, :] = Unz[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Vi_vertx[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Vi_vertx[lat, lon, :].shape)
+        Vi_vertx_noisy[lat, lon, :] = Vi_vertx[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Vi_verty[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Vi_verty[lat, lon, :].shape)
+        Vi_verty_noisy[lat, lon, :] = Vi_verty[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Vi_vertz[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Vi_vertz[lat, lon, :].shape)
+        Vi_vertz_noisy[lat, lon, :] = Vi_vertz[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(NOp[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NOp[lat, lon, :].shape)
+        NOp_noisy[lat, lon, :] = NOp[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(NO2p[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NO2p[lat, lon, :].shape)
+        NO2p_noisy[lat, lon, :] = NO2p[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(NNOp[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NNOp[lat, lon, :].shape)
+        NNOp_noisy[lat, lon, :] = NNOp[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(NO[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NO[lat, lon, :].shape)
+        NO_noisy[lat, lon, :] = NO[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(NO2[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NO2[lat, lon, :].shape)
+        NO2_noisy[lat, lon, :] = NO2[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(NN2[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NN2[lat, lon, :].shape)
+        NN2_noisy[lat, lon, :] = NN2[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Ne[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ne[lat, lon, :].shape)
+        Ne_noisy[lat, lon, :] = Ne[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Ti[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ti[lat, lon, :].shape)
+        Ti_noisy[lat, lon, :] = Ti[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Tn[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Tn[lat, lon, :].shape)
+        Tn_noisy[lat, lon, :] = Tn[lat, lon, :] + noise
+    
+        rms_data = np.sqrt(np.mean(Te[lat, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Te[lat, lon, :].shape)
+        Te_noisy[lat, lon, :] = Te[lat, lon, :] + noise
+        
+    # Latitude - Longitude map profile case
+    if lat == -1 and lon == -1:
+        rms_data = np.sqrt(np.mean(Bx[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Bx[:, :, lev].shape)
+        Bx_noisy[:, :, lev] = Bx[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(By[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, By[:, :, lev].shape)
+        By_noisy[:, :, lev] = By[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Bz[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Bz[:, :, lev].shape)
+        Bz_noisy[:, :, lev] = Bz[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Ex[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ex[:, :, lev].shape)
+        Ex_noisy[:, :, lev] = Ex[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Ey[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ey[:, :, lev].shape)
+        Ey_noisy[:, :, lev] = Ey[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Ez[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ez[:, :, lev].shape)
+        Ez_noisy[:, :, lev] = Ez[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Unx[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Unx[:, :, lev].shape)
+        Unx_noisy[:, :, lev] = Unx[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Uny[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Uny[:, :, lev].shape)
+        Uny_noisy[:, :, lev] = Uny[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Unz[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Unz[:, :, lev].shape)
+        Unz_noisy[:, :, lev] = Unz[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Vi_vertx[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Vi_vertx[:, :, lev].shape)
+        Vi_vertx_noisy[:, :, lev] = Vi_vertx[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Vi_verty[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Vi_verty[:, :, lev].shape)
+        Vi_verty_noisy[:, :, lev] = Vi_verty[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Vi_vertz[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Vi_vertz[:, :, lev].shape)
+        Vi_vertz_noisy[:, :, lev] = Vi_vertz[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(NOp[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NOp[:, :, lev].shape)
+        NOp_noisy[:, :, lev] = NOp[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(NO2p[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NO2p[:, :, lev].shape)
+        NO2p_noisy[:, :, lev] = NO2p[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(NNOp[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NNOp[:, :, lev].shape)
+        NNOp_noisy[:, :, lev] = NNOp[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(NO[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NO[:, :, lev].shape)
+        NO_noisy[:, :, lev] = NO[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(NO2[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NO2[:, :, lev].shape)
+        NO2_noisy[:, :, lev] = NO2[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(NN2[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NN2[:, :, lev].shape)
+        NN2_noisy[:, :, lev] = NN2[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Ne[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ne[:, :, lev].shape)
+        Ne_noisy[:, :, lev] = Ne[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Ti[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ti[:, :, lev].shape)
+        Ti_noisy[:, :, lev] = Ti[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Tn[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Tn[:, :, lev].shape)
+        Tn_noisy[:, :, lev] = Tn[:, :, lev] + noise
+    
+        rms_data = np.sqrt(np.mean(Te[:, :, lev] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Te[:, :, lev].shape)
+        Te_noisy[:, :, lev] = Te[:, :, lev] + noise
+        
+        # Latitude Altitude map profile case
+    if lat == -1 and lev == -1:
+        rms_data = np.sqrt(np.mean(Bx[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Bx[:, lon, :].shape)
+        Bx_noisy[:, lon, :] = Bx[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(By[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, By[lat, lon, :].shape)
-    By_noisy[lat, lon, :] = By[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(By[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, By[:, lon, :].shape)
+        By_noisy[:, lon, :] = By[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Bz[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Bz[lat, lon, :].shape)
-    Bz_noisy[lat, lon, :] = Bz[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Bz[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Bz[:, lon, :].shape)
+        Bz_noisy[:, lon, :] = Bz[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Ex[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Ex[lat, lon, :].shape)
-    Ex_noisy[lat, lon, :] = Ex[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Ex[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ex[:, lon, :].shape)
+        Ex_noisy[:, lon, :] = Ex[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Ey[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Ey[lat, lon, :].shape)
-    Ey_noisy[lat, lon, :] = Ey[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Ey[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ey[:, lon, :].shape)
+        Ey_noisy[:, lon, :] = Ey[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Ez[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Ez[lat, lon, :].shape)
-    Ez_noisy[lat, lon, :] = Ez[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Ez[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ez[:, lon, :].shape)
+        Ez_noisy[:, lon, :] = Ez[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Unx[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Unx[lat, lon, :].shape)
-    Unx_noisy[lat, lon, :] = Unx[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Unx[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Unx[:, lon, :].shape)
+        Unx_noisy[:, lon, :] = Unx[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Uny[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Uny[lat, lon, :].shape)
-    Uny_noisy[lat, lon, :] = Uny[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Uny[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Uny[:, lon, :].shape)
+        Uny_noisy[:, lon, :] = Uny[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Unz[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Unz[lat, lon, :].shape)
-    Unz_noisy[lat, lon, :] = Unz[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Unz[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Unz[:, lon, :].shape)
+        Unz_noisy[:, lon, :] = Unz[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Vi_vertx[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Vi_vertx[lat, lon, :].shape)
-    Vi_vertx_noisy[lat, lon, :] = Vi_vertx[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Vi_vertx[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Vi_vertx[:, lon, :].shape)
+        Vi_vertx_noisy[:, lon, :] = Vi_vertx[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Vi_verty[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Vi_verty[lat, lon, :].shape)
-    Vi_verty_noisy[lat, lon, :] = Vi_verty[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Vi_verty[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Vi_verty[:, lon, :].shape)
+        Vi_verty_noisy[:, lon, :] = Vi_verty[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Vi_vertz[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Vi_vertz[lat, lon, :].shape)
-    Vi_vertz_noisy[lat, lon, :] = Vi_vertz[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Vi_vertz[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Vi_vertz[:, lon, :].shape)
+        Vi_vertz_noisy[:, lon, :] = Vi_vertz[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(NOp[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, NOp[lat, lon, :].shape)
-    NOp_noisy[lat, lon, :] = NOp[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(NOp[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NOp[:, lon, :].shape)
+        NOp_noisy[:, lon, :] = NOp[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(NO2p[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, NO2p[lat, lon, :].shape)
-    NO2p_noisy[lat, lon, :] = NO2p[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(NO2p[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NO2p[:, lon, :].shape)
+        NO2p_noisy[:, lon, :] = NO2p[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(NNOp[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, NNOp[lat, lon, :].shape)
-    NNOp_noisy[lat, lon, :] = NNOp[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(NNOp[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NNOp[:, lon, :].shape)
+        NNOp_noisy[:, lon, :] = NNOp[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(NO[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, NO[lat, lon, :].shape)
-    NO_noisy[lat, lon, :] = NO[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(NO[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NO[:, lon, :].shape)
+        NO_noisy[:, lon, :] = NO[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(NO2[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, NO2[lat, lon, :].shape)
-    NO2_noisy[lat, lon, :] = NO2[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(NO2[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NO2[:, lon, :].shape)
+        NO2_noisy[:, lon, :] = NO2[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(NN2[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, NN2[lat, lon, :].shape)
-    NN2_noisy[lat, lon, :] = NN2[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(NN2[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, NN2[:, lon, :].shape)
+        NN2_noisy[:, lon, :] = NN2[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Ne[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Ne[lat, lon, :].shape)
-    Ne_noisy[lat, lon, :] = Ne[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Ne[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ne[:, lon, :].shape)
+        Ne_noisy[:, lon, :] = Ne[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Ti[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Ti[lat, lon, :].shape)
-    Ti_noisy[lat, lon, :] = Ti[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Ti[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Ti[:, lon, :].shape)
+        Ti_noisy[:, lon, :] = Ti[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Tn[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Tn[lat, lon, :].shape)
-    Tn_noisy[lat, lon, :] = Tn[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Tn[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Tn[:, lon, :].shape)
+        Tn_noisy[:, lon, :] = Tn[:, lon, :] + noise
 
-    rms_data = np.sqrt(np.mean(Te[lat, lon, :] ** 2))
-    rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
-    noise = np.random.normal(0, rms_noise, Te[lat, lon, :].shape)
-    Te_noisy[lat, lon, :] = Te[lat, lon, :] + noise
+        rms_data = np.sqrt(np.mean(Te[:, lon, :] ** 2))
+        rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
+        noise = np.random.normal(0, rms_noise, Te[:, lon, :].shape)
+        Te_noisy[:, lon, :] = Te[:, lon, :] + noise
 
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Create Noise $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+    print('Calculated Noise in: ', time.time() - start_time, ' sec !')
+    print(" ")
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF AWGN FUNCTION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ CREATE RANDOM NOISE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
     start_time = time.time()
@@ -608,12 +847,12 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
         lev_range = len(glev_in) - 1
 
     # Assigning Accuracies
-    # Magnetic field
+    # Magnetic field (in tesla)
     Bx_ac = 5 * 10 ** (-9)
     By_ac = 5 * 10 ** (-9)
     Bz_ac = 5 * 10 ** (-9)
 
-    # Electric field
+    # Electric field (in V/m)
     Ex_ac = 2 * 10 ** (-3)
     Ey_ac = 2 * 10 ** (-3)
     Ez_ac = 2 * 10 ** (-3)
@@ -634,12 +873,12 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
     Te_ac = 10 / 100
     Tn_ac = 20 / 100
 
-    # Neutral wind
+    # Neutral wind (in m/s)
     Unx_ac = 10
     Uny_ac = 20
     Unz_ac = 10
 
-    # Ion drift
+    # Ion drift (in m/s)
     Vix_ac = 100
     Viy_ac = 100
     Viz_ac = 100
@@ -677,7 +916,7 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
                 noise = np.random.normal(0, NO2p_ac * NO2p[lat, lon, lev])
                 NO2p_noisy[lat, lon, lev] = NO2p[lat, lon, lev] + noise
                 noise = np.random.normal(0, NNOp_ac * NNOp[lat, lon, lev])
-                NNOp_noisy[lat, lon,lev] = NNOp[lat, lon, lev] + noise
+                NNOp_noisy[lat, lon, lev] = NNOp[lat, lon, lev] + noise
                 noise = np.random.normal(0, Ne_ac * Ne[lat, lon, lev])
                 Ne_noisy[lat, lon, lev] = Ne[lat, lon, lev] + noise
 
@@ -706,6 +945,7 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
                 Vi_vertz_noisy[lat, lon, lev] = Vi_vertz[lat, lon, lev] + noise
 
     print('Calculated Noise in: ', time.time() - start_time, ' sec !')
+    print(" ")
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Noise Calculation End $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
@@ -875,6 +1115,9 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
                 # Neutral wind vector(in meter/sec)
                 Un = [Unx_in[lat, lon, lev], Uny_in[lat, lon, lev], Unz_in[lat, lon, lev]]
 
+                # Vi perpendicular to magnetic field vector
+                Vi_vert = [Vix_in[lat, lon, lev], Viy_in[lat, lon, lev], Viz_in[lat, lon, lev]]
+
                 # Neutral wind perpendicular to magnetic field
                 # Unvert = Un cross bunit
                 Un_vertx = Un[1] * bunit[2] - Un[2] * bunit[1]
@@ -897,16 +1140,6 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
                 Estar_z = Evert[2] + UnvXB[2]
 
                 Estar = [Estar_x, Estar_y, Estar_z]
-
-                # Estar cross bunit
-                x = Estar[1] * bunit[2] - Estar[2] * bunit[1]
-                y = Estar[2] * bunit[0] - Estar[0] * bunit[2]
-                z = Estar[0] * bunit[1] - Estar[1] * bunit[0]
-
-                EstarXbunit = [x, y, z]
-
-                # Vi perpendicular to magnetic field vector
-                Vi_vert = [Vix_in[lat, lon, lev], Viy_in[lat, lon, lev], Viz_in[lat, lon, lev]]
 
                 # ################################## JOULE HEATING ##################################
                 # ###################################################################################
@@ -1570,10 +1803,1063 @@ def plot_csections_rel_error(lat_value, lon_value, min_alt, max_alt):
     fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
 
     fig.show()
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF VERTICAL PROFILE PLOTS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GUI CREATION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ LATITUDE-LONGITUDE MAP PROFILE PLOTS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+def mapll_heating_rates_plot(pressure_level, night_shade):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lev = pressure_level
+
+    # Joule Heating
+    fig1 = plt.figure(figsize=(13, 13))
+    ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
+
+    m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m1.drawcoastlines()
+
+    sc1 = m1.imshow(Joule_Heating[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m1.nightshade(map_time, alpha=0.3)
+
+    m1.drawparallels(np.arange(-90., 91., 5.))
+    m1.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Joule Heating' + title)
+
+    divider = make_axes_locatable(ax1)
+    cax1 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    cbar = plt.colorbar(sc1, cax=cax1)
+    cbar.set_label(label='$(W/m^{3})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Ohmic Heating
+    fig2 = plt.figure(figsize=(13, 13))
+    ax2 = fig2.add_subplot(1, 1, 1, aspect='equal')
+
+    m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m2.drawcoastlines()
+
+    sc2 = m2.imshow(Ohmic_Heating[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m2.nightshade(map_time, alpha=0.3)
+
+    m2.drawparallels(np.arange(-90., 91., 5.))
+    m2.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Ohmic Heating' + title)
+
+    divider = make_axes_locatable(ax2)
+    cax2 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    cbar = plt.colorbar(sc2, cax=cax2)
+    cbar.set_label(label='$(W/m^{3})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Frictional Heating
+    fig3 = plt.figure(figsize=(13, 13))
+    ax3 = fig3.add_subplot(1, 1, 1, aspect='equal')
+
+    m3 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m3.drawcoastlines()
+
+    sc3 = m3.imshow(Frictional_Heating[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m3.nightshade(map_time, alpha=0.3)
+
+    m3.drawparallels(np.arange(-90., 91., 5.))
+    m3.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Frictional Heating' + title)
+
+    divider = make_axes_locatable(ax3)
+    cax3 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    cbar = plt.colorbar(sc3, cax=cax3)
+    cbar.set_label(label='$(W/m^{3})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapll_collisions_plot(pressure_level, night_shade):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lev = pressure_level
+
+    # Average Ion Collision Frequency
+    fig1 = plt.figure(figsize=(13, 13))
+    ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
+
+    m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m1.drawcoastlines()
+
+    sc1 = m1.imshow((nu_Op_sum[:, :, lev] + nu_O2p_sum[:, :, lev] + nu_NOp_sum[:, :, lev]) / 3, cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m1.nightshade(map_time, alpha=0.3)
+
+    m1.drawparallels(np.arange(-90., 91., 5.))
+    m1.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Average Ion Collision Frequency' + title)
+
+    divider = make_axes_locatable(ax1)
+    cax1 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    cbar = plt.colorbar(sc1, cax=cax1)
+    cbar.set_label(label='$(Hz)$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Electron Collision Frequency
+    fig2 = plt.figure(figsize=(13, 13))
+    ax2 = fig2.add_subplot(1, 1, 1, aspect='equal')
+
+    m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m2.drawcoastlines()
+
+    sc2 = m2.imshow(nu_e_sum[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m2.nightshade(map_time, alpha=0.3)
+
+    m2.drawparallels(np.arange(-90., 91., 5.))
+    m2.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Electron Collision Frequency' + title)
+
+    divider = make_axes_locatable(ax2)
+    cax2 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    cbar = plt.colorbar(sc2, cax=cax2)
+    cbar.set_label(label='$(Hz)$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapll_conductivities_plot(pressure_level, night_shade):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lev = pressure_level
+
+    # Pedersen Conductivity
+    fig1 = plt.figure(figsize=(13, 13))
+    ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
+
+    m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m1.drawcoastlines()
+
+    sc1 = m1.imshow(pedersen_con[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m1.nightshade(map_time, alpha=0.3)
+
+    m1.drawparallels(np.arange(-90., 91., 5.))
+    m1.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Pedersen Conductivity' + title)
+
+    divider = make_axes_locatable(ax1)
+    cax1 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    cbar = plt.colorbar(sc1, cax=cax1)
+    cbar.set_label(label='$(S/m)$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Hall Conductivity
+    fig2 = plt.figure(figsize=(13, 13))
+    ax2 = fig2.add_subplot(1, 1, 1, aspect='equal')
+
+    m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m2.drawcoastlines()
+
+    sc2 = m2.imshow(hall_con[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m2.nightshade(map_time, alpha=0.3)
+
+    m2.drawparallels(np.arange(-90., 91., 5.))
+    m2.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Hall Conductivity' + title)
+
+    divider = make_axes_locatable(ax2)
+    cax2 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    cbar = plt.colorbar(sc2, cax=cax2)
+    cbar.set_label(label='$(S/m)$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Parallel Conductivity
+    fig3 = plt.figure(figsize=(13, 13))
+    ax3 = fig3.add_subplot(1, 1, 1, aspect='equal')
+
+    m3 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m3.drawcoastlines()
+
+    sc3 = m3.imshow(parallel_con[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m3.nightshade(map_time, alpha=0.3)
+
+    m3.drawparallels(np.arange(-90., 91., 5.))
+    m3.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Parallel Conductivity' + title)
+
+    divider = make_axes_locatable(ax3)
+    cax3 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    cbar = plt.colorbar(sc3, cax=cax3)
+    cbar.set_label(label='$(S/m)$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapll_currents_plot(pressure_level, night_shade):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lev = pressure_level
+
+    # Ohmic Current
+    fig1 = plt.figure(figsize=(13, 13))
+    ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
+
+    m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m1.drawcoastlines()
+
+    sc1 = m1.imshow(J_ohmic[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m1.nightshade(map_time, alpha=0.3)
+
+    m1.drawparallels(np.arange(-90., 91., 5.))
+    m1.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Ohmic Current' + title)
+
+    divider = make_axes_locatable(ax1)
+    cax1 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    cbar = plt.colorbar(sc1, cax=cax1)
+    cbar.set_label(label='$(A/m^{2})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Densities Current
+    fig2 = plt.figure(figsize=(13, 13))
+    ax2 = fig2.add_subplot(1, 1, 1, aspect='equal')
+
+    m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m2.drawcoastlines()
+
+    sc2 = m2.imshow(J_dens[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m2.nightshade(map_time, alpha=0.3)
+
+    m2.drawparallels(np.arange(-90., 91., 5.))
+    m2.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Densities Current' + title)
+
+    divider = make_axes_locatable(ax2)
+    cax2 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    cbar = plt.colorbar(sc2, cax=cax2)
+    cbar.set_label(label='$(A/m^{2})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapll_csection_plot(pressure_level, night_shade):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lev = pressure_level
+
+    fig1 = plt.figure(figsize=(13, 13))
+    ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
+
+    m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m1.drawcoastlines()
+
+    sc1 = m1.imshow(C_ion[:, :, lev], cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m1.nightshade(map_time, alpha=0.3)
+
+    m1.drawparallels(np.arange(-90., 91., 5.))
+    m1.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Average Ion Cross Section' + title)
+
+    divider = make_axes_locatable(ax1)
+    cax1 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    cbar = plt.colorbar(sc1, cax=cax1)
+    cbar.set_label(label='$(m^{2})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lev = pressure_level
+
+    # Joule Heating
+    fig1 = plt.figure(figsize=(13, 13))
+    ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
+
+    m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m1.drawcoastlines()
+
+    sc1 = m1.imshow(abs((Joule_Heating_noisy[:, :, lev] - Joule_Heating[:, :, lev]) / Joule_Heating[:, :, lev]), cmap=cm.batlow,
+                    interpolation='bicubic')
+
+    if night_shade:
+        m1.nightshade(map_time, alpha=0.3)
+
+    m1.drawparallels(np.arange(-90., 91., 5.))
+    m1.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Joule Heating Relative Error' + title)
+
+    divider = make_axes_locatable(ax1)
+    cax1 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    plt.colorbar(sc1, cax=cax1)
+
+    # Ohmic Heating
+    fig2 = plt.figure(figsize=(13, 13))
+    ax2 = fig2.add_subplot(1, 1, 1, aspect='equal')
+
+    m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m2.drawcoastlines()
+
+    sc2 = m2.imshow(abs((Ohmic_Heating_noisy[:, :, lev] - Ohmic_Heating[:, :, lev]) / Ohmic_Heating[:, :, lev]), cmap=cm.batlow,
+                    interpolation='bicubic')
+
+    if night_shade:
+        m2.nightshade(map_time, alpha=0.3)
+
+    m2.drawparallels(np.arange(-90., 91., 5.))
+    m2.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Ohmic Heating Relative Error' + title)
+
+    divider = make_axes_locatable(ax2)
+    cax2 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    plt.colorbar(sc2, cax=cax2)
+
+    # Frictional Heating
+    fig3 = plt.figure(figsize=(13, 13))
+    ax3 = fig3.add_subplot(1, 1, 1, aspect='equal')
+
+    m3 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m3.drawcoastlines()
+
+    sc3 = m3.imshow(abs((Frictional_Heating_noisy[:, :, lev] - Frictional_Heating[:, :, lev]) / Frictional_Heating[:, :, lev]), cmap=cm.batlow,
+                    interpolation='bicubic')
+
+    if night_shade:
+        m3.nightshade(map_time, alpha=0.3)
+
+    m3.drawparallels(np.arange(-90., 91., 5.))
+    m3.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Frictional Heating Relative Error' + title)
+
+    divider = make_axes_locatable(ax3)
+    cax3 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    plt.colorbar(sc3, cax=cax3)
+
+    plt.show()
+
+
+def mapll_collisions_rel_error_plot(pressure_level, night_shade):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lev = pressure_level
+
+    # Average Ion Collisions Relative Error
+    fig1 = plt.figure(figsize=(13, 13))
+    ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
+
+    m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m1.drawcoastlines()
+
+    sc1 = m1.imshow(abs((((nu_Op_sum_noisy[:, :, lev] + nu_O2p_sum_noisy[:, :, lev] + nu_NOp_sum_noisy[:, :, lev]) / 3) -
+                    ((nu_Op_sum[:, :, lev] + nu_O2p_sum[:, :, lev] + nu_NOp_sum[:, :, lev]) / 3)) /
+                    ((nu_Op_sum[:, :, lev] + nu_O2p_sum[:, :, lev] + nu_NOp_sum[:, :, lev]) / 3)),
+                    cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m1.nightshade(map_time, alpha=0.3)
+
+    m1.drawparallels(np.arange(-90., 91., 5.))
+    m1.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Average Ion Collision Frequency Relative Error' + title)
+
+    divider = make_axes_locatable(ax1)
+    cax1 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    plt.colorbar(sc1, cax=cax1)
+
+    # Electron Collision Frequency Relative Error
+    fig2 = plt.figure(figsize=(13, 13))
+    ax2 = fig2.add_subplot(1, 1, 1, aspect='equal')
+
+    m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m2.drawcoastlines()
+
+    sc2 = m2.imshow(abs((nu_e_sum_noisy[:, :, lev] - nu_e_sum[:, :, lev]) / nu_e_sum[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m2.nightshade(map_time, alpha=0.3)
+
+    m2.drawparallels(np.arange(-90., 91., 5.))
+    m2.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Electron Collision Frequency Relative Error' + title)
+
+    divider = make_axes_locatable(ax2)
+    cax2 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    plt.colorbar(sc2, cax=cax2)
+
+    plt.show()
+
+
+def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lev = pressure_level
+
+    # Pedersen Conductivity
+    fig1 = plt.figure(figsize=(13, 13))
+    ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
+
+    m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m1.drawcoastlines()
+
+    sc1 = m1.imshow(abs((pedersen_con_noisy[:, :, lev] - pedersen_con[:, :, lev]) / pedersen_con[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m1.nightshade(map_time, alpha=0.3)
+
+    m1.drawparallels(np.arange(-90., 91., 5.))
+    m1.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Pedersen Conductivity Relative Error' + title)
+
+    divider = make_axes_locatable(ax1)
+    cax1 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    plt.colorbar(sc1, cax=cax1)
+
+    # Hall Conductivity
+    fig2 = plt.figure(figsize=(13, 13))
+    ax2 = fig2.add_subplot(1, 1, 1, aspect='equal')
+
+    m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m2.drawcoastlines()
+
+    sc2 = m2.imshow(abs((hall_con_noisy[:, :, lev] - hall_con[:, :, lev]) / hall_con[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m2.nightshade(map_time, alpha=0.3)
+
+    m2.drawparallels(np.arange(-90., 91., 5.))
+    m2.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Hall Conductivity Relative Error' + title)
+
+    divider = make_axes_locatable(ax2)
+    cax2 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    plt.colorbar(sc2, cax=cax2)
+
+    # Parallel Conductivity
+    fig3 = plt.figure(figsize=(13, 13))
+    ax3 = fig3.add_subplot(1, 1, 1, aspect='equal')
+
+    m3 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m3.drawcoastlines()
+
+    sc3 = m3.imshow(abs((parallel_con_noisy[:, :, lev] - parallel_con[:, :, lev]) / parallel_con[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m3.nightshade(map_time, alpha=0.3)
+
+    m3.drawparallels(np.arange(-90., 91., 5.))
+    m3.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Parallel Conductivity Relative Error' + title)
+
+    divider = make_axes_locatable(ax3)
+    cax3 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    plt.colorbar(sc3, cax=cax3)
+
+    plt.show()
+
+
+def mapll_currents_rel_error_plot(pressure_level, night_shade):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lev = pressure_level
+
+    # Ohmic Current
+    fig1 = plt.figure(figsize=(13, 13))
+    ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
+
+    m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m1.drawcoastlines()
+
+    sc1 = m1.imshow(abs((J_ohmic_noisy[:, :, lev] - J_ohmic[:, :, lev]) / J_ohmic[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m1.nightshade(map_time, alpha=0.3)
+
+    m1.drawparallels(np.arange(-90., 91., 5.))
+    m1.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Ohmic Current Relative Error' + title)
+
+    divider = make_axes_locatable(ax1)
+    cax1 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    plt.colorbar(sc1, cax=cax1)
+
+    # Densities Current
+    fig2 = plt.figure(figsize=(13, 13))
+    ax2 = fig2.add_subplot(1, 1, 1, aspect='equal')
+
+    m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m2.drawcoastlines()
+
+    sc2 = m2.imshow(abs((J_dens_noisy[:, :, lev] - J_dens[:, :, lev]) / J_dens[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m2.nightshade(map_time, alpha=0.3)
+
+    m2.drawparallels(np.arange(-90., 91., 5.))
+    m2.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Densities Current Relative Error' + title)
+
+    divider = make_axes_locatable(ax2)
+    cax2 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    plt.colorbar(sc2, cax=cax2)
+
+    plt.show()
+
+
+def mapll_csection_rel_error_plot(pressure_level, night_shade):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lev = pressure_level
+
+    fig1 = plt.figure(figsize=(13, 13))
+    ax1 = fig1.add_subplot(1, 1, 1, aspect='equal')
+
+    m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
+    m1.drawcoastlines()
+
+    sc1 = m1.imshow(abs((C_ion_noisy[:, :, lev] - C_ion[:, :, lev]) / C_ion[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+
+    if night_shade:
+        m1.nightshade(map_time, alpha=0.3)
+
+    m1.drawparallels(np.arange(-90., 91., 5.))
+    m1.drawmeridians(np.arange(-180., 181., 10.))
+
+    plt.xticks(np.arange(-180., 181., 60.))
+    plt.yticks(np.arange(-90., 91., 30.))
+    plt.xlabel('$Longitude \ (deg)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Average Ion Cross Section Relative Error' + title)
+
+    divider = make_axes_locatable(ax1)
+    cax1 = divider.append_axes("right", size="5%", pad=0.2, aspect=15)
+    plt.colorbar(sc1, cax=cax1)
+
+    plt.show()
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF LATITUDE-LONGITUDE MAP PROFILE PLOTS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ LATITUDE-ALTITUDE PROFILE PLOTS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+def mapla_heating_rates_plot(lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    # Joule Heating
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], Joule_Heating[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Joule Heating' + title)
+    cbar = plt.colorbar(cp1)
+    cbar.set_label(label='$(W/m^{3})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Ohmic Heating
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], Ohmic_Heating[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Ohmic Heating' + title)
+    cbar = plt.colorbar(cp2)
+    cbar.set_label(label='$(W/m^{3})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Frictional Heating
+    plt.figure(figsize=(12, 12))
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], Frictional_Heating[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Frictional Heating' + title)
+    cbar = plt.colorbar(cp3)
+    cbar.set_label(label='$(W/m^{3})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapla_collisions_plot(lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    # Ion Average Collision Frequency
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], (nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3,
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Average Ion Collision Frequency' + title)
+    cbar = plt.colorbar(cp1)
+    cbar.set_label(label='$(Hz)$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Electron Collision Frequency
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], nu_e_sum[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Electron Collision Frequency' + title)
+    cbar = plt.colorbar(cp2)
+    cbar.set_label(label='$(Hz)$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapla_conductivities_plot(lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    # Pedersen
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], pedersen_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Pedersen Conductivity' + title)
+    cbar = plt.colorbar(cp1)
+    cbar.set_label(label='$(S/m)$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Hall Conductivity
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], hall_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Hall Conductivity' + title)
+    cbar = plt.colorbar(cp2)
+    cbar.set_label(label='$(S/m)$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Parallel Conductivity
+    plt.figure(figsize=(12, 12))
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], parallel_con[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+    plt.title('Parallel Conductivity' + title)
+    cbar = plt.colorbar(cp3)
+    cbar.set_label(label='$(S/m)$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapla_currents_plot(lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    # Ohmic Current
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], J_ohmic[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Ohmic Current' + title)
+    cbar = plt.colorbar(cp1)
+    cbar.set_label(label='$(A/m^{2})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Densities Current
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], J_dens[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Densities Current' + title)
+    cbar = plt.colorbar(cp2)
+    cbar.set_label(label='$(A/m^{2})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapla_cross_section_plot(lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    # Average Ion Cross Section
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], C_ion[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Average Ion Cross Section' + title)
+    cbar = plt.colorbar(cp1)
+    cbar.set_label(label='$(m^{2})$', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    # Joule Heating
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((Joule_Heating_noisy[:, lon, :-1] - Joule_Heating[:, lon, :-1]) / Joule_Heating[:, lon, :-1]),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Joule Heating Relative Error' + title)
+    cbar = plt.colorbar(cp1)
+    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Ohmic Heating
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((Ohmic_Heating_noisy[:, lon, :-1] - Ohmic_Heating[:, lon, :-1]) / Ohmic_Heating[:, lon, :-1]),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Ohmic Heating Relative Error' + title)
+    cbar = plt.colorbar(cp2)
+    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Frictional Heating
+    plt.figure(figsize=(12, 12))
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], abs((Frictional_Heating_noisy[:, lon, :-1] - Frictional_Heating[:, lon, :-1]) /
+                                                        Frictional_Heating[:, lon, :-1]),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Frictional Heating Relative Error' + title)
+    cbar = plt.colorbar(cp3)
+    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapla_collisions_rel_error_plot(lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    # Ion Average Collision Frequency
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((((nu_Op_sum_noisy[:, lon, :-1] + nu_O2p_sum_noisy[:, lon, :-1] +
+                                                           nu_NOp_sum_noisy[:, lon, :-1]) / 3) - ((nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] +
+                                                                                                   nu_NOp_sum[:, lon, :-1]) / 3)) /
+                                                           ((nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3)),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Average Ion Collision Frequency Relative Error' + title)
+    cbar = plt.colorbar(cp1)
+    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Electron Collision Frequency
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((nu_e_sum_noisy[:, lon, :-1] - nu_e_sum[:, lon, :-1]) / nu_e_sum[:, lon, :-1]),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Electron Collision Frequency Relative Error' + title)
+    cbar = plt.colorbar(cp2)
+    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    # Pedersen
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((pedersen_con_noisy[:, lon, :-1] - pedersen_con[:, lon, :-1]) / pedersen_con[:, lon, :-1]),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Pedersen Conductivity Relative Error' + title)
+    cbar = plt.colorbar(cp1)
+    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Hall Conductivity
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((hall_con_noisy[:, lon, :-1] - hall_con[:, lon, :-1]) / hall_con[:, lon, :-1]),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Hall Conductivity Relative Error' + title)
+    cbar = plt.colorbar(cp2)
+    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Parallel Conductivity
+    plt.figure(figsize=(12, 12))
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], abs((parallel_con_noisy[:, lon, :-1] - parallel_con[:, lon, :-1]) / parallel_con[:, lon, :-1]),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Parallel Conductivity Relative Error' + title)
+    cbar = plt.colorbar(cp3)
+    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    # Ohmic Current
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((J_ohmic_noisy[:, lon, :-1] - J_ohmic[:, lon, :-1]) / J_ohmic[:, lon, :-1]),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Ohmic Current Relative Error' + title)
+    cbar = plt.colorbar(cp1)
+    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
+
+    # Densities Current
+    plt.figure(figsize=(12, 12))
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((J_dens_noisy[:, lon, :-1] - J_dens[:, lon, :-1]) / J_dens[:, lon, :-1]),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Densities Current Relative Error' + title)
+    cbar = plt.colorbar(cp2)
+    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+def mapla_cross_section_rel_error_plot(lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    # Average Ion Cross Section
+    plt.figure(figsize=(12, 12))
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((C_ion_noisy[:, lon, :-1] - C_ion[:, lon, :-1]) / C_ion[:, lon, :-1]),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    plt.xlim(min_alt, max_alt)
+    plt.xlabel('~$Altitude \ (km)$')
+    plt.ylabel('$Latitude \ (deg)$')
+
+    plt.title('Average Ion Cross Section Relative Error' + title)
+    cbar = plt.colorbar(cp1)
+    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
+
+    plt.show()
+
+
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GUI CREATION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 def gui():
     # function used to define buttons in gui
     def button(name, tooltip):
@@ -1802,7 +3088,7 @@ def gui():
             Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
              parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], \
              C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
-                calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
+             calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
                                    Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
                                    Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
             prod_calculated = True
@@ -1821,8 +3107,14 @@ def gui():
             user_time = values["-TIME_map-"]
             user_lev = values["-Pr_level-"]
             models_input(file_name=user_file_name, timer=user_time, pressure_level=user_lev)
+            Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
+             parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], \
+             C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
+             calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
+                                   Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
+                                   Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, pressure_level=user_lev)
             prod_calculated = True
-            if values["-TABGROUP1-"]=="Map Profile (Lat-Lon) Plots":
+            if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
                 user_lev = values["-Pr_level-"]
                 night_shade = False
                 if values["-NIGHT-"]:
@@ -1837,14 +3129,20 @@ def gui():
                     mapll_currents_plot(pressure_level=user_lev, night_shade=night_shade)
                 if values["-CR_mapll-"]:
                     mapll_csection_plot(pressure_level=user_lev, night_shade=night_shade)
-        if event=="Calculate Products" and values["-TABGROUP-"]=="Map Profile (Lat-Alt)":
+        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
             user_lon = values["-Lon_map2-"]
             user_time = values["-TIME_map2-"]
             min_alt_la = values["-min_alt_la-"]
             max_alt_la = values["-max_alt_la-"]
             models_input(file_name=user_file_name, timer=user_time, lon_value=lon_dictionary[user_lon])
+            Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
+             parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], \
+             C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
+             calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
+                                   Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
+                                   Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lon_value=lon_dictionary[user_lon])
             prod_calculated = True
-            if values["-TABGROUP1-"]=="Map Profile (Lat-Alt) Plots":
+            if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
                 if values["-HR_mapla-"]:
                     mapla_heating_rates_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
                 if values["-COL_mapla-"]:
@@ -1859,12 +3157,12 @@ def gui():
             if prod_calculated:
                 user_lat = values["-LAT-"]
                 user_lon = values["-LON-"]
-                calculate_noise(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                calculate_noise_2(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
                 Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
                  hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :],\
                  nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
                  J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
-                    calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
+                 calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
                                        Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
                                        Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
                                        NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
@@ -1900,41 +3198,67 @@ def gui():
                     if values["-CR_rel-"]:
                         plot_csections_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                                  max_alt=max_alt)
-        if event=="Calculate Error" and values["-TABGROUP-"]=="Map Profile (Lat-Lon)":
+            else:
+                Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
+        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
             user_lev = values["-Pr_level-"]
-            if values["-TABGROUP1-"]=="Map Profile (Lat-Lon) Plots":
-                user_lev = values["-Pr_level-"]
-                night_shade = False
-                if values["-NIGHT-"]:
-                    night_shade = True
-                if values["-HR_mapll_error-"]:
-                    mapll_heating_rates_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-COL_mapll_error-"]:
-                    mapll_collisions_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CON_mapll_error-"]:
-                    mapll_conductivities_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CUR_mapll_error-"]:
-                    mapll_currents_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CR_mapll_error-"]:
-                    mapll_csection_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-        if event=="Calculate Error" and values["-TABGROUP-"]=="Map Profile (Lat-Alt)":
+            if prod_calculated:
+                calculate_noise_2(pressure_level=user_lev)
+                Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
+                 hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :], \
+                 nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
+                 J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
+                 calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
+                                       Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
+                                       Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
+                                       NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
+                                       pressure_level=user_lev)
+                if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
+                    user_lev = values["-Pr_level-"]
+                    night_shade = False
+                    if values["-NIGHT-"]:
+                        night_shade = True
+                    if values["-HR_mapll_error-"]:
+                        mapll_heating_rates_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-COL_mapll_error-"]:
+                        mapll_collisions_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CON_mapll_error-"]:
+                        mapll_conductivities_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CUR_mapll_error-"]:
+                        mapll_currents_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CR_mapll_error-"]:
+                        mapll_csection_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+            else:
+                Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
+        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
             user_lon = values["-Lon_map2-"]
             min_alt_la = values["-min_alt_la-"]
             max_alt_la = values["-max_alt_la-"]
-            if values["-TABGROUP1-"]=="Map Profile (Lat-Alt) Plots":
-                if values["-HR_mapla_error-"]:
-                    mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-COL_mapla_error-"]:
-                    mapla_collisions_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CON_mapla_error-"]:
-                    mapla_conductivities_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CUR_mapla_error-"]:
-                    mapla_currents_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CR_mapla_error-"]:
-                    mapla_cross_section_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+            if prod_calculated:
+                calculate_noise_2(lon_value=lon_dictionary[user_lon])
+                Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
+                 hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :], \
+                 nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
+                 J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
+                 calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
+                                       Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
+                                       Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
+                                       NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
+                                       lon_value=lon_dictionary[user_lon])
+                if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
+                    if values["-HR_mapla_error-"]:
+                        mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-COL_mapla_error-"]:
+                        mapla_collisions_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CON_mapla_error-"]:
+                        mapla_conductivities_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CUR_mapla_error-"]:
+                        mapla_currents_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CR_mapla_error-"]:
+                        mapla_cross_section_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
             else:
                 Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
-        if event=="Help":
+        if event == "Help":
             Sg.popup(help_text, title="Help", keep_on_top=True)
     # ######################### Close Window #########################
     window.close()

@@ -190,6 +190,13 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
 
     print('Getting data from models........')
 
+    # Create loading bar
+    layout = [[Sg.Text('Getting data from models........')], [Sg.ProgressBar(210, orientation='h', size=(50, 20), key='progressbar')]]
+
+    window = Sg.Window('Progress', keep_on_top=True).Layout(layout)
+    progress_bar = window.FindElement('progressbar')
+    event, values = window.Read(timeout=1)
+
     global glat_in
     global glon_in
     global glev_in
@@ -206,17 +213,20 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
     zgmid_in = tiegcm.variables['ZGMID'][:]  # geometric height at midpoints
     glat_in = tiegcm.variables['lat'][:]     # geographic latitude in deg(earth as perfect sphere)
     glon_in = tiegcm.variables['lon'][:]     # geographic longitude in deg(earth as perfect sphere)
+    progress_bar.UpdateBar(0, 30)
     glev_in = tiegcm.variables['lev'][:]     # midpoint levels
     time_in = tiegcm.variables['time'][:]    # minutes since 2015-1-1 0:0:0
     O_in = tiegcm.variables['O_CM3'][:]      # atomic oxygen density (neutral) in cm^(-3)
     O2_in = tiegcm.variables['O2_CM3'][:]    # molecular oxygen density (neutral) in cm^(-3)
     N2_in = tiegcm.variables['N2_CM3'][:]    # molecular nitrogen density (neutral) in cm^(-3)
+    progress_bar.UpdateBar(30, 80)
     Op_in = tiegcm.variables['OP'][:]        # atomic oxygen density (ion) in cm^(-3)
     O2p_in = tiegcm.variables['O2P'][:]      # molecular oxygen density (ion) in cm^(-3)
     NOp_in = tiegcm.variables['NOP_LAM'][:]  # nitric oxide density (ion) in cm^(-3)
     Te_in = tiegcm.variables['TE'][:]        # electron temperature in kelvin
     Tn_in = tiegcm.variables['TN'][:]        # neutral temperature in kelvin
     Ti_in = tiegcm.variables['TI'][:]        # ion temperature in kelvin
+    progress_bar.UpdateBar(80, 140)
     Un_north_in = tiegcm.variables['VN_si'][:]  # neutral meridional wind (+north) in m/sec
     Un_east_in = tiegcm.variables['UN_si'][:]   # neutral zonal wind (+east) in m/sec
     Un_up_in = tiegcm.variables['WN_si'][:]     # neutral vertical wind (+up) in m/sec
@@ -224,7 +234,7 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
     Ee_in = tiegcm.variables['EEX_si'][:]  # electric field (+east) in V/m
     En_in = tiegcm.variables['EEY_si'][:]  # electric field (+north) in V/m
     Eu_in = tiegcm.variables['EEZ_si'][:]  # electric field (+up) in V/m
-
+    progress_bar.UpdateBar(140, 180)
     # Close TIE-GCM file
     tiegcm.close()
 
@@ -450,6 +460,10 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
                 Vi_verty[lat, lon, lev] = (Vi_Op_y + Vi_O2p_y + Vi_NOp_y) / 3
                 Vi_vertz[lat, lon, lev] = (Vi_Op_z + Vi_O2p_z + Vi_NOp_z) / 3
 
+    progress_bar.UpdateBar(180, 210)
+    time.sleep(3)
+    window.close()
+    Sg.popup("_" * 40, "Data imported in : " + str(time.time() - start_time) + " sec!", "_" * 40, title="Finished", keep_on_top=True)
     print('Data imported in: ', str(time.time() - start_time), ' sec!')
     print(' ')
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF INPUT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -464,7 +478,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
     lon = lon_value
     lev = pressure_level
     
-    snr = 45
+    snr = 60
 
     # Vertical profile case
     if lat != -1 and lon != -1:
@@ -482,7 +496,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Bz[lat, lon, :].shape)
         Bz_noisy[lat, lon, :] = Bz[lat, lon, :] + noise
-    
+
         rms_data = np.sqrt(np.mean(Ex[lat, lon, :] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ex[lat, lon, :].shape)
@@ -512,7 +526,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Unz[lat, lon, :].shape)
         Unz_noisy[lat, lon, :] = Unz[lat, lon, :] + noise
-    
+
         rms_data = np.sqrt(np.mean(Vi_vertx[lat, lon, :] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Vi_vertx[lat, lon, :].shape)
@@ -527,7 +541,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Vi_vertz[lat, lon, :].shape)
         Vi_vertz_noisy[lat, lon, :] = Vi_vertz[lat, lon, :] + noise
-    
+
         rms_data = np.sqrt(np.mean(NOp[lat, lon, :] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NOp[lat, lon, :].shape)
@@ -542,7 +556,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NNOp[lat, lon, :].shape)
         NNOp_noisy[lat, lon, :] = NNOp[lat, lon, :] + noise
-    
+
         rms_data = np.sqrt(np.mean(NO[lat, lon, :] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NO[lat, lon, :].shape)
@@ -557,7 +571,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NN2[lat, lon, :].shape)
         NN2_noisy[lat, lon, :] = NN2[lat, lon, :] + noise
-    
+
         rms_data = np.sqrt(np.mean(Ne[lat, lon, :] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ne[lat, lon, :].shape)
@@ -567,7 +581,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ti[lat, lon, :].shape)
         Ti_noisy[lat, lon, :] = Ti[lat, lon, :] + noise
-    
+
         rms_data = np.sqrt(np.mean(Tn[lat, lon, :] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Tn[lat, lon, :].shape)
@@ -577,7 +591,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Te[lat, lon, :].shape)
         Te_noisy[lat, lon, :] = Te[lat, lon, :] + noise
-        
+
     # Latitude - Longitude map profile case
     if lat == -1 and lon == -1:
         rms_data = np.sqrt(np.mean(Bx[:, :, lev] ** 2))
@@ -594,7 +608,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Bz[:, :, lev].shape)
         Bz_noisy[:, :, lev] = Bz[:, :, lev] + noise
-    
+
         rms_data = np.sqrt(np.mean(Ex[:, :, lev] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ex[:, :, lev].shape)
@@ -624,7 +638,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Unz[:, :, lev].shape)
         Unz_noisy[:, :, lev] = Unz[:, :, lev] + noise
-    
+
         rms_data = np.sqrt(np.mean(Vi_vertx[:, :, lev] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Vi_vertx[:, :, lev].shape)
@@ -639,7 +653,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Vi_vertz[:, :, lev].shape)
         Vi_vertz_noisy[:, :, lev] = Vi_vertz[:, :, lev] + noise
-    
+
         rms_data = np.sqrt(np.mean(NOp[:, :, lev] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NOp[:, :, lev].shape)
@@ -654,7 +668,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NNOp[:, :, lev].shape)
         NNOp_noisy[:, :, lev] = NNOp[:, :, lev] + noise
-    
+
         rms_data = np.sqrt(np.mean(NO[:, :, lev] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NO[:, :, lev].shape)
@@ -669,7 +683,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NN2[:, :, lev].shape)
         NN2_noisy[:, :, lev] = NN2[:, :, lev] + noise
-    
+
         rms_data = np.sqrt(np.mean(Ne[:, :, lev] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ne[:, :, lev].shape)
@@ -679,7 +693,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ti[:, :, lev].shape)
         Ti_noisy[:, :, lev] = Ti[:, :, lev] + noise
-    
+
         rms_data = np.sqrt(np.mean(Tn[:, :, lev] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Tn[:, :, lev].shape)
@@ -689,8 +703,8 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Te[:, :, lev].shape)
         Te_noisy[:, :, lev] = Te[:, :, lev] + noise
-        
-        # Latitude Altitude map profile case
+
+    # Latitude Altitude map profile case
     if lat == -1 and lev == -1:
         rms_data = np.sqrt(np.mean(Bx[:, lon, :] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
@@ -802,6 +816,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         noise = np.random.normal(0, rms_noise, Te[:, lon, :].shape)
         Te_noisy[:, lon, :] = Te[:, lon, :] + noise
 
+    Sg.popup("_" * 50, "Noise calculated in : " + str(time.time() - start_time) + " sec!", "_" * 50, title="Finished", keep_on_top=True)
     print('Calculated Noise in: ', time.time() - start_time, ' sec !')
     print(" ")
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF AWGN FUNCTION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -823,6 +838,7 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
     lev_start = 0
     lat_start = 0
     lon_start = 0
+    max_bar = 0
 
     # Lat - Alt map profile
     if lat_value == -1 and pressure_level == -1:
@@ -830,6 +846,7 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
         lat_range = len(glat_in)
         lon_start = lon_value
         lon_range = lon_start + 1
+        max_bar = lev_range
 
     # Lat - Lon map profile
     if lat_value == -1 and lon_value == -1:
@@ -837,6 +854,7 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
         lev_range = lev_start + 1
         lat_range = len(glat_in)
         lon_range = len(glon_in)
+        max_bar = lat_range
 
     # Vertical profile
     if lat_value != -1 and lon_value != -1:
@@ -845,6 +863,14 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
         lat_range = lat_start + 1
         lon_range = lon_start + 1
         lev_range = len(glev_in) - 1
+        max_bar = lev_range
+
+    # Create loading bar
+    layout = [[Sg.Text('Calculating Noise.....')], [Sg.ProgressBar(max_bar, orientation='h', size=(50, 20), key='progressbar')]]
+
+    window = Sg.Window(title=title, keep_on_top=True).Layout(layout)
+    progress_bar = window.FindElement('progressbar')
+    event, values = window.Read(timeout=1)
 
     # Assigning Accuracies
     # Magnetic field (in tesla)
@@ -886,6 +912,12 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
     for lev in range(lev_start, lev_range):
         for lat in range(lat_start, lat_range):
             for lon in range(lon_start, lon_range):
+                # progress bar index
+                if max_bar == lev_range:
+                    i = lev
+                else:
+                    i = lat
+
                 # Magnetic field
                 noise = np.random.normal(0, Bx_ac)
                 Bx_noisy[lat, lon, lev] = Bx[lat, lon, lev] + noise
@@ -943,7 +975,11 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
                 Vi_verty_noisy[lat, lon, lev] = Vi_verty[lat, lon, lev] + noise
                 noise = np.random.normal(0, Viz_ac)
                 Vi_vertz_noisy[lat, lon, lev] = Vi_vertz[lat, lon, lev] + noise
+                progress_bar.UpdateBar(i)
 
+    time.sleep(3)
+    window.close()
+    Sg.popup("_" * 50, "Noise calculated in : " + str(time.time() - start_time) + " sec!", "_" * 50, title="Finished", keep_on_top=True)
     print('Calculated Noise in: ', time.time() - start_time, ' sec !')
     print(" ")
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Noise Calculation End $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -996,6 +1032,7 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
     lev_start = 0
     lat_start = 0
     lon_start = 0
+    max_bar = 0
 
     # Lat - Alt map profile
     if lat_value == -1 and pressure_level == -1:
@@ -1003,6 +1040,7 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
         lat_range = len(glat_in)
         lon_start = lon_value
         lon_range = lon_start + 1
+        max_bar = lev_range
 
     # Lat - Lon map profile
     if lat_value == -1 and lon_value == -1:
@@ -1010,6 +1048,7 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
         lev_range = lev_start + 1
         lat_range = len(glat_in)
         lon_range = len(glon_in)
+        max_bar = lat_range
 
     # Vertical profile
     if lat_value != -1 and lon_value != -1:
@@ -1018,10 +1057,23 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
         lat_range = lat_start + 1
         lon_range = lon_start + 1
         lev_range = len(glev_in) - 1
+        max_bar = lev_range
+
+    # Create loading bar
+    layout = [[Sg.Text('Calculating Products.....')], [Sg.ProgressBar(max_bar, orientation='h', size=(50, 20), key='progressbar')]]
+
+    window = Sg.Window(title=title, keep_on_top=True).Layout(layout)
+    progress_bar = window.FindElement('progressbar')
+    event, values = window.Read(timeout=1)
 
     for lev in range(lev_start, lev_range):
         for lat in range(lat_start, lat_range):
             for lon in range(lon_start, lon_range):
+                # progress bar index
+                if max_bar == lev_range:
+                    i = lev
+                else:
+                    i = lat
                 # ########################## COLLISION FREQUENCIES ##########################
                 # nu-Op = nu(Op-N2) + nu(Op-O2) + nu(Op-O) (in Hz)
                 # densities in cm^(-3)
@@ -1245,6 +1297,11 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
                 J_denz = qe * (Ne_in[lat, lon, lev] * ccm) * (Vi_vert[2] - Ve_vert[2])
                 J_dens_temp[lat, lon, lev] = np.sqrt(J_denx ** 2 + J_deny ** 2 + J_denz ** 2)
 
+                progress_bar.UpdateBar(i)
+
+    time.sleep(3)
+    window.close()
+    Sg.popup("_" * 50, "Products calculated in : " + str(time.time() - start_time) + " sec!", "_" * 50, title="Finished", keep_on_top=True)
     print('Products calculated in: ', time.time() - start_time, ' sec!')
     print(' ')
 
@@ -1253,6 +1310,155 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
            J_ohmic_temp, J_dens_temp
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF PRODUCTS CALCULATION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+def plot_data_2(lat_value, lon_value, min_alt, max_alt):
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(x=NOp_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO(+) + noise", mode='lines',
+        line=dict(shape='spline', color='orange')))
+    fig.add_trace(go.Scatter(x=NO2p_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO2(+) + noise", mode='lines',
+        line=dict(shape='spline', color='orange', dash="dot")))
+    fig.add_trace(go.Scatter(x=NNOp_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NNO(+) + noise", mode='lines',
+        line=dict(shape='spline', color='orange', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=NOp[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO(+)", mode='lines',
+        line=dict(shape='spline', color='black')))
+    fig.add_trace(go.Scatter(x=NO2p[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO2(+)", mode='lines',
+        line=dict(shape='spline', color='black', dash="dot")))
+    fig.add_trace(go.Scatter(x=NNOp[lat, lon, :-1], y=heights[lat, lon, :-1], name="NNO(+)", mode='lines',
+        line=dict(shape='spline', color='black', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=NO_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO + noise", mode='lines',
+        line=dict(shape='spline', color='black')))
+    fig.add_trace(go.Scatter(x=NO2_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO2 + noise", mode='lines',
+        line=dict(shape='spline', color='black', dash="dot")))
+    fig.add_trace(go.Scatter(x=NN2_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NN2 + noise", mode='lines',
+        line=dict(shape='spline', color='black', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=NO[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO", mode='lines',
+        line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=NO2[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO2", mode='lines',
+        line=dict(shape='spline', color='red', dash="dot")))
+    fig.add_trace(go.Scatter(x=NN2[lat, lon, :-1], y=heights[lat, lon, :-1], name="NN2", mode='lines',
+        line=dict(shape='spline', color='red', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=Ne_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ne + noise", mode='lines',
+        line=dict(shape='spline', color='purple')))
+    fig.add_trace(go.Scatter(x=Ne[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ne", mode='lines',
+        line=dict(shape='spline', color='yellow')))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+        tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)),
+        xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+        title={'text': 'Data With Noise' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
+
+
+def plot_data(lat_value, lon_value, min_alt, max_alt):
+    lat = lat_value
+    lon = lon_value
+    min_alt = min_alt
+    max_alt = max_alt
+
+    fig = go.Figure()
+
+    # adding the various plots
+    fig.add_trace(go.Scatter(x=Bx_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Bx + noise", mode='lines',
+                             line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=By_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="By + noise", mode='lines',
+                             line=dict(shape='spline', color='red', dash="dot")))
+    fig.add_trace(go.Scatter(x=Bz_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Bz + noise", mode='lines',
+                             line=dict(shape='spline', color='red', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=Bx[lat, lon, :-1], y=heights[lat, lon, :-1], name="Bx", mode='lines',
+        line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=By[lat, lon, :-1], y=heights[lat, lon, :-1], name="By", mode='lines',
+        line=dict(shape='spline', color='blue', dash="dot")))
+    fig.add_trace(go.Scatter(x=Bz[lat, lon, :-1], y=heights[lat, lon, :-1], name="Bz", mode='lines',
+        line=dict(shape='spline', color='blue', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=Ex_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ex + noise", mode='lines',
+                             line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=Ey_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ey + noise", mode='lines',
+                             line=dict(shape='spline', color='blue', dash="dot")))
+    fig.add_trace(go.Scatter(x=Ez_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ez + noise", mode='lines',
+                             line=dict(shape='spline', color='blue', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=Ex[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ex", mode='lines',
+        line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=Ey[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ey", mode='lines',
+        line=dict(shape='spline', color='red', dash="dot")))
+    fig.add_trace(go.Scatter(x=Ez[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ez", mode='lines',
+        line=dict(shape='spline', color='red', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=Unx_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Unx + noise", mode='lines',
+                             line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=Uny_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Uny + noise", mode='lines',
+                             line=dict(shape='spline', color='green', dash="dot")))
+    fig.add_trace(go.Scatter(x=Unz_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Unz + noise", mode='lines',
+                             line=dict(shape='spline', color='green', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=Unx[lat, lon, :-1], y=heights[lat, lon, :-1], name="Unx", mode='lines',
+        line=dict(shape='spline', color='purple')))
+    fig.add_trace(go.Scatter(x=Uny[lat, lon, :-1], y=heights[lat, lon, :-1], name="Uny", mode='lines',
+        line=dict(shape='spline', color='purple', dash="dot")))
+    fig.add_trace(go.Scatter(x=Unz[lat, lon, :-1], y=heights[lat, lon, :-1], name="Unz", mode='lines',
+        line=dict(shape='spline', color='purple', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=Vi_vertx_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Vix + noise", mode='lines',
+                             line=dict(shape='spline', color='yellow')))
+    fig.add_trace(go.Scatter(x=Vi_verty_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Viy + noise", mode='lines',
+                             line=dict(shape='spline', color='yellow', dash="dot")))
+    fig.add_trace(go.Scatter(x=Vi_vertz_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Viz + noise", mode='lines',
+                             line=dict(shape='spline', color='yellow', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=Vi_vertx[lat, lon, :-1], y=heights[lat, lon, :-1], name="Vix", mode='lines',
+        line=dict(shape='spline', color='brown')))
+    fig.add_trace(go.Scatter(x=Vi_verty[lat, lon, :-1], y=heights[lat, lon, :-1], name="Viy", mode='lines',
+        line=dict(shape='spline', color='brown', dash="dot")))
+    fig.add_trace(go.Scatter(x=Vi_vertz[lat, lon, :-1], y=heights[lat, lon, :-1], name="Viz", mode='lines',
+        line=dict(shape='spline', color='brown', dash="dash")))
+
+
+    fig.add_trace(go.Scatter(x=Ti_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ti + noise", mode='lines',
+                             line=dict(shape='spline', color='brown')))
+    fig.add_trace(go.Scatter(x=Tn_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Tn + noise", mode='lines',
+                             line=dict(shape='spline', color='brown', dash="dot")))
+    fig.add_trace(go.Scatter(x=Te_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Te + noise", mode='lines',
+                             line=dict(shape='spline', color='brown', dash="dash")))
+
+    fig.add_trace(go.Scatter(x=Ti[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ti", mode='lines',
+        line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=Tn[lat, lon, :-1], y=heights[lat, lon, :-1], name="Tn", mode='lines',
+        line=dict(shape='spline', color='blue', dash="dot")))
+    fig.add_trace(go.Scatter(x=Te[lat, lon, :-1], y=heights[lat, lon, :-1], name="Te", mode='lines',
+        line=dict(shape='spline', color='blue', dash="dash")))
+
+    # updating the layout of the figure
+    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)),
+                      xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Data With Noise' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+
+    fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='black', mirror=True)
+
+    fig.show()
 
 
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ VERTICAL PROFILE PLOTS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -3170,6 +3376,10 @@ def gui():
                 if values["-TABGROUP1-"] == "Vertical Profile Plots":
                     min_alt = values["-min_alt-"]
                     max_alt = values["-max_alt-"]
+                    plot_data(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                              max_alt=max_alt)
+                    plot_data_2(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                max_alt=max_alt)
                     if values["-COL_abs-"]:
                         plot_collisions_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                               max_alt=max_alt)

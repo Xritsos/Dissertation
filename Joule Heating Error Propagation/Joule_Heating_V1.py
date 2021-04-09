@@ -410,6 +410,7 @@ def products(lat_value=-1, lon_value=-1, pressure_level=-1):
     print('Calculating Products.....')
     print(' ')
     print(title)
+
     # distinguish Map from Vertical profile
     lev_range = 0
     lat_range = 0
@@ -4199,12 +4200,13 @@ def gui():
     # ################################################# Create Window ##################################################
     window = Sg.Window("Joule Heating Error Propagation GUI", main_layout, element_justification="c", keep_on_top=False)
     prod_calculated = False
-    help_text = "----------------------- FILE SELECTION ----------------- \n" \
+    help_text = "----------------------- FILE SELECTION ---------------- \n" \
                 "From the main Menu use dropdown menu to select \n a TIEGCM-file." \
                 "\n" \
                 "\n" \
-                "--------------------- ERRORS ------------------------- \n" \
-                "Either choose the errors as percentage or click the \n button Real Error." \
+                "------------------------ ERRORS ------------------------- \n" \
+                "Either choose the errors as percentage or click the \n \"Science study errors\"." \
+                " If \" Science study errors \" is ticked, percentage errors are disabled automatically." \
                 "\n" \
                 "\n" \
                 "----------------------- PROFILES -------------------------- \n" \
@@ -4233,7 +4235,7 @@ def gui():
                 " process make sure the \"Choose Profile\" tab \n" \
                 " and \"Choose Plots\" tab match before pressing the \n" \
                 " calculate buttons.\n" \
-                "The nightshade option greys out the areas of the \n " \
+                " The nightshade option greys out the areas of the \n " \
                 "map that are in night time. \n" \
                 "\n " \
                 "-------------------- EXIT ------------------\n" \

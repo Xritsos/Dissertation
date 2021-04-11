@@ -472,13 +472,14 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
 
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ AWGN FUNCTION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
+def calculate_noise_awgn(SNR, lat_value=-1, lon_value=-1, pressure_level=-1):
     start_time = time.time()
     lat = lat_value
     lon = lon_value
     lev = pressure_level
     
-    snr = 60
+    snr = SNR
+    print("SNR = ", snr)
 
     # Vertical profile case
     if lat != -1 and lon != -1:
@@ -486,7 +487,7 @@ def calculate_noise_2(lat_value=-1, lon_value=-1, pressure_level=-1):
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Bx[lat, lon, :].shape)
         Bx_noisy[lat, lon, :] = Bx[lat, lon, :] + noise
-    
+
         rms_data = np.sqrt(np.mean(By[lat, lon, :] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, By[lat, lon, :].shape)
@@ -1312,7 +1313,7 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
-def plot_data_2(lat_value, lon_value, min_alt, max_alt):
+def plot_data(lat_value, lon_value, min_alt, max_alt):
     lat = lat_value
     lon = lon_value
     min_alt = min_alt
@@ -1321,43 +1322,43 @@ def plot_data_2(lat_value, lon_value, min_alt, max_alt):
     fig = go.Figure()
 
     fig.add_trace(go.Scatter(x=NOp_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO(+) + noise", mode='lines',
-        line=dict(shape='spline', color='orange')))
+                  line=dict(shape='spline', color='orange')))
     fig.add_trace(go.Scatter(x=NO2p_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO2(+) + noise", mode='lines',
-        line=dict(shape='spline', color='orange', dash="dot")))
+                  line=dict(shape='spline', color='orange', dash="dot")))
     fig.add_trace(go.Scatter(x=NNOp_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NNO(+) + noise", mode='lines',
-        line=dict(shape='spline', color='orange', dash="dash")))
+                  line=dict(shape='spline', color='orange', dash="dash")))
 
     fig.add_trace(go.Scatter(x=NOp[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO(+)", mode='lines',
-        line=dict(shape='spline', color='black')))
+                  line=dict(shape='spline', color='black')))
     fig.add_trace(go.Scatter(x=NO2p[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO2(+)", mode='lines',
-        line=dict(shape='spline', color='black', dash="dot")))
+                  line=dict(shape='spline', color='black', dash="dot")))
     fig.add_trace(go.Scatter(x=NNOp[lat, lon, :-1], y=heights[lat, lon, :-1], name="NNO(+)", mode='lines',
-        line=dict(shape='spline', color='black', dash="dash")))
+                  line=dict(shape='spline', color='black', dash="dash")))
 
     fig.add_trace(go.Scatter(x=NO_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO + noise", mode='lines',
-        line=dict(shape='spline', color='black')))
+                             line=dict(shape='spline', color='black')))
     fig.add_trace(go.Scatter(x=NO2_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO2 + noise", mode='lines',
-        line=dict(shape='spline', color='black', dash="dot")))
+                             line=dict(shape='spline', color='black', dash="dot")))
     fig.add_trace(go.Scatter(x=NN2_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="NN2 + noise", mode='lines',
-        line=dict(shape='spline', color='black', dash="dash")))
+                             line=dict(shape='spline', color='black', dash="dash")))
 
     fig.add_trace(go.Scatter(x=NO[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO", mode='lines',
-        line=dict(shape='spline', color='red')))
+                             line=dict(shape='spline', color='red')))
     fig.add_trace(go.Scatter(x=NO2[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO2", mode='lines',
-        line=dict(shape='spline', color='red', dash="dot")))
+                             line=dict(shape='spline', color='red', dash="dot")))
     fig.add_trace(go.Scatter(x=NN2[lat, lon, :-1], y=heights[lat, lon, :-1], name="NN2", mode='lines',
-        line=dict(shape='spline', color='red', dash="dash")))
+                             line=dict(shape='spline', color='red', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Ne_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ne + noise", mode='lines',
-        line=dict(shape='spline', color='purple')))
+                             line=dict(shape='spline', color='purple')))
     fig.add_trace(go.Scatter(x=Ne[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ne", mode='lines',
-        line=dict(shape='spline', color='yellow')))
+                             line=dict(shape='spline', color='yellow')))
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-        tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)),
-        xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
-        title={'text': 'Data With Noise' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
+                      xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
+                      title={'text': 'Data With Noise' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
     fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1367,7 +1368,7 @@ def plot_data_2(lat_value, lon_value, min_alt, max_alt):
     fig.show()
 
 
-def plot_data(lat_value, lon_value, min_alt, max_alt):
+def plot_data_2(lat_value, lon_value, min_alt, max_alt):
     lat = lat_value
     lon = lon_value
     min_alt = min_alt
@@ -1384,11 +1385,11 @@ def plot_data(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='red', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Bx[lat, lon, :-1], y=heights[lat, lon, :-1], name="Bx", mode='lines',
-        line=dict(shape='spline', color='blue')))
+                  line=dict(shape='spline', color='blue')))
     fig.add_trace(go.Scatter(x=By[lat, lon, :-1], y=heights[lat, lon, :-1], name="By", mode='lines',
-        line=dict(shape='spline', color='blue', dash="dot")))
+                  line=dict(shape='spline', color='blue', dash="dot")))
     fig.add_trace(go.Scatter(x=Bz[lat, lon, :-1], y=heights[lat, lon, :-1], name="Bz", mode='lines',
-        line=dict(shape='spline', color='blue', dash="dash")))
+                  line=dict(shape='spline', color='blue', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Ex_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ex + noise", mode='lines',
                              line=dict(shape='spline', color='blue')))
@@ -1398,11 +1399,11 @@ def plot_data(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='blue', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Ex[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ex", mode='lines',
-        line=dict(shape='spline', color='red')))
+                  line=dict(shape='spline', color='red')))
     fig.add_trace(go.Scatter(x=Ey[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ey", mode='lines',
-        line=dict(shape='spline', color='red', dash="dot")))
+                  line=dict(shape='spline', color='red', dash="dot")))
     fig.add_trace(go.Scatter(x=Ez[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ez", mode='lines',
-        line=dict(shape='spline', color='red', dash="dash")))
+                  line=dict(shape='spline', color='red', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Unx_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Unx + noise", mode='lines',
                              line=dict(shape='spline', color='green')))
@@ -1412,11 +1413,11 @@ def plot_data(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='green', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Unx[lat, lon, :-1], y=heights[lat, lon, :-1], name="Unx", mode='lines',
-        line=dict(shape='spline', color='purple')))
+                  line=dict(shape='spline', color='purple')))
     fig.add_trace(go.Scatter(x=Uny[lat, lon, :-1], y=heights[lat, lon, :-1], name="Uny", mode='lines',
-        line=dict(shape='spline', color='purple', dash="dot")))
+                  line=dict(shape='spline', color='purple', dash="dot")))
     fig.add_trace(go.Scatter(x=Unz[lat, lon, :-1], y=heights[lat, lon, :-1], name="Unz", mode='lines',
-        line=dict(shape='spline', color='purple', dash="dash")))
+                  line=dict(shape='spline', color='purple', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Vi_vertx_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Vix + noise", mode='lines',
                              line=dict(shape='spline', color='yellow')))
@@ -1426,12 +1427,11 @@ def plot_data(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='yellow', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Vi_vertx[lat, lon, :-1], y=heights[lat, lon, :-1], name="Vix", mode='lines',
-        line=dict(shape='spline', color='brown')))
+                  line=dict(shape='spline', color='brown')))
     fig.add_trace(go.Scatter(x=Vi_verty[lat, lon, :-1], y=heights[lat, lon, :-1], name="Viy", mode='lines',
-        line=dict(shape='spline', color='brown', dash="dot")))
+                  line=dict(shape='spline', color='brown', dash="dot")))
     fig.add_trace(go.Scatter(x=Vi_vertz[lat, lon, :-1], y=heights[lat, lon, :-1], name="Viz", mode='lines',
-        line=dict(shape='spline', color='brown', dash="dash")))
-
+                  line=dict(shape='spline', color='brown', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Ti_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ti + noise", mode='lines',
                              line=dict(shape='spline', color='brown')))
@@ -1441,15 +1441,15 @@ def plot_data(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='brown', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Ti[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ti", mode='lines',
-        line=dict(shape='spline', color='blue')))
+                  line=dict(shape='spline', color='blue')))
     fig.add_trace(go.Scatter(x=Tn[lat, lon, :-1], y=heights[lat, lon, :-1], name="Tn", mode='lines',
-        line=dict(shape='spline', color='blue', dash="dot")))
+                  line=dict(shape='spline', color='blue', dash="dot")))
     fig.add_trace(go.Scatter(x=Te[lat, lon, :-1], y=heights[lat, lon, :-1], name="Te", mode='lines',
-        line=dict(shape='spline', color='blue', dash="dash")))
+                  line=dict(shape='spline', color='blue', dash="dash")))
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)),
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
                       xaxis_title="", yaxis_title="$Altitude \ (km)$", width=800, height=650,
                       title={'text': 'Data With Noise' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
@@ -3225,6 +3225,12 @@ def gui():
                                    "tiegcm2.0_res2.5_3years_sech_016_JH_QD_AllVars.nc"),
                     default_value="tiegcm2.0_res2.5_3years_sech_014_JH_QD_AllVars.nc", key="-FILE-")],
                    [Sg.Frame("Choose plots", templay4, pad=((0, 0), (40, 30)))],
+                   [Sg.Text("Choose Noise Method:", font=("Helvetica", 14)), Sg.Checkbox("AWGN", default=False, enable_events=True,
+                    tooltip="Additive Gaussian Noise Method", key="-AWGN-"),
+                    Sg.Checkbox("Science Study Random Error", default=False, enable_events=True, tooltip="Random Noise Based on Science Study Errors",
+                    key="-SC_rand-")],
+                   [Sg.Text("Signal to Noise Ratio (in dB):"), Sg.Spin(size=(3, 3), values=[i for i in range(0, 105, 5)], initial_value=45,
+                    disabled=True, enable_events=True, key="-SNR-")],
                    [Sg.Text("Choose Profile")],
                    [Sg.TabGroup([[Sg.Tab("Vertical Profile", vert_layout), Sg.Tab("Map Profile (Lat-Lon)", map_layout),
                                   Sg.Tab("Map Profile (Lat-Alt)", map2_latout)]], key="-TABGROUP-")],
@@ -3283,6 +3289,20 @@ def gui():
             break
 
         user_file_name = values["-FILE-"]
+
+        if values["-AWGN-"]:
+            window.FindElement("-SC_rand-").Update(disabled=True)
+            window.FindElement("-SNR-").Update(disabled=False)
+        elif not values["-AWGN-"]:
+            window.FindElement("-SC_rand-").Update(disabled=False)
+            window.FindElement("-SNR-").Update(disabled=True)
+
+        if values["-SC_rand-"]:
+            window.FindElement("-AWGN-").Update(disabled=True)
+            window.FindElement("-SNR-").Update(disabled=True)
+        elif not values["-SC_rand-"]:
+            window.FindElement("-AWGN-").Update(disabled=False)
+            window.FindElement("-SNR-").Update(disabled=False)
 
         if event == "Calculate Products" and values["-TABGROUP-"] == "Vertical Profile":
             user_lat = values["-LAT-"]
@@ -3361,9 +3381,13 @@ def gui():
                     mapla_cross_section_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
         if event == "Calculate Error" and values["-TABGROUP-"] == 'Vertical Profile':
             if prod_calculated:
+                user_snr = float(values["-SNR-"])
                 user_lat = values["-LAT-"]
                 user_lon = values["-LON-"]
-                calculate_noise_2(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                if values["-AWGN-"]:
+                    calculate_noise_awgn(SNR=user_snr, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                elif values["-SC_rand-"]:
+                    calculate_noise(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
                 Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
                  hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :],\
                  nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
@@ -3413,7 +3437,11 @@ def gui():
         if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
             user_lev = values["-Pr_level-"]
             if prod_calculated:
-                calculate_noise_2(pressure_level=user_lev)
+                user_snr = float(values["-SNR-"])
+                if values["-AWGN-"]:
+                    calculate_noise_awgn(SNR=user_snr, pressure_level=user_lev)
+                elif values["-SC_rand-"]:
+                    calculate_noise(pressure_level=user_lev)
                 Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
                  hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :], \
                  nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
@@ -3445,7 +3473,11 @@ def gui():
             min_alt_la = values["-min_alt_la-"]
             max_alt_la = values["-max_alt_la-"]
             if prod_calculated:
-                calculate_noise_2(lon_value=lon_dictionary[user_lon])
+                user_snr = float(values["-SNR-"])
+                if values["-AWGN-"]:
+                    calculate_noise_awgn(SNR=user_snr, lon_value=lon_dictionary[user_lon])
+                elif values["-SC_rand-"]:
+                    calculate_noise(lon_value=lon_dictionary[user_lon])
                 Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
                  hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :], \
                  nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \

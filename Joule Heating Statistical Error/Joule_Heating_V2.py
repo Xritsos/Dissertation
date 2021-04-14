@@ -483,112 +483,112 @@ def calculate_noise_awgn(SNR, lat_value=-1, lon_value=-1, pressure_level=-1):
 
     # Vertical profile case
     if lat != -1 and lon != -1:
-        rms_data = np.sqrt(np.mean(Bx[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Bx[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Bx[lat, lon, :].shape)
         Bx_noisy[lat, lon, :] = Bx[lat, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(By[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(By[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, By[lat, lon, :].shape)
         By_noisy[lat, lon, :] = By[lat, lon, :] + noise
     
-        rms_data = np.sqrt(np.mean(Bz[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Bz[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Bz[lat, lon, :].shape)
         Bz_noisy[lat, lon, :] = Bz[lat, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Ex[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Ex[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ex[lat, lon, :].shape)
         Ex_noisy[lat, lon, :] = Ex[lat, lon, :] + noise
     
-        rms_data = np.sqrt(np.mean(Ey[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Ey[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ey[lat, lon, :].shape)
         Ey_noisy[lat, lon, :] = Ey[lat, lon, :] + noise
     
-        rms_data = np.sqrt(np.mean(Ez[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Ez[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ez[lat, lon, :].shape)
         Ez_noisy[lat, lon, :] = Ez[lat, lon, :] + noise
     
-        rms_data = np.sqrt(np.mean(Unx[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Unx[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Unx[lat, lon, :].shape)
         Unx_noisy[lat, lon, :] = Unx[lat, lon, :] + noise
     
-        rms_data = np.sqrt(np.mean(Uny[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Uny[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Uny[lat, lon, :].shape)
         Uny_noisy[lat, lon, :] = Uny[lat, lon, :] + noise
     
-        rms_data = np.sqrt(np.mean(Unz[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Unz[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Unz[lat, lon, :].shape)
         Unz_noisy[lat, lon, :] = Unz[lat, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Vi_vertx[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Vi_vertx[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Vi_vertx[lat, lon, :].shape)
         Vi_vertx_noisy[lat, lon, :] = Vi_vertx[lat, lon, :] + noise
     
-        rms_data = np.sqrt(np.mean(Vi_verty[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Vi_verty[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Vi_verty[lat, lon, :].shape)
         Vi_verty_noisy[lat, lon, :] = Vi_verty[lat, lon, :] + noise
     
-        rms_data = np.sqrt(np.mean(Vi_vertz[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Vi_vertz[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Vi_vertz[lat, lon, :].shape)
         Vi_vertz_noisy[lat, lon, :] = Vi_vertz[lat, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(NOp[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(NOp[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NOp[lat, lon, :].shape)
         NOp_noisy[lat, lon, :] = NOp[lat, lon, :] + noise
-    
-        rms_data = np.sqrt(np.mean(NO2p[lat, lon, :] ** 2))
+
+        rms_data = np.sqrt(np.mean(NO2p[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NO2p[lat, lon, :].shape)
         NO2p_noisy[lat, lon, :] = NO2p[lat, lon, :] + noise
     
-        rms_data = np.sqrt(np.mean(NNOp[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(NNOp[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NNOp[lat, lon, :].shape)
         NNOp_noisy[lat, lon, :] = NNOp[lat, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(NO[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(NO[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NO[lat, lon, :].shape)
         NO_noisy[lat, lon, :] = NO[lat, lon, :] + noise
-    
-        rms_data = np.sqrt(np.mean(NO2[lat, lon, :] ** 2))
+
+        rms_data = np.sqrt(np.mean(NO2[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NO2[lat, lon, :].shape)
         NO2_noisy[lat, lon, :] = NO2[lat, lon, :] + noise
-    
-        rms_data = np.sqrt(np.mean(NN2[lat, lon, :] ** 2))
+
+        rms_data = np.sqrt(np.mean(NN2[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NN2[lat, lon, :].shape)
         NN2_noisy[lat, lon, :] = NN2[lat, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Ne[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Ne[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ne[lat, lon, :].shape)
         Ne_noisy[lat, lon, :] = Ne[lat, lon, :] + noise
     
-        rms_data = np.sqrt(np.mean(Ti[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Ti[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ti[lat, lon, :].shape)
         Ti_noisy[lat, lon, :] = Ti[lat, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Tn[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Tn[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Tn[lat, lon, :].shape)
         Tn_noisy[lat, lon, :] = Tn[lat, lon, :] + noise
     
-        rms_data = np.sqrt(np.mean(Te[lat, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Te[lat, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Te[lat, lon, :].shape)
         Te_noisy[lat, lon, :] = Te[lat, lon, :] + noise
@@ -707,112 +707,112 @@ def calculate_noise_awgn(SNR, lat_value=-1, lon_value=-1, pressure_level=-1):
 
     # Latitude Altitude map profile case
     if lat == -1 and lev == -1:
-        rms_data = np.sqrt(np.mean(Bx[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Bx[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Bx[:, lon, :].shape)
         Bx_noisy[:, lon, :] = Bx[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(By[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(By[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, By[:, lon, :].shape)
         By_noisy[:, lon, :] = By[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Bz[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Bz[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Bz[:, lon, :].shape)
         Bz_noisy[:, lon, :] = Bz[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Ex[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Ex[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ex[:, lon, :].shape)
         Ex_noisy[:, lon, :] = Ex[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Ey[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Ey[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ey[:, lon, :].shape)
         Ey_noisy[:, lon, :] = Ey[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Ez[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Ez[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ez[:, lon, :].shape)
         Ez_noisy[:, lon, :] = Ez[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Unx[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Unx[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Unx[:, lon, :].shape)
         Unx_noisy[:, lon, :] = Unx[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Uny[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Uny[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Uny[:, lon, :].shape)
         Uny_noisy[:, lon, :] = Uny[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Unz[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Unz[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Unz[:, lon, :].shape)
         Unz_noisy[:, lon, :] = Unz[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Vi_vertx[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Vi_vertx[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Vi_vertx[:, lon, :].shape)
         Vi_vertx_noisy[:, lon, :] = Vi_vertx[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Vi_verty[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Vi_verty[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Vi_verty[:, lon, :].shape)
         Vi_verty_noisy[:, lon, :] = Vi_verty[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Vi_vertz[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Vi_vertz[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Vi_vertz[:, lon, :].shape)
         Vi_vertz_noisy[:, lon, :] = Vi_vertz[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(NOp[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(NOp[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NOp[:, lon, :].shape)
         NOp_noisy[:, lon, :] = NOp[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(NO2p[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(NO2p[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NO2p[:, lon, :].shape)
         NO2p_noisy[:, lon, :] = NO2p[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(NNOp[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(NNOp[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NNOp[:, lon, :].shape)
         NNOp_noisy[:, lon, :] = NNOp[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(NO[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(NO[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NO[:, lon, :].shape)
         NO_noisy[:, lon, :] = NO[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(NO2[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(NO2[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NO2[:, lon, :].shape)
         NO2_noisy[:, lon, :] = NO2[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(NN2[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(NN2[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, NN2[:, lon, :].shape)
         NN2_noisy[:, lon, :] = NN2[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Ne[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Ne[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ne[:, lon, :].shape)
         Ne_noisy[:, lon, :] = Ne[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Ti[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Ti[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Ti[:, lon, :].shape)
         Ti_noisy[:, lon, :] = Ti[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Tn[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Tn[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Tn[:, lon, :].shape)
         Tn_noisy[:, lon, :] = Tn[:, lon, :] + noise
 
-        rms_data = np.sqrt(np.mean(Te[:, lon, :] ** 2))
+        rms_data = np.sqrt(np.mean(Te[:, lon, :-1] ** 2))
         rms_noise = rms_data / np.sqrt(10 ** (snr / 10))
         noise = np.random.normal(0, rms_noise, Te[:, lon, :].shape)
         Te_noisy[:, lon, :] = Te[:, lon, :] + noise
@@ -3315,8 +3315,8 @@ def gui():
              parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], \
              C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
              calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
-                                   Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
-                                   Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                                Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
+                                Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
             prod_calculated = True
             if values["-TABGROUP1-"] == "Vertical Profile Plots":
                 if values["-COL-"]:
@@ -3337,8 +3337,8 @@ def gui():
              parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], \
              C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
              calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
-                                   Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
-                                   Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, pressure_level=user_lev)
+                                Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
+                                Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, pressure_level=user_lev)
             prod_calculated = True
             if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
                 user_lev = values["-Pr_level-"]
@@ -3365,8 +3365,8 @@ def gui():
              parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], \
              C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
              calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
-                                   Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
-                                   Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lon_value=lon_dictionary[user_lon])
+                                Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
+                                Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lon_value=lon_dictionary[user_lon])
             prod_calculated = True
             if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
                 if values["-HR_mapla-"]:
@@ -3393,10 +3393,10 @@ def gui():
                  nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
                  J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
                  calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
-                                       Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
-                                       Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
-                                       NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
-                                       lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                                    Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
+                                    Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
+                                    NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
+                                    lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
                 if values["-TABGROUP1-"] == "Vertical Profile Plots":
                     min_alt = values["-min_alt-"]
                     max_alt = values["-max_alt-"]
@@ -3447,10 +3447,10 @@ def gui():
                  nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
                  J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
                  calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
-                                       Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
-                                       Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
-                                       NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
-                                       pressure_level=user_lev)
+                                    Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
+                                    Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
+                                    NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
+                                    pressure_level=user_lev)
                 if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
                     user_lev = values["-Pr_level-"]
                     night_shade = False
@@ -3483,10 +3483,10 @@ def gui():
                  nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
                  J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
                  calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
-                                       Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
-                                       Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
-                                       NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
-                                       lon_value=lon_dictionary[user_lon])
+                                    Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
+                                    Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
+                                    NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
+                                    lon_value=lon_dictionary[user_lon])
                 if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
                     if values["-HR_mapla_error-"]:
                         mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)

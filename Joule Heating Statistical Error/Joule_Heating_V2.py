@@ -818,7 +818,7 @@ def calculate_noise_awgn(SNR, lat_value=-1, lon_value=-1, pressure_level=-1):
         Te_noisy[:, lon, :] = Te[:, lon, :] + noise
 
     Sg.popup("_" * 50, "Noise calculated in : " + str(time.time() - start_time) + " sec!", "_" * 50, title="Finished", keep_on_top=True)
-    print('Calculated Noise in: ', time.time() - start_time, ' sec !')
+    print('Calculated Noise in: ', time.time() - start_time, ' sec!')
     print(" ")
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF AWGN FUNCTION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -901,9 +901,11 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
     Tn_ac = 20 / 100
 
     # Neutral wind (in m/s)
-    Unx_ac = 10
-    Uny_ac = 20
-    Unz_ac = 10
+    H_wind = 20
+    V_wind = 10
+    Unx_ac = V_wind
+    Uny_ac = V_wind
+    Unz_ac = H_wind
 
     # Ion drift (in m/s)
     Vix_ac = 100
@@ -1313,7 +1315,12 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ VERTICAL PROFILE PLOTS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 def plot_data(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 40, "Plotting.....", "_" * 40, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
+
     lat = lat_value
     lon = lon_value
     min_alt = min_alt
@@ -1369,6 +1376,9 @@ def plot_data(lat_value, lon_value, min_alt, max_alt):
 
 
 def plot_data_2(lat_value, lon_value, min_alt, max_alt):
+    print("Plotting.....")
+    Sg.popup("_" * 40, "Plotting.....", "_" * 40, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
+
     lat = lat_value
     lon = lon_value
     min_alt = min_alt
@@ -1461,11 +1471,9 @@ def plot_data_2(lat_value, lon_value, min_alt, max_alt):
     fig.show()
 
 
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ VERTICAL PROFILE PLOTS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 def plot_heating_rates(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_"*40, "Plotting.....", "_"*40, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_"*40, "Plotting.....", "_"*40, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1500,7 +1508,7 @@ def plot_heating_rates(lat_value, lon_value, min_alt, max_alt):
 
 def plot_collisions(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1539,7 +1547,7 @@ def plot_collisions(lat_value, lon_value, min_alt, max_alt):
 
 def plot_conductivities(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1571,7 +1579,7 @@ def plot_conductivities(lat_value, lon_value, min_alt, max_alt):
 
 def plot_currents(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1606,7 +1614,7 @@ def plot_currents(lat_value, lon_value, min_alt, max_alt):
 
 def plot_cross_sections(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1643,7 +1651,7 @@ def plot_cross_sections(lat_value, lon_value, min_alt, max_alt):
 
 def plot_heating_rates_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1676,7 +1684,7 @@ def plot_heating_rates_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_heating_rates_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1713,7 +1721,7 @@ def plot_heating_rates_rel_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_collisions_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1748,7 +1756,7 @@ def plot_collisions_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_collisions_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1792,7 +1800,7 @@ def plot_collisions_rel_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_conductivities_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1824,7 +1832,7 @@ def plot_conductivities_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_conductivities_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1861,7 +1869,7 @@ def plot_conductivities_rel_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_currents_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1898,7 +1906,7 @@ def plot_currents_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_currents_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1938,7 +1946,7 @@ def plot_currents_rel_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_csections_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1973,7 +1981,7 @@ def plot_csections_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_csections_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2017,7 +2025,7 @@ def plot_csections_rel_error(lat_value, lon_value, min_alt, max_alt):
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 def mapll_heating_rates_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -2107,7 +2115,7 @@ def mapll_heating_rates_plot(pressure_level, night_shade):
 
 def mapll_collisions_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -2170,7 +2178,7 @@ def mapll_collisions_plot(pressure_level, night_shade):
 
 def mapll_conductivities_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -2260,7 +2268,7 @@ def mapll_conductivities_plot(pressure_level, night_shade):
 
 def mapll_currents_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -2323,7 +2331,7 @@ def mapll_currents_plot(pressure_level, night_shade):
 
 def mapll_csection_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -2358,7 +2366,7 @@ def mapll_csection_plot(pressure_level, night_shade):
 
 def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -2448,7 +2456,7 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
 
 def mapll_collisions_rel_error_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -2512,7 +2520,7 @@ def mapll_collisions_rel_error_plot(pressure_level, night_shade):
 
 def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -2599,7 +2607,7 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
 
 def mapll_currents_rel_error_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -2660,7 +2668,7 @@ def mapll_currents_rel_error_plot(pressure_level, night_shade):
 
 def mapll_csection_rel_error_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -2698,7 +2706,7 @@ def mapll_csection_rel_error_plot(pressure_level, night_shade):
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 def mapla_heating_rates_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -2742,7 +2750,7 @@ def mapla_heating_rates_plot(lon_value, min_alt, max_alt):
 
 def mapla_collisions_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -2776,7 +2784,7 @@ def mapla_collisions_plot(lon_value, min_alt, max_alt):
 
 def mapla_conductivities_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -2820,7 +2828,7 @@ def mapla_conductivities_plot(lon_value, min_alt, max_alt):
 
 def mapla_currents_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -2853,7 +2861,7 @@ def mapla_currents_plot(lon_value, min_alt, max_alt):
 
 def mapla_cross_section_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -2875,7 +2883,7 @@ def mapla_cross_section_plot(lon_value, min_alt, max_alt):
 
 def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -2923,7 +2931,7 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
 def mapla_collisions_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -2961,7 +2969,7 @@ def mapla_collisions_rel_error_plot(lon_value, min_alt, max_alt):
 
 def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3008,7 +3016,7 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
 
 def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3043,7 +3051,7 @@ def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
 
 def mapla_cross_section_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3106,17 +3114,19 @@ def gui():
                       "162.5": 137, "165.0": 138, "167.5": 139, "170.0": 140, "172.5": 141, "175.0": 142, "177.5": 143}
 
     # used in plotting choices frame
-    col1 = [[Sg.Checkbox("Plot Heating Rates With Error", default=False, tooltip="Plots heating rates with error", key="-HR_abs-")],
-            [Sg.Checkbox("Plot Heating Rates Relative Error", default=False, tooltip="Plots heating rates relative error", key="-HR_rel-")],
-            [Sg.Checkbox("Plot Collision Frequencies With Error", default=False, tooltip="Plots collision frequencies with error",
+    col1 = [[Sg.Checkbox("Plot NO+,NO2+,NNO+,NO,NO2,NN2,Ne With Noise", default=False, tooltip="Plots densities with noise", key="-Data_1-")],
+            [Sg.Checkbox("Plot B,E,Un,Vi,Ti,Tn,Te With Noise", default=False, tooltip="Plots data with noise", key="-Data_2-")],
+            [Sg.Checkbox("Plot Heating Rates With Noise", default=False, tooltip="Plots heating rates with noise", key="-HR_abs-")],
+            [Sg.Checkbox("Plot Heating Rates Relative Error", default=False, tooltip="Plots heating rates relative Error", key="-HR_rel-")],
+            [Sg.Checkbox("Plot Collision Frequencies With Noise", default=False, tooltip="Plots collision frequencies with noise",
                          key="-COL_abs-")],
             [Sg.Checkbox("Plot Collision Frequencies Relative Error", default=False, tooltip="Plots collision frequencies relative error",
                          key="-COL_rel-")],
-            [Sg.Checkbox("Plot Conductivities With Error", default=False, tooltip="Plots conductivities with error", key="-CON_abs-")],
+            [Sg.Checkbox("Plot Conductivities With Noise", default=False, tooltip="Plots conductivities with noise", key="-CON_abs-")],
             [Sg.Checkbox("Plot Conductivities Relative Error", default=False, tooltip="Plots conductivities relative error", key="-CON_rel-")],
-            [Sg.Checkbox("Plot Currents With Error", default=False, tooltip="Plots currents with error", key="-CUR_abs-")],
+            [Sg.Checkbox("Plot Currents With Noise", default=False, tooltip="Plots currents with noise", key="-CUR_abs-")],
             [Sg.Checkbox("Plot Currents Relative Error", default=False, tooltip="Plots currents relative error", key="-CUR_rel-")],
-            [Sg.Checkbox("Plot Cross Sections With Error", default=False, tooltip="Plots cross sections with error", key="-CR_abs-")],
+            [Sg.Checkbox("Plot Cross Sections With Noise", default=False, tooltip="Plots cross sections with Noise", key="-CR_abs-")],
             [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error", key="-CR_rel-")]]
 
     col2 = [[Sg.Checkbox("Plot Heating Rates", default=False, tooltip="Plots heating rates", key="-HR-")],
@@ -3388,6 +3398,8 @@ def gui():
                     calculate_noise_awgn(SNR=user_snr, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
                 elif values["-SC_rand-"]:
                     calculate_noise(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                else:
+                    Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
                 Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
                  hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :],\
                  nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
@@ -3400,10 +3412,12 @@ def gui():
                 if values["-TABGROUP1-"] == "Vertical Profile Plots":
                     min_alt = values["-min_alt-"]
                     max_alt = values["-max_alt-"]
-                    plot_data(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                              max_alt=max_alt)
-                    plot_data_2(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                max_alt=max_alt)
+                    if values["-Data_1-"]:
+                        plot_data(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                  max_alt=max_alt)
+                    if values["-Data_2-"]:
+                        plot_data_2(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                    max_alt=max_alt)
                     if values["-COL_abs-"]:
                         plot_collisions_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                               max_alt=max_alt)
@@ -3442,6 +3456,8 @@ def gui():
                     calculate_noise_awgn(SNR=user_snr, pressure_level=user_lev)
                 elif values["-SC_rand-"]:
                     calculate_noise(pressure_level=user_lev)
+                else:
+                    Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
                 Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
                  hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :], \
                  nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
@@ -3478,6 +3494,8 @@ def gui():
                     calculate_noise_awgn(SNR=user_snr, lon_value=lon_dictionary[user_lon])
                 elif values["-SC_rand-"]:
                     calculate_noise(lon_value=lon_dictionary[user_lon])
+                else:
+                    Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
                 Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
                  hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :], \
                  nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \

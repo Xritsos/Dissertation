@@ -891,13 +891,11 @@ def error(error_flag, B_error, E_error, NO_error, NO2_error, NN2_error, NOp_erro
                     H_wind = 20
                     V_wind = 10
                     dUnx = V_wind ** 2
-                    dUny = H_wind ** 2
-                    dUnz = V_wind ** 2
-                    H_drift = 100
-                    V_drift = 100
-                    dVix = V_drift ** 2
-                    dViy = H_drift ** 2
-                    dViz = V_drift ** 2
+                    dUny = V_wind ** 2
+                    dUnz = H_wind ** 2
+                    dVix = 100 ** 2
+                    dViy = 100 ** 2
+                    dViz = 100 ** 2
 
                 # ################# COLLISION FREQUENCIES ERROR #################
                 # ######################### O+ #########################

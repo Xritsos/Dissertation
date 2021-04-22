@@ -1734,7 +1734,7 @@ def error(error_flag, B_error, E_error, NO_error, NO2_error, NN2_error, NOp_erro
 # ############################ Vertical Profile Plots ############################
 def plot_collisions(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1777,7 +1777,7 @@ def plot_collisions(lat_value, lon_value, min_alt, max_alt):
 
 def plot_heating_rates(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_"*40, "Plotting.....", "_"*40, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 40, "Plotting.....", "_" * 40, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1812,7 +1812,7 @@ def plot_heating_rates(lat_value, lon_value, min_alt, max_alt):
 
 def plot_conductivities(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1844,7 +1844,7 @@ def plot_conductivities(lat_value, lon_value, min_alt, max_alt):
 
 def plot_currents(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1879,7 +1879,7 @@ def plot_currents(lat_value, lon_value, min_alt, max_alt):
 
 def plot_cross_sections(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1916,7 +1916,7 @@ def plot_cross_sections(lat_value, lon_value, min_alt, max_alt):
 
 def plot_collisions_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1951,7 +1951,7 @@ def plot_collisions_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_collisions_plus_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -1994,7 +1994,7 @@ def plot_collisions_plus_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_collisions_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2038,7 +2038,7 @@ def plot_collisions_rel_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_collisions_contr(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2091,7 +2091,7 @@ def plot_collisions_contr(lat_value, lon_value, min_alt, max_alt):
 
 def plot_heating_rates_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2124,7 +2124,7 @@ def plot_heating_rates_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_heating_rates_plus_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2163,7 +2163,7 @@ def plot_heating_rates_plus_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_heating_rates_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2200,7 +2200,7 @@ def plot_heating_rates_rel_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_heating_rates_contr(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2342,7 +2342,7 @@ def plot_heating_rates_contr(lat_value, lon_value, min_alt, max_alt):
 
 def plot_conductivities_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2374,7 +2374,7 @@ def plot_conductivities_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_conductivities_plus_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2412,7 +2412,7 @@ def plot_conductivities_plus_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_conductivities_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2449,7 +2449,7 @@ def plot_conductivities_rel_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_conductivities_contr(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2543,7 +2543,7 @@ def plot_conductivities_contr(lat_value, lon_value, min_alt, max_alt):
 
 def plot_currents_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2580,7 +2580,7 @@ def plot_currents_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_currents_plus_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2623,7 +2623,7 @@ def plot_currents_plus_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_currents_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2663,7 +2663,7 @@ def plot_currents_rel_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_currents_contr(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2765,7 +2765,7 @@ def plot_currents_contr(lat_value, lon_value, min_alt, max_alt):
 
 def plot_csections_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2800,7 +2800,7 @@ def plot_csections_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_csections_plus_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2843,7 +2843,7 @@ def plot_csections_plus_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_csections_rel_error(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2883,7 +2883,7 @@ def plot_csections_rel_error(lat_value, lon_value, min_alt, max_alt):
 
 def plot_csections_contr(lat_value, lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lat = lat_value
     lon = lon_value
@@ -2927,7 +2927,7 @@ def plot_csections_contr(lat_value, lon_value, min_alt, max_alt):
 # ############################### Lat-Lon Map Profile Plots ###############################
 def mapll_heating_rates_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -3017,7 +3017,7 @@ def mapll_heating_rates_plot(pressure_level, night_shade):
 
 def mapll_collisions_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -3080,7 +3080,7 @@ def mapll_collisions_plot(pressure_level, night_shade):
 
 def mapll_conductivities_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -3170,7 +3170,7 @@ def mapll_conductivities_plot(pressure_level, night_shade):
 
 def mapll_currents_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -3233,7 +3233,7 @@ def mapll_currents_plot(pressure_level, night_shade):
 
 def mapll_csection_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -3268,7 +3268,7 @@ def mapll_csection_plot(pressure_level, night_shade):
 
 def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -3355,7 +3355,7 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
 
 def mapll_collisions_rel_error_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -3418,7 +3418,7 @@ def mapll_collisions_rel_error_plot(pressure_level, night_shade):
 
 def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -3505,7 +3505,7 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
 
 def mapll_currents_rel_error_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -3566,7 +3566,7 @@ def mapll_currents_rel_error_plot(pressure_level, night_shade):
 
 def mapll_csection_rel_error_plot(pressure_level, night_shade):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lev = pressure_level
 
@@ -3601,7 +3601,7 @@ def mapll_csection_rel_error_plot(pressure_level, night_shade):
 # ####################################### Lat - Alt Profile Plots #######################################
 def mapla_heating_rates_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3645,7 +3645,7 @@ def mapla_heating_rates_plot(lon_value, min_alt, max_alt):
 
 def mapla_collisions_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3679,7 +3679,7 @@ def mapla_collisions_plot(lon_value, min_alt, max_alt):
 
 def mapla_conductivities_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3723,7 +3723,7 @@ def mapla_conductivities_plot(lon_value, min_alt, max_alt):
 
 def mapla_currents_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3756,7 +3756,7 @@ def mapla_currents_plot(lon_value, min_alt, max_alt):
 
 def mapla_cross_section_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3778,7 +3778,7 @@ def mapla_cross_section_plot(lon_value, min_alt, max_alt):
 
 def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3825,7 +3825,7 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
 def mapla_collisions_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3860,7 +3860,7 @@ def mapla_collisions_rel_error_plot(lon_value, min_alt, max_alt):
 
 def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3907,7 +3907,7 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
 
 def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -3942,7 +3942,7 @@ def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
 
 def mapla_cross_section_rel_error_plot(lon_value, min_alt, max_alt):
     print("Plotting.....")
-    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, keep_on_top=True)
+    Sg.popup("_" * 50, "Plotting.....", "_" * 50, title=title, auto_close=True, auto_close_duration=1, keep_on_top=True)
 
     lon = lon_value
     min_alt = min_alt
@@ -4013,32 +4013,32 @@ def gui():
                          Sg.Text("e\u207b", pad=((25, 0), (10, 0)), tooltip="Electron"), Sg.Text("O", pad=((30, 0), (10, 0)),
                          tooltip="Atomic Oxygen Neutral"), Sg.Text("O\u2082", pad=((30, 0), (10, 0)), tooltip="Molecular Oxygen Neutral"),
                          Sg.Text("N\u2082", pad=((30, 0), (10, 0)), tooltip="Molecular Nitrogen Neutral")],
-                        [Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-O+-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-NO+-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-O2+-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-e-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-O-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-O2-"),
-                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-N2-")]]
+                        [Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-O+-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-NO+-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-O2+-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-e-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-O-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-O2-"),
+                         Sg.Spin(size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-N2-")]]
 
     # layout for temperatures frame
     temp_layout = [[Sg.Text("T\u1d62", pad=((40, 0), (10, 0)), tooltip="Ion Temperature"), Sg.Text("T\u2099", pad=((85, 0), (10, 0)),
                     tooltip="Neutral Temperature"), Sg.Text("T\u2091", pad=((85, 0), (10, 0)), tooltip="Electron Temperature")],
-                   [Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 2)], initial_value=4, key="-Ti-"),
-                    Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 2)], initial_value=4, key="-Tn-"),
-                    Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 2)], initial_value=4, key="-Te-")]]
+                   [Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-Ti-"),
+                    Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-Tn-"),
+                    Sg.Spin(size=(3, 3), pad=(30, 0), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-Te-")]]
 
     # layout for wind - velocity frame
     win_vel_layout = [[Sg.Text("U\u2099", pad=((80, 0), (10, 0)), tooltip="Neutral wind"), Sg.Text("V\u1d62", pad=((110, 0), (10, 0)),
                        tooltip="Ion velocity")], [Sg.Spin(pad=(70, 0), size=(3, 3), values=[i for i in range(0, 101, 2)],
-                                                  initial_value=4, key="-Un-"),
-                      Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-Vi-")]]
+                                                  initial_value=4, enable_events=True, key="-Un-"),
+                      Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-Vi-")]]
 
     # layout for electric and magnetic field frame
     fields_layout = [[Sg.Text("E", pad=((80, 0), (10, 0)), tooltip="Electric field"), Sg.Text("B", pad=((120, 0), (10, 0)),
                       tooltip="Magnetic field")], [Sg.Spin(pad=(70, 0), size=(3, 3), values=[i for i in range(0, 101, 2)],
-                                                   initial_value=4, key="-E-"),
-                     Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, key="-B-")]]
+                                                   initial_value=4, enable_events=True, key="-E-"),
+                     Sg.Spin(pad=(20, 0), size=(3, 3), values=[i for i in range(0, 101, 2)], initial_value=4, enable_events=True, key="-B-")]]
 
     # used in plotting choices frame
     col1 = [[Sg.Checkbox("Plot Heating Rates Absolute Error", default=False, tooltip="Plots heating rates absolute error", key="-HR_abs-")],
@@ -4186,7 +4186,8 @@ def gui():
                     default_value="tiegcm2.0_res2.5_3years_sech_014_JH_QD_AllVars.nc", key="-FILE-")],
                    [Sg.Frame("Percentage Errors", perc_errors_layout, pad=((0, 0), (10, 4))),
                     Sg.Frame("Choose plots", templay4, pad=((0, 0), (40, 30)))],
-                   [Sg.Checkbox("Science study errors", default=True, tooltip="True errors", pad=((0, 800), (0, 10)), key="-ERROR-")],
+                   [Sg.Checkbox("Science study errors", default=False, tooltip="True errors", pad=((0, 800), (0, 10)), enable_events=True,
+                    key="-ERROR-")],
                    [Sg.Text("Choose Profile")],
                    [Sg.TabGroup([[Sg.Tab("Vertical Profile", vert_layout), Sg.Tab("Map Profile (Lat-Lon)", map_layout),
                                   Sg.Tab("Map Profile (Lat-Alt)", map2_latout)]], key="-TABGROUP-")],
@@ -4261,6 +4262,40 @@ def gui():
         vi_error = float(values["-Vi-"])
 
         ERROR_FLAG = values["-ERROR-"]
+
+        if ERROR_FLAG:
+            window.FindElement("-O+-").Update(disabled=True)
+            window.FindElement("-O2+-").Update(disabled=True)
+            window.FindElement("-NO+-").Update(disabled=True)
+            window.FindElement("-O-").Update(disabled=True)
+            window.FindElement("-O2-").Update(disabled=True)
+            window.FindElement("-N2-").Update(disabled=True)
+            window.FindElement("-e-").Update(disabled=True)
+            window.FindElement("-O+-").Update(disabled=True)
+            window.FindElement("-Ti-").Update(disabled=True)
+            window.FindElement("-Te-").Update(disabled=True)
+            window.FindElement("-Tn-").Update(disabled=True)
+            window.FindElement("-Un-").Update(disabled=True)
+            window.FindElement("-Vi-").Update(disabled=True)
+            window.FindElement("-E-").Update(disabled=True)
+            window.FindElement("-B-").Update(disabled=True)
+        else:
+            window.FindElement("-O+-").Update(disabled=False)
+            window.FindElement("-O2+-").Update(disabled=False)
+            window.FindElement("-NO+-").Update(disabled=False)
+            window.FindElement("-O-").Update(disabled=False)
+            window.FindElement("-O2-").Update(disabled=False)
+            window.FindElement("-N2-").Update(disabled=False)
+            window.FindElement("-e-").Update(disabled=False)
+            window.FindElement("-O+-").Update(disabled=False)
+            window.FindElement("-Ti-").Update(disabled=False)
+            window.FindElement("-Te-").Update(disabled=False)
+            window.FindElement("-Tn-").Update(disabled=False)
+            window.FindElement("-Un-").Update(disabled=False)
+            window.FindElement("-Vi-").Update(disabled=False)
+            window.FindElement("-E-").Update(disabled=False)
+            window.FindElement("-B-").Update(disabled=False)
+
         if event == "Calculate Products" and values["-TABGROUP-"] == "Vertical Profile":
             user_lat = values["-LAT-"]
             user_lon = values["-LON-"]

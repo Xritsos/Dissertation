@@ -1746,19 +1746,19 @@ def plot_collisions(lat_value, lon_value, min_alt, max_alt):
     fig1 = go.Figure()
 
     # adding the various plots
-    fig1.add_trace(go.Scatter(x=nu_Op_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{O^{+}}$", mode='lines',
+    fig1.add_trace(go.Scatter(x=nu_Op_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νO+", mode='lines',
                               line=dict(shape='spline', color='red')))
-    fig1.add_trace(go.Scatter(x=nu_O2p_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{O2^{+}}$", mode='lines',
+    fig1.add_trace(go.Scatter(x=nu_O2p_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νO2+", mode='lines',
                               line=dict(shape='spline', color='blue')))
-    fig1.add_trace(go.Scatter(x=nu_NOp_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{NO^{+}}$", mode='lines',
+    fig1.add_trace(go.Scatter(x=nu_NOp_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νNO+", mode='lines',
                               line=dict(shape='spline', color='yellow')))
-    fig1.add_trace(go.Scatter(x=mean_ion_collisions, y=heights[lat, lon, :-1], name="$ν_{in}$", mode='lines',
+    fig1.add_trace(go.Scatter(x=mean_ion_collisions, y=heights[lat, lon, :-1], name="νion", mode='lines',
                               line=dict(shape='spline', color='orange')))
-    fig1.add_trace(go.Scatter(x=nu_e_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="$ν_{en}$", mode='lines',
+    fig1.add_trace(go.Scatter(x=nu_e_sum[lat, lon, :-1], y=heights[lat, lon, :-1], name="νe", mode='lines',
                               line=dict(shape='spline', color='purple')))
-    fig1.add_trace(go.Scatter(x=Omega_ion[lat, lon, :-1], y=heights[lat, lon, :-1], name="$Ω_{i}$", mode='lines',
+    fig1.add_trace(go.Scatter(x=Omega_ion[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ωi", mode='lines',
                               line=dict(shape='spline', color='brown')))
-    fig1.add_trace(go.Scatter(x=Omega_e[lat, lon, :-1], y=heights[lat, lon, :-1], name="$Ω_{e}$", mode='lines',
+    fig1.add_trace(go.Scatter(x=Omega_e[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ωe", mode='lines',
                               line=dict(shape='spline', color='black')))
 
     # updating the layout of the figure

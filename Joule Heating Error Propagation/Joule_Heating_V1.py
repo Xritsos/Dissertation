@@ -1889,13 +1889,13 @@ def plot_cross_sections(lat_value, lon_value, min_alt, max_alt):
     fig = go.Figure()
 
     # adding the various plots
-    fig.add_trace(go.Scatter(x=C_Op[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O^{+}$", mode='lines',
+    fig.add_trace(go.Scatter(x=C_Op[lat, lon, :-1], y=heights[lat, lon, :-1], name="O+", mode='lines',
                              line=dict(shape='spline', color='red')))
-    fig.add_trace(go.Scatter(x=C_O2p[lat, lon, :-1], y=heights[lat, lon, :-1], name="$O_{2}^{+}$", mode='lines',
+    fig.add_trace(go.Scatter(x=C_O2p[lat, lon, :-1], y=heights[lat, lon, :-1], name="O2+", mode='lines',
                              line=dict(shape='spline', color='blue')))
-    fig.add_trace(go.Scatter(x=C_NOp[lat, lon, :-1], y=heights[lat, lon, :-1], name="$NO^{+}$", mode='lines',
+    fig.add_trace(go.Scatter(x=C_NOp[lat, lon, :-1], y=heights[lat, lon, :-1], name="NO+", mode='lines',
                              line=dict(shape='spline', color='green')))
-    fig.add_trace(go.Scatter(x=C_ion[lat, lon, :-1], y=heights[lat, lon, :-1], name="$Avg$", mode='lines',
+    fig.add_trace(go.Scatter(x=C_ion[lat, lon, :-1], y=heights[lat, lon, :-1], name="Avg", mode='lines',
                              line=dict(shape='spline', color='black')))
 
     x_range = max(C_Op[lat, lon, :-1])

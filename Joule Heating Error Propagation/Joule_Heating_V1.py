@@ -2135,17 +2135,17 @@ def plot_heating_rates_plus_error(lat_value, lon_value, min_alt, max_alt):
 
     # adding the various plots
     fig.add_trace(go.Scatter(x=Ohmic_Heating_error[lat, lon, :-1] + Ohmic_Heating[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Ohmic Heating +error", mode='lines', line=dict(shape='spline', color='red')))
+                             name="Ohmic Heating + error", mode='lines', line=dict(shape='spline', color='red')))
     fig.add_trace(go.Scatter(x=Ohmic_Heating[lat, lon, :-1] - Ohmic_Heating_error[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Ohmic Heating -error", mode='lines', line=dict(shape='spline', color='red', dash="dash")))
+                             name="Ohmic Heating - error", mode='lines', line=dict(shape='spline', color='red', dash="dash")))
     fig.add_trace(go.Scatter(x=Frictional_Heating_error[lat, lon, :-1] + Frictional_Heating[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Frictional Heating +error", mode='lines', line=dict(shape='spline', color='blue')))
+                             name="Frictional Heating + error", mode='lines', line=dict(shape='spline', color='blue')))
     fig.add_trace(go.Scatter(x=Frictional_Heating[lat, lon, :-1] - Frictional_Heating_error[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Frictional Heating -error", mode='lines', line=dict(shape='spline', color='blue', dash="dash")))
+                             name="Frictional Heating - error", mode='lines', line=dict(shape='spline', color='blue', dash="dash")))
     fig.add_trace(go.Scatter(x=Joule_Heating_error[lat, lon, :-1] + Joule_Heating[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Joule Heating +error", mode='lines', line=dict(shape='spline', color='green')))
+                             name="Joule Heating + error", mode='lines', line=dict(shape='spline', color='green')))
     fig.add_trace(go.Scatter(x=Joule_Heating[lat, lon, :-1] - Joule_Heating_error[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Joule Heating -error", mode='lines', line=dict(shape='spline', color='green', dash="dash")))
+                             name="Joule Heating - error", mode='lines', line=dict(shape='spline', color='green', dash="dash")))
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
@@ -2591,21 +2591,21 @@ def plot_currents_plus_error(lat_value, lon_value, min_alt, max_alt):
 
     # adding the various plots
     fig.add_trace(go.Scatter(x=J_pedersen_error[lat, lon, :-1] + J_pedersen[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Pedersen Current +error", mode='lines', line=dict(shape='spline', color='red')))
+                             name="Pedersen Current + error", mode='lines', line=dict(shape='spline', color='red')))
     fig.add_trace(go.Scatter(x=J_pedersen[lat, lon, :-1] - J_pedersen_error[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Pedersen Current -error", mode='lines', line=dict(shape='spline', color='red', dash="dash")))
+                             name="Pedersen Current - error", mode='lines', line=dict(shape='spline', color='red', dash="dash")))
     fig.add_trace(go.Scatter(x=J_hall_error[lat, lon, :-1] + J_hall[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Hall Current +error", mode='lines', line=dict(shape='spline', color='blue')))
+                             name="Hall Current + error", mode='lines', line=dict(shape='spline', color='blue')))
     fig.add_trace(go.Scatter(x=J_hall[lat, lon, :-1] - J_hall_error[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Hall Current -error", mode='lines', line=dict(shape='spline', color='blue', dash="dash")))
+                             name="Hall Current - error", mode='lines', line=dict(shape='spline', color='blue', dash="dash")))
     fig.add_trace(go.Scatter(x=J_ohmic_error[lat, lon, :-1] + J_ohmic[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Ohmic current +error", mode='lines', line=dict(shape='spline', color='green')))
+                             name="Ohmic current + error", mode='lines', line=dict(shape='spline', color='green')))
     fig.add_trace(go.Scatter(x=J_ohmic[lat, lon, :-1] - J_ohmic_error[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Ohmic current -error", mode='lines', line=dict(shape='spline', color='green', dash="dash")))
+                             name="Ohmic current - error", mode='lines', line=dict(shape='spline', color='green', dash="dash")))
     fig.add_trace(go.Scatter(x=J_dens_error[lat, lon, :-1] + J_dens[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Densities current +error", mode='lines', line=dict(shape='spline', color='black')))
+                             name="Densities current + error", mode='lines', line=dict(shape='spline', color='black')))
     fig.add_trace(go.Scatter(x=J_dens[lat, lon, :-1] - J_dens_error[lat, lon, :-1], y=heights[lat, lon, :-1],
-                             name="Densities current -error", mode='lines', line=dict(shape='spline', color='black', dash="dash")))
+                             name="Densities current - error", mode='lines', line=dict(shape='spline', color='black', dash="dash")))
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],

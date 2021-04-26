@@ -2249,7 +2249,7 @@ def plot_heating_rates_contr(lat_value, lon_value, min_alt, max_alt):
     # updating the layout of the figure
     fig1.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                        tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
-                       xaxis_title="$(W/m^{3})$", yaxis_title="$Altitude \ (km)$", width=900, height=650,
+                       xaxis_title="", yaxis_title="$Altitude \ (km)$", width=900, height=650,
                        title={'text': 'Ohmic Heating Error Contributions' + title, 'y': 0.9, 'x': 0.49, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig1.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')

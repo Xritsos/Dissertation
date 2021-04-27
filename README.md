@@ -42,4 +42,5 @@ Distributed under the GPL-3.0 License. See more at `LICENSE`.
 I would be glad to answer your questions and listen to your suggestions. Also any correction would be highly appreciated.
 
 Psychalas Christos - kobecris24@yahoo.gr
+
 Project Link: https://github.com/Xritsos/Dissertation.git

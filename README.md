@@ -13,9 +13,9 @@ In the first version, the error propagation method is used to determine the syst
 * Collision frequencies
 * Conductivities
 * Currents and
-* Cross sections,
-
-and also their errors. The output plots depict the quantities and errors as height, latitude-longitude and altitude-latitude depended.
+* Cross sections
+and also their errors. 
+The output plots depict the quantities and errors as height, latitude-longitude and altitude-latitude depended.
 
 
 ## 

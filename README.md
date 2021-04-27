@@ -11,3 +11,4 @@ The data are not provided here beacause of large file sizes but anyone can reque
 * http://www.geomag.bgs.ac.uk/data_service/models_compass/igrf_calc.html
 
 In this case the data for the IGRF model where not request but imported with the pyglow library (including more atmospheric models), which can be found here: https://github.com/timduly4/pyglow.git
+The operating system used is Ubuntu 18.04.5 LTS. More prerequisites can be found  <li><a href="#license">License</a></li>

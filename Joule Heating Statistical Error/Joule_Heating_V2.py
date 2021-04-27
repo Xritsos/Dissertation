@@ -5,6 +5,7 @@ Daedalus Science Study
 """
 
 import datetime
+import sys
 import warnings
 import time
 import pyglow
@@ -185,6 +186,8 @@ def enu_ecef(lat_phi, lon_lmd, Fe, Fn, Fup):
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GET INPUT FROM TIE-GCM AND I-GRF $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1):
+
+    print(sys.version)
     warnings.filterwarnings("ignore")
     start_time = time.time()
 

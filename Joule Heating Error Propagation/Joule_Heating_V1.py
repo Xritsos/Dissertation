@@ -4202,45 +4202,40 @@ def gui():
     # ################################################# Create Window ##################################################
     window = Sg.Window("Joule Heating Error Propagation GUI", main_layout, element_justification="c", keep_on_top=False)
     prod_calculated = False
-    help_text = "----------------------- FILE SELECTION ---------------- \n" \
-                "From the main Menu use dropdown menu to select \n a TIEGCM-file." \
-                "\n" \
+    help_text = "--------------------- FILE SELECTION ------------------ \n" \
+                "From the main Menu use dropdown menu to select \n a TIEGCM-file.\n" \
                 "\n" \
                 "------------------------ ERRORS ------------------------- \n" \
                 "Either choose the errors as percentage or click the \n \"Science study errors\"." \
-                " If \" Science study errors \" is ticked, percentage errors are disabled automatically." \
-                "\n" \
+                " If \"Science study errors\" is ticked, percentage errors are disabled automatically.\n" \
                 "\n" \
                 "----------------------- PROFILES -------------------------- \n" \
-                "The vertical profile tab corresponds to height profile, \n " \
-                "that is Latitude, Longitude and Timestep are \n " \
-                "considered constant and the  height is in a range.\n" \
-                " To choose Latitude, Longitude and Timestep use the \n " \
-                "dropdown menus in the tab. Timestep values are not \n " \
-                "time values, but correspond to TIEGCM file\u0027s \n " \
-                "instances.\n " \
-                "The map profile tab calculates values for a constant \n " \
-                "height and Timestep  and for all the Latitude - \n" \
-                " Longitude. Again the Timestep is not real time and \n " \
-                "also neither the Pressure level, which corresponds \n " \
-                "to different heights. \n " \
-                "The nightshade option greys out the areas of the \n " \
-                "map that are in night time." \
-                "\n" \
+                "The vertical profile tab corresponds to height profile, \n" \
+                "that is Latitude, Longitude and Timestep are consid-\n" \
+                "ered constant and the height is in a range.To choose\n" \
+                "Latitude, Longitude and Timestep use the dropdown\n" \
+                "menus in the tab. Timestep values are not time valu-\n" \
+                "es, but correspond to TIEGCM file\u0027s instances.\n" \
+                "The Lat-Lon map profile calculates values for a con-\n" \
+                "stant height and Timestep and for all the Latitude-Lo- \n" \
+                "ngitude.The nightshade option greys out the areas\n" \
+                "of the map that are in night time. \n" \
+                "The Lat-Alt map calculates values for a constant Lo-\n" \
+                "ngitude and Timestep and for a range of Altitude and \n"\
+                "Latitude.Again the Pressure level does not correspo- \n"\
+                "nd to a specific altitude.\n"\
                 "\n" \
                 "-------------------------- RUN --------------------------\n" \
-                "To run the program after you have chosen a file, \n " \
-                "the type of errors, the wanted profile and have \n " \
-                "checked what plots are needed, then FIRST \n " \
-                "click the button Calculate Products and after \n " \
+                "To run the program after you have chosen a file, \n" \
+                "the type of errors, the wanted profile and have \n" \
+                "checked what plots are needed, then FIRST \n" \
+                "click the button Calculate Products and after \n" \
                 "that the button Calculate Error. For the plotting \n" \
-                " process make sure the \"Choose Profile\" tab \n" \
-                " and \"Choose Plots\" tab match before pressing the \n" \
-                " calculate buttons.\n" \
-                " The nightshade option greys out the areas of the \n " \
-                "map that are in night time. \n" \
-                "\n " \
-                "-------------------- EXIT ------------------\n" \
+                "process make sure the \"Choose Profile\" tab \n" \
+                "and \"Choose Plots\" tab match before pressing \n" \
+                "the calculate buttons.\n" \
+                "\n" \
+                "---------------------------- EXIT --------------------------\n" \
                 "To exit the program hit the Exit button."
     # #################### Event Loop ####################
     while True:
@@ -4300,177 +4295,200 @@ def gui():
             window.FindElement("-B-").Update(disabled=False)
 
         if event == "Calculate Products" and values["-TABGROUP-"] == "Vertical Profile":
-            user_lat = values["-LAT-"]
-            user_lon = values["-LON-"]
-            min_alt = values["-min_alt-"]
-            max_alt = values["-max_alt-"]
-            user_time = int(values["-TIME_vert-"])
-            models_input(file_name=user_file_name, timer=user_time, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
-            products(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
-            prod_calculated = True
-            if values["-TABGROUP1-"] == "Vertical Profile Plots":
-                if values["-COL-"]:
-                    plot_collisions(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                if values["-HR-"]:
-                    plot_heating_rates(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                if values["-CON-"]:
-                    plot_conductivities(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                if values["-CUR-"]:
-                    plot_currents(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                if values["-CR-"]:
-                    plot_cross_sections(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
-            user_time = values["-TIME_map-"]
-            user_lev = values["-Pr_level-"]
-            models_input(file_name=user_file_name, timer=user_time, pressure_level=user_lev)
-            products(pressure_level=user_lev)
-            prod_calculated = True
-            if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
-                user_lev = values["-Pr_level-"]
-                night_shade = False
-                if values["-NIGHT-"]:
-                    night_shade = True
-                if values["-HR_mapll-"]:
-                    mapll_heating_rates_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-COL_mapll-"]:
-                    mapll_collisions_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CON_mapll-"]:
-                    mapll_conductivities_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CUR_mapll-"]:
-                    mapll_currents_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CR_mapll-"]:
-                    mapll_csection_plot(pressure_level=user_lev, night_shade=night_shade)
-        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
-            user_lon = values["-Lon_map2-"]
-            user_time = values["-TIME_map2-"]
-            min_alt_la = values["-min_alt_la-"]
-            max_alt_la = values["-max_alt_la-"]
-            models_input(file_name=user_file_name, timer=user_time, lon_value=lon_dictionary[user_lon])
-            products(lon_value=lon_dictionary[user_lon])
-            prod_calculated = True
-            if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
-                if values["-HR_mapla-"]:
-                    mapla_heating_rates_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-COL_mapla-"]:
-                    mapla_collisions_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CON_mapla-"]:
-                    mapla_conductivities_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CUR_mapla-"]:
-                    mapla_currents_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CR_mapla-"]:
-                    mapla_cross_section_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-        if event == "Calculate Error" and values["-TABGROUP-"] == 'Vertical Profile':
-            if prod_calculated:
+            if values["-TABGROUP-"] == "Vertical Profile" and values["-TABGROUP1-"] == "Vertical Profile Plots":
                 user_lat = values["-LAT-"]
                 user_lon = values["-LON-"]
-                error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
-                      NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
-                      Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                min_alt = values["-min_alt-"]
+                max_alt = values["-max_alt-"]
+                user_time = int(values["-TIME_vert-"])
+                models_input(file_name=user_file_name, timer=user_time, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                products(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                prod_calculated = True
                 if values["-TABGROUP1-"] == "Vertical Profile Plots":
-                    min_alt = values["-min_alt-"]
-                    max_alt = values["-max_alt-"]
-                    if values["-COL_abs-"]:
-                        plot_collisions_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                              max_alt=max_alt)
-                    if values["-COL_plus_error-"]:
-                        plot_collisions_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                   max_alt=max_alt)
-                    if values["-COL_rel-"]:
-                        plot_collisions_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                  max_alt=max_alt)
-                    if values["-COL_con-"]:
-                        plot_collisions_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                              max_alt=max_alt)
-                    if values["-HR_abs-"]:
-                        plot_heating_rates_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                 max_alt=max_alt)
-                    if values["-HR_plus_error-"]:
-                        plot_heating_rates_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                      max_alt=max_alt)
-                    if values["-HR_rel-"]:
-                        plot_heating_rates_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                     max_alt=max_alt)
-                    if values["-HR_con-"]:
-                        plot_heating_rates_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                 max_alt=max_alt)
-                    if values["-CON_abs-"]:
-                        plot_conductivities_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                  max_alt=max_alt)
-                    if values["-CON_plus_error-"]:
-                        plot_conductivities_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                       max_alt=max_alt)
-                    if values["-CON_rel-"]:
-                        plot_conductivities_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                      max_alt=max_alt)
-                    if values["-CON_con-"]:
-                        plot_conductivities_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                  max_alt=max_alt)
-                    if values["-CUR_abs-"]:
-                        plot_currents_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                    if values["-CUR_plus_error-"]:
-                        plot_currents_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                 max_alt=max_alt)
-                    if values["-CUR_rel-"]:
-                        plot_currents_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                max_alt=max_alt)
-                    if values["-CUR_con-"]:
-                        plot_currents_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                    if values["-CR_abs-"]:
-                        plot_csections_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                    if values["-CR_plus_error-"]:
-                        plot_csections_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                  max_alt=max_alt)
-                    if values["-CR_rel-"]:
-                        plot_csections_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                 max_alt=max_alt)
-                    if values["-CR_con-"]:
-                        plot_csections_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                    if values["-COL-"]:
+                        plot_collisions(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                    if values["-HR-"]:
+                        plot_heating_rates(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                    if values["-CON-"]:
+                        plot_conductivities(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                    if values["-CUR-"]:
+                        plot_currents(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                    if values["-CR-"]:
+                        plot_cross_sections(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
             else:
-                Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
-        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
-            user_lev = values["-Pr_level-"]
-            if prod_calculated:
-                error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
-                      NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
-                      Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, pressure_level=user_lev)
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
+        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
+            if values["-TABGROUP-"] == "Map Profile (Lat-Lon)" and values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
+                user_time = values["-TIME_map-"]
+                user_lev = values["-Pr_level-"]
+                models_input(file_name=user_file_name, timer=user_time, pressure_level=user_lev)
+                products(pressure_level=user_lev)
+                prod_calculated = True
                 if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
                     user_lev = values["-Pr_level-"]
                     night_shade = False
                     if values["-NIGHT-"]:
                         night_shade = True
-                    if values["-HR_mapll_error-"]:
-                        mapll_heating_rates_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                    if values["-COL_mapll_error-"]:
-                        mapll_collisions_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                    if values["-CON_mapll_error-"]:
-                        mapll_conductivities_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                    if values["-CUR_mapll_error-"]:
-                        mapll_currents_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                    if values["-CR_mapll_error-"]:
-                        mapll_csection_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-HR_mapll-"]:
+                        mapll_heating_rates_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-COL_mapll-"]:
+                        mapll_collisions_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CON_mapll-"]:
+                        mapll_conductivities_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CUR_mapll-"]:
+                        mapll_currents_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CR_mapll-"]:
+                        mapll_csection_plot(pressure_level=user_lev, night_shade=night_shade)
             else:
-                Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
-        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
-            user_lon = values["-Lon_map2-"]
-            min_alt_la = values["-min_alt_la-"]
-            max_alt_la = values["-max_alt_la-"]
-            if prod_calculated:
-                error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
-                      NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
-                      Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, lon_value=lon_dictionary[user_lon])
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
+        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
+            if values["-TABGROUP-"] == "Map Profile (Lat-Alt)" and values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
+                user_lon = values["-Lon_map2-"]
+                user_time = values["-TIME_map2-"]
+                min_alt_la = values["-min_alt_la-"]
+                max_alt_la = values["-max_alt_la-"]
+                models_input(file_name=user_file_name, timer=user_time, lon_value=lon_dictionary[user_lon])
+                products(lon_value=lon_dictionary[user_lon])
+                prod_calculated = True
                 if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
-                    if values["-HR_mapla_error-"]:
-                        mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                    if values["-COL_mapla_error-"]:
-                        mapla_collisions_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                    if values["-CON_mapla_error-"]:
-                        mapla_conductivities_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                    if values["-CUR_mapla_error-"]:
-                        mapla_currents_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                    if values["-CR_mapla_error-"]:
-                        mapla_cross_section_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-HR_mapla-"]:
+                        mapla_heating_rates_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-COL_mapla-"]:
+                        mapla_collisions_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CON_mapla-"]:
+                        mapla_conductivities_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CUR_mapla-"]:
+                        mapla_currents_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CR_mapla-"]:
+                        mapla_cross_section_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
             else:
-                Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
+        if event == "Calculate Error" and values["-TABGROUP-"] == 'Vertical Profile':
+            if values["-TABGROUP-"] == 'Vertical Profile' and values["-TABGROUP1-"] == "Vertical Profile Plots":
+                if prod_calculated:
+                    user_lat = values["-LAT-"]
+                    user_lon = values["-LON-"]
+                    error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
+                          NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
+                          Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, lat_value=lat_dictionary[user_lat],
+                          lon_value=lon_dictionary[user_lon])
+                    if values["-TABGROUP1-"] == "Vertical Profile Plots":
+                        min_alt = values["-min_alt-"]
+                        max_alt = values["-max_alt-"]
+                        if values["-COL_abs-"]:
+                            plot_collisions_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                  max_alt=max_alt)
+                        if values["-COL_plus_error-"]:
+                            plot_collisions_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                       max_alt=max_alt)
+                        if values["-COL_rel-"]:
+                            plot_collisions_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                      max_alt=max_alt)
+                        if values["-COL_con-"]:
+                            plot_collisions_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                  max_alt=max_alt)
+                        if values["-HR_abs-"]:
+                            plot_heating_rates_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                     max_alt=max_alt)
+                        if values["-HR_plus_error-"]:
+                            plot_heating_rates_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                          max_alt=max_alt)
+                        if values["-HR_rel-"]:
+                            plot_heating_rates_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                         max_alt=max_alt)
+                        if values["-HR_con-"]:
+                            plot_heating_rates_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                     max_alt=max_alt)
+                        if values["-CON_abs-"]:
+                            plot_conductivities_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                      max_alt=max_alt)
+                        if values["-CON_plus_error-"]:
+                            plot_conductivities_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                           max_alt=max_alt)
+                        if values["-CON_rel-"]:
+                            plot_conductivities_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                          max_alt=max_alt)
+                        if values["-CON_con-"]:
+                            plot_conductivities_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                      max_alt=max_alt)
+                        if values["-CUR_abs-"]:
+                            plot_currents_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                max_alt=max_alt)
+                        if values["-CUR_plus_error-"]:
+                            plot_currents_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                     max_alt=max_alt)
+                        if values["-CUR_rel-"]:
+                            plot_currents_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                    max_alt=max_alt)
+                        if values["-CUR_con-"]:
+                            plot_currents_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                max_alt=max_alt)
+                        if values["-CR_abs-"]:
+                            plot_csections_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                 max_alt=max_alt)
+                        if values["-CR_plus_error-"]:
+                            plot_csections_plus_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                      max_alt=max_alt)
+                        if values["-CR_rel-"]:
+                            plot_csections_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                     max_alt=max_alt)
+                        if values["-CR_con-"]:
+                            plot_csections_contr(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                 max_alt=max_alt)
+                else:
+                    Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
+            else:
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
+        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
+            if values["-TABGROUP-"] == "Map Profile (Lat-Lon)" and values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
+                user_lev = values["-Pr_level-"]
+                if prod_calculated:
+                    error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
+                          NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
+                          Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, pressure_level=user_lev)
+                    if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
+                        user_lev = values["-Pr_level-"]
+                        night_shade = False
+                        if values["-NIGHT-"]:
+                            night_shade = True
+                        if values["-HR_mapll_error-"]:
+                            mapll_heating_rates_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                        if values["-COL_mapll_error-"]:
+                            mapll_collisions_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                        if values["-CON_mapll_error-"]:
+                            mapll_conductivities_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                        if values["-CUR_mapll_error-"]:
+                            mapll_currents_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                        if values["-CR_mapll_error-"]:
+                            mapll_csection_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                else:
+                    Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
+            else:
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
+        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
+            if values["-TABGROUP-"] == "Map Profile (Lat-Alt)" and values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
+                user_lon = values["-Lon_map2-"]
+                min_alt_la = values["-min_alt_la-"]
+                max_alt_la = values["-max_alt_la-"]
+                if prod_calculated:
+                    error(error_flag=ERROR_FLAG, B_error=b_error, E_error=e_error, NO_error=no_error, NO2_error=no2_error, NN2_error=nn2_error,
+                          NOp_error=nop_error, NO2p_error=no2p_error, NNOp_error=nnop_error, Ne_error=ne_error, Te_error=te_error, Ti_error=ti_error,
+                          Tn_error=tn_error, Un_error=un_error, Vi_error=vi_error, lon_value=lon_dictionary[user_lon])
+                    if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
+                        if values["-HR_mapla_error-"]:
+                            mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                        if values["-COL_mapla_error-"]:
+                            mapla_collisions_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                        if values["-CON_mapla_error-"]:
+                            mapla_conductivities_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                        if values["-CUR_mapla_error-"]:
+                            mapla_currents_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                        if values["-CR_mapla_error-"]:
+                            mapla_cross_section_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                else:
+                    Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
+            else:
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
         if event == "Help":
             Sg.popup(help_text, title="Help", keep_on_top=True)
     # ######################### Close Window #########################

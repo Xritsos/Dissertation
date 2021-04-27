@@ -10,15 +10,13 @@ In this repository two versions of the code can be found in the folders:
 * `Joule Heating Error Propagation` (version 1)
 * `Joule Heating Statistical Error` (version 2)
 
-In the first version, the error propagation method is used to determine the systematic error, based on the errors proposed by the Daedalus team. The second version deals with random error or else refered as noise or statistical error. Both versions calculate some key ionospheric quantities, such as:
+In the first version, the error propagation method is used to determine the systematic error, based on the errors proposed by the Daedalus team. The second version deals with random error or else refered as noise or statistical error. Both versions calculate some key ionospheric quantities and their errors, such as:
 * Heating rates
 * Collision frequencies
 * Conductivities
 * Currents and
-* Cross sections
-
-and also their errors. 
-
+* Cross sections.
+ 
 The output plots depict the quantities and errors as height, latitude-longitude and altitude-latitude depended.
 
 ## Prerequisites

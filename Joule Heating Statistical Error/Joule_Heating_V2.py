@@ -3146,9 +3146,9 @@ def gui():
 
     col4 = [[Sg.Checkbox("Plot Heating Rates Relative Error", default=False, tooltip="Plots heating rates relative error", key="-HR_mapll_error-")],
             [Sg.Checkbox("Plot Collision Frequencies Relative Error", default=False, tooltip="Plots collision frequencies relative error",
-                key="-COL_mapll_error-")],
+                         key="-COL_mapll_error-")],
             [Sg.Checkbox("Plot Conductivities Relative Error", default=False, tooltip="Plots conductivities relative error",
-                key="-CON_mapll_error-")],
+                         key="-CON_mapll_error-")],
             [Sg.Checkbox("Plot Currents Relative Error", default=False, tooltip="Plots currents relative error", key="-CUR_mapll_error-")],
             [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error", key="-CR_mapll_error-")]]
 
@@ -3160,9 +3160,9 @@ def gui():
 
     col6 = [[Sg.Checkbox("Plot Heating Rates Relative Error", default=False, tooltip="Plots heating rates relative error", key="-HR_mapla_error-")],
             [Sg.Checkbox("Plot Collision Frequencies Relative Error", default=False, tooltip="Plots collision frequencies relative error",
-                key="-COL_mapla_error-")],
+                         key="-COL_mapla_error-")],
             [Sg.Checkbox("Plot Conductivities Relative Error", default=False, tooltip="Plots conductivities relative error",
-                key="-CON_mapla_error-")],
+                         key="-CON_mapla_error-")],
             [Sg.Checkbox("Plot Currents Relative Error", default=False, tooltip="Plots currents relative error", key="-CUR_mapla_error-")],
             [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error", key="-CR_mapla_error-")]]
 
@@ -3179,9 +3179,9 @@ def gui():
 
     templay3 = [[Sg.Text("min altitude(km)", pad=((30, 0), (15, 0))), Sg.Text("max altitude(km)", pad=((30, 10), (15, 0)))],
                 [Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((40, 0), (10, 20)), size=(10, 1), default_value="110",
-                    key="-min_alt_la-"),
+                               key="-min_alt_la-"),
                  Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((45, 0), (10, 20)), size=(11, 1), default_value="200",
-                     key="-max_alt_la-")],
+                               key="-max_alt_la-")],
                 [Sg.Text("Products", pad=((30, 0), (30, 0))), Sg.Text("Errors", pad=((200, 0), (30, 0)))],
                 [Sg.Text("_" * 15, pad=((20, 0), (0, 0))), Sg.Text("_" * 30, pad=((105, 0), (0, 0)))],
                 [Sg.Column(col5, scrollable=False), Sg.Column(col6, scrollable=False)]]
@@ -3255,45 +3255,44 @@ def gui():
     # ################################################# Create Window ##################################################
     window = Sg.Window("Joule Heating Statistical Error GUI", main_layout, element_justification="c", keep_on_top=False)
     prod_calculated = False
-    help_text = "----------------------- FILE SELECTION ----------------- \n" \
-                "From the main Menu use dropdown menu to select \n a TIEGCM-file." \
+    help_text = "----------------------- FILE SELECTION ---------------- \n" \
+                "From the main Menu use dropdown menu to select\n a TIEGCM-file." \
                 "\n" \
-                "\n" \
-                "--------------------- ERRORS ------------------------- \n" \
-                "Either choose the errors as percentage or click the \n button Real Error." \
-                "\n" \
+                "------------------------ NOISE ------------------------- \n" \
+                "Two methods can be used to determine the noise. \n" \
+                "The AWGN method uses an SNR input value in de-\n" \
+                "cibels and determines the noise's standard deviati-\n" \
+                "on based on data rms value and SNR.\nThe second method uses noise standard deviation \n" \
+                "based on science study's values. \n" \
                 "\n" \
                 "----------------------- PROFILES -------------------------- \n" \
-                "The vertical profile tab corresponds to height profile, \n " \
-                "that is Latitude, Longitude and Timestep are \n " \
-                "considered constant and the  height is in a range.\n" \
-                " To choose Latitude, Longitude and Timestep use the \n " \
-                "dropdown menus in the tab. Timestep values are not \n " \
-                "time values, but correspond to TIEGCM file\u0027s \n " \
-                "instances.\n " \
-                "The map profile tab calculates values for a constant \n " \
-                "height and Timestep  and for all the Latitude - \n" \
-                " Longitude. Again the Timestep is not real time and \n " \
-                "also neither the Pressure level, which corresponds \n " \
-                "to different heights. \n " \
-                "The nightshade option greys out the areas of the \n " \
-                "map that are in night time." \
-                "\n" \
+                "The vertical profile tab corresponds to height profile, \n" \
+                "that is Latitude, Longitude and Timestep are consid-\n" \
+                "ered constant and the height is in a range.To choose\n" \
+                "Latitude, Longitude and Timestep use the dropdown\n" \
+                "menus in the tab. Timestep values are not time valu-\n" \
+                "es, but correspond to TIEGCM file\u0027s instances.\n" \
+                "The Lat-Lon map profile calculates values for a con-\n" \
+                "stant height and Timestep and for all the Latitude-Lo- \n" \
+                "ngitude.The nightshade option greys out the areas\n" \
+                "of the map that are in night time. \n" \
+                "The Lat-Alt map calculates values for a constant Lo-\n" \
+                "ngitude and Timestep and for a range of Altitude and \n" \
+                "Latitude.Again the Pressure level does not correspo- \n" \
+                "nd to a specific altitude.\n" \
                 "\n" \
                 "-------------------------- RUN --------------------------\n" \
                 "To run the program after you have chosen a file, \n " \
-                "the type of errors, the wanted profile and have \n " \
+                "the method of noise, the wanted profile and have \n " \
                 "checked what plots are needed, then FIRST \n " \
                 "click the button Calculate Products and after \n " \
                 "that the button Calculate Error. For the plotting \n" \
                 " process make sure the \"Choose Profile\" tab \n" \
                 " and \"Choose Plots\" tab match before pressing the \n" \
                 " calculate buttons.\n" \
-                "The nightshade option greys out the areas of the \n " \
-                "map that are in night time. \n" \
                 "\n " \
-                "-------------------- EXIT ------------------\n" \
-                "To exit the program hit the Exit button."
+                "------------------------- EXIT -----------------------\n" \
+                " To exit the program hit the Exit button."
 
     # #################### Event Loop ####################
     while True:
@@ -3318,209 +3317,241 @@ def gui():
             window.FindElement("-SNR-").Update(disabled=False)
 
         if event == "Calculate Products" and values["-TABGROUP-"] == "Vertical Profile":
-            user_lat = values["-LAT-"]
-            user_lon = values["-LON-"]
-            min_alt = values["-min_alt-"]
-            max_alt = values["-max_alt-"]
-            user_time = int(values["-TIME_vert-"])
-            models_input(file_name=user_file_name, timer=user_time, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
-            Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
-             parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], \
-             C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
-             calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
-                                Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
-                                Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
-            prod_calculated = True
-            if values["-TABGROUP1-"] == "Vertical Profile Plots":
-                if values["-COL-"]:
-                    plot_collisions(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                if values["-HR-"]:
-                    plot_heating_rates(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                if values["-CON-"]:
-                    plot_conductivities(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                if values["-CUR-"]:
-                    plot_currents(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                if values["-CR-"]:
-                    plot_cross_sections(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
-            user_time = values["-TIME_map-"]
-            user_lev = values["-Pr_level-"]
-            models_input(file_name=user_file_name, timer=user_time, pressure_level=user_lev)
-            Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
-             parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], \
-             C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
-             calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
-                                Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
-                                Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, pressure_level=user_lev)
-            prod_calculated = True
-            if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
-                user_lev = values["-Pr_level-"]
-                night_shade = False
-                if values["-NIGHT-"]:
-                    night_shade = True
-                if values["-HR_mapll-"]:
-                    mapll_heating_rates_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-COL_mapll-"]:
-                    mapll_collisions_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CON_mapll-"]:
-                    mapll_conductivities_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CUR_mapll-"]:
-                    mapll_currents_plot(pressure_level=user_lev, night_shade=night_shade)
-                if values["-CR_mapll-"]:
-                    mapll_csection_plot(pressure_level=user_lev, night_shade=night_shade)
-        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
-            user_lon = values["-Lon_map2-"]
-            user_time = values["-TIME_map2-"]
-            min_alt_la = values["-min_alt_la-"]
-            max_alt_la = values["-max_alt_la-"]
-            models_input(file_name=user_file_name, timer=user_time, lon_value=lon_dictionary[user_lon])
-            Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
-             parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], \
-             C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
-             calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
-                                Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
-                                Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lon_value=lon_dictionary[user_lon])
-            prod_calculated = True
-            if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
-                if values["-HR_mapla-"]:
-                    mapla_heating_rates_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-COL_mapla-"]:
-                    mapla_collisions_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CON_mapla-"]:
-                    mapla_conductivities_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CUR_mapla-"]:
-                    mapla_currents_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                if values["-CR_mapla-"]:
-                    mapla_cross_section_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-        if event == "Calculate Error" and values["-TABGROUP-"] == 'Vertical Profile':
-            if prod_calculated:
-                user_snr = float(values["-SNR-"])
+            if values["-TABGROUP-"] == "Vertical Profile" and values["-TABGROUP1-"] == "Vertical Profile Plots":
                 user_lat = values["-LAT-"]
                 user_lon = values["-LON-"]
-                if values["-AWGN-"]:
-                    calculate_noise_awgn(SNR=user_snr, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
-                elif values["-SC_rand-"]:
-                    calculate_noise(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
-                else:
-                    Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
-                Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
-                 hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :],\
-                 nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
-                 J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
-                 calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
-                                    Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
-                                    Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
-                                    NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
-                                    lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                min_alt = values["-min_alt-"]
+                max_alt = values["-max_alt-"]
+                user_time = int(values["-TIME_vert-"])
+                models_input(file_name=user_file_name, timer=user_time, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
+                 parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], \
+                 C_O2p[:, :, :], C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
+                 calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
+                                    Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
+                                    Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                prod_calculated = True
                 if values["-TABGROUP1-"] == "Vertical Profile Plots":
-                    min_alt = values["-min_alt-"]
-                    max_alt = values["-max_alt-"]
-                    if values["-Data_1-"]:
-                        plot_data(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                  max_alt=max_alt)
-                    if values["-Data_2-"]:
-                        plot_data_2(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                    max_alt=max_alt)
-                    if values["-COL_abs-"]:
-                        plot_collisions_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                              max_alt=max_alt)
-                    if values["-COL_rel-"]:
-                        plot_collisions_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                  max_alt=max_alt)
-                    if values["-HR_abs-"]:
-                        plot_heating_rates_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                 max_alt=max_alt)
-                    if values["-HR_rel-"]:
-                        plot_heating_rates_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                     max_alt=max_alt)
-                    if values["-CON_abs-"]:
-                        plot_conductivities_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                  max_alt=max_alt)
-                    if values["-CON_rel-"]:
-                        plot_conductivities_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                      max_alt=max_alt)
-                    if values["-CUR_abs-"]:
-                        plot_currents_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                    if values["-CUR_rel-"]:
-                        plot_currents_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                max_alt=max_alt)
-                    if values["-CR_abs-"]:
-                        plot_csections_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
-                    if values["-CR_rel-"]:
-                        plot_csections_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                 max_alt=max_alt)
+                    if values["-COL-"]:
+                        plot_collisions(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                    if values["-HR-"]:
+                        plot_heating_rates(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                    if values["-CON-"]:
+                        plot_conductivities(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                    if values["-CUR-"]:
+                        plot_currents(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                    if values["-CR-"]:
+                        plot_cross_sections(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
             else:
-                Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
-        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
-            user_lev = values["-Pr_level-"]
-            if prod_calculated:
-                user_snr = float(values["-SNR-"])
-                if values["-AWGN-"]:
-                    calculate_noise_awgn(SNR=user_snr, pressure_level=user_lev)
-                elif values["-SC_rand-"]:
-                    calculate_noise(pressure_level=user_lev)
-                else:
-                    Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
-                Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
-                 hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :], \
-                 nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
-                 J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
-                 calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
-                                    Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
-                                    Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
-                                    NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
-                                    pressure_level=user_lev)
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
+        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
+            if values["-TABGROUP-"] == "Map Profile (Lat-Lon)" and values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
+                user_time = values["-TIME_map-"]
+                user_lev = values["-Pr_level-"]
+                models_input(file_name=user_file_name, timer=user_time, pressure_level=user_lev)
+                Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
+                 parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], \
+                 C_O2p[:, :, :], C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
+                 calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
+                                    Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
+                                    Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, pressure_level=user_lev)
+                prod_calculated = True
                 if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
                     user_lev = values["-Pr_level-"]
                     night_shade = False
                     if values["-NIGHT-"]:
                         night_shade = True
-                    if values["-HR_mapll_error-"]:
-                        mapll_heating_rates_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                    if values["-COL_mapll_error-"]:
-                        mapll_collisions_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                    if values["-CON_mapll_error-"]:
-                        mapll_conductivities_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                    if values["-CUR_mapll_error-"]:
-                        mapll_currents_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
-                    if values["-CR_mapll_error-"]:
-                        mapll_csection_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-HR_mapll-"]:
+                        mapll_heating_rates_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-COL_mapll-"]:
+                        mapll_collisions_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CON_mapll-"]:
+                        mapll_conductivities_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CUR_mapll-"]:
+                        mapll_currents_plot(pressure_level=user_lev, night_shade=night_shade)
+                    if values["-CR_mapll-"]:
+                        mapll_csection_plot(pressure_level=user_lev, night_shade=night_shade)
             else:
-                Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
-        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
-            user_lon = values["-Lon_map2-"]
-            min_alt_la = values["-min_alt_la-"]
-            max_alt_la = values["-max_alt_la-"]
-            if prod_calculated:
-                user_snr = float(values["-SNR-"])
-                if values["-AWGN-"]:
-                    calculate_noise_awgn(SNR=user_snr, lon_value=lon_dictionary[user_lon])
-                elif values["-SC_rand-"]:
-                    calculate_noise(lon_value=lon_dictionary[user_lon])
-                else:
-                    Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
-                Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
-                 hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :], \
-                 nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], \
-                 J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
-                 calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
-                                    Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
-                                    Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
-                                    NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
-                                    lon_value=lon_dictionary[user_lon])
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
+        if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
+            if values["-TABGROUP-"] == "Map Profile (Lat-Alt)" and values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
+                user_lon = values["-Lon_map2-"]
+                user_time = values["-TIME_map2-"]
+                min_alt_la = values["-min_alt_la-"]
+                max_alt_la = values["-max_alt_la-"]
+                models_input(file_name=user_file_name, timer=user_time, lon_value=lon_dictionary[user_lon])
+                Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
+                 parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], \
+                 C_O2p[:, :, :], C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
+                 calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
+                                    Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
+                                    Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lon_value=lon_dictionary[user_lon])
+                prod_calculated = True
                 if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
-                    if values["-HR_mapla_error-"]:
-                        mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                    if values["-COL_mapla_error-"]:
-                        mapla_collisions_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                    if values["-CON_mapla_error-"]:
-                        mapla_conductivities_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                    if values["-CUR_mapla_error-"]:
-                        mapla_currents_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
-                    if values["-CR_mapla_error-"]:
-                        mapla_cross_section_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-HR_mapla-"]:
+                        mapla_heating_rates_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-COL_mapla-"]:
+                        mapla_collisions_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CON_mapla-"]:
+                        mapla_conductivities_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CUR_mapla-"]:
+                        mapla_currents_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                    if values["-CR_mapla-"]:
+                        mapla_cross_section_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
             else:
-                Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
+        if event == "Calculate Error" and values["-TABGROUP-"] == 'Vertical Profile':
+            calculated_noise = False
+            if values["-TABGROUP-"] == 'Vertical Profile' and values["-TABGROUP1-"] == "Vertical Profile Plots":
+                if prod_calculated:
+                    user_snr = float(values["-SNR-"])
+                    user_lat = values["-LAT-"]
+                    user_lon = values["-LON-"]
+                    if values["-AWGN-"]:
+                        calculate_noise_awgn(SNR=user_snr, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                        calculated_noise = True
+                    elif values["-SC_rand-"]:
+                        calculate_noise(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                        calculated_noise = True
+                    else:
+                        Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
+                    if calculated_noise:
+                        Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
+                         hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], \
+                         nu_NOp_sum_noisy[:, :, :], nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], \
+                         C_ion_noisy[:, :, :], J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
+                         calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
+                                            Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
+                                            Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
+                                            NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
+                                            lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                        if values["-TABGROUP1-"] == "Vertical Profile Plots":
+                            min_alt = values["-min_alt-"]
+                            max_alt = values["-max_alt-"]
+                            if values["-Data_1-"]:
+                                plot_data(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                          max_alt=max_alt)
+                            if values["-Data_2-"]:
+                                plot_data_2(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                            max_alt=max_alt)
+                            if values["-COL_abs-"]:
+                                plot_collisions_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                      max_alt=max_alt)
+                            if values["-COL_rel-"]:
+                                plot_collisions_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                          max_alt=max_alt)
+                            if values["-HR_abs-"]:
+                                plot_heating_rates_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                         max_alt=max_alt)
+                            if values["-HR_rel-"]:
+                                plot_heating_rates_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                             max_alt=max_alt)
+                            if values["-CON_abs-"]:
+                                plot_conductivities_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                          max_alt=max_alt)
+                            if values["-CON_rel-"]:
+                                plot_conductivities_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                              max_alt=max_alt)
+                            if values["-CUR_abs-"]:
+                                plot_currents_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                    max_alt=max_alt)
+                            if values["-CUR_rel-"]:
+                                plot_currents_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                        max_alt=max_alt)
+                            if values["-CR_abs-"]:
+                                plot_csections_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                     max_alt=max_alt)
+                            if values["-CR_rel-"]:
+                                plot_csections_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                                         max_alt=max_alt)
+                else:
+                    Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
+            else:
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
+        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
+            calculated_noise = False
+            if values["-TABGROUP-"] == "Map Profile (Lat-Lon)" and values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
+                user_lev = values["-Pr_level-"]
+                if prod_calculated:
+                    user_snr = float(values["-SNR-"])
+                    if values["-AWGN-"]:
+                        calculate_noise_awgn(SNR=user_snr, pressure_level=user_lev)
+                        calculated_noise = True
+                    elif values["-SC_rand-"]:
+                        calculate_noise(pressure_level=user_lev)
+                        calculated_noise = True
+                    else:
+                        Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
+                    if calculated_noise:
+                        Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
+                         hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], \
+                         nu_NOp_sum_noisy[:, :, :], nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], \
+                         C_ion_noisy[:, :, :], J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
+                         calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
+                                            Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
+                                            Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
+                                            NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
+                                            pressure_level=user_lev)
+                        if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
+                            user_lev = values["-Pr_level-"]
+                            night_shade = False
+                            if values["-NIGHT-"]:
+                                night_shade = True
+                            if values["-HR_mapll_error-"]:
+                                mapll_heating_rates_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                            if values["-COL_mapll_error-"]:
+                                mapll_collisions_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                            if values["-CON_mapll_error-"]:
+                                mapll_conductivities_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                            if values["-CUR_mapll_error-"]:
+                                mapll_currents_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                            if values["-CR_mapll_error-"]:
+                                mapll_csection_rel_error_plot(pressure_level=user_lev, night_shade=night_shade)
+                else:
+                    Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
+            else:
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
+        if event == "Calculate Error" and values["-TABGROUP-"] == "Map Profile (Lat-Alt)":
+            calculated_noise = False
+            if values["-TABGROUP-"] == "Map Profile (Lat-Alt)" and values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
+                user_lon = values["-Lon_map2-"]
+                min_alt_la = values["-min_alt_la-"]
+                max_alt_la = values["-max_alt_la-"]
+                if prod_calculated:
+                    user_snr = float(values["-SNR-"])
+                    if values["-AWGN-"]:
+                        calculate_noise_awgn(SNR=user_snr, lon_value=lon_dictionary[user_lon])
+                        calculated_noise = True
+                    elif values["-SC_rand-"]:
+                        calculate_noise(lon_value=lon_dictionary[user_lon])
+                        calculated_noise = True
+                    else:
+                        Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
+                    if calculated_noise:
+                        Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
+                         hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], \
+                         nu_NOp_sum_noisy[:, :, :], nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], \
+                         C_ion_noisy[:, :, :], J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
+                         calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
+                                            Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
+                                            Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
+                                            NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
+                                            lon_value=lon_dictionary[user_lon])
+                        if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
+                            if values["-HR_mapla_error-"]:
+                                mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                            if values["-COL_mapla_error-"]:
+                                mapla_collisions_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                            if values["-CON_mapla_error-"]:
+                                mapla_conductivities_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                            if values["-CUR_mapla_error-"]:
+                                mapla_currents_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                            if values["-CR_mapla_error-"]:
+                                mapla_cross_section_rel_error_plot(lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)
+                else:
+                    Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
+            else:
+                Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
         if event == "Help":
             Sg.popup(help_text, title="Help", keep_on_top=True)
     # ######################### Close Window #########################

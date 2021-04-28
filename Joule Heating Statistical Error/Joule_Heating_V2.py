@@ -2718,7 +2718,10 @@ def mapla_heating_rates_plot(lon_value, min_alt, max_alt):
     # Joule Heating
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], Joule_Heating[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
@@ -2729,7 +2732,10 @@ def mapla_heating_rates_plot(lon_value, min_alt, max_alt):
     # Ohmic Heating
     plt.figure(figsize=(12, 12))
     cp2 = plt.contourf(heights_la[:-1], glat_in[:], Ohmic_Heating[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
@@ -2740,7 +2746,10 @@ def mapla_heating_rates_plot(lon_value, min_alt, max_alt):
     # Frictional Heating
     plt.figure(figsize=(12, 12))
     cp3 = plt.contourf(heights_la[:-1], glat_in[:], Frictional_Heating[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
@@ -2763,7 +2772,10 @@ def mapla_collisions_plot(lon_value, min_alt, max_alt):
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], (nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3,
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
@@ -2774,7 +2786,10 @@ def mapla_collisions_plot(lon_value, min_alt, max_alt):
     # Electron Collision Frequency
     plt.figure(figsize=(12, 12))
     cp2 = plt.contourf(heights_la[:-1], glat_in[:], nu_e_sum[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
@@ -2796,7 +2811,10 @@ def mapla_conductivities_plot(lon_value, min_alt, max_alt):
     # Pedersen
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], pedersen_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
@@ -2807,7 +2825,10 @@ def mapla_conductivities_plot(lon_value, min_alt, max_alt):
     # Hall Conductivity
     plt.figure(figsize=(12, 12))
     cp2 = plt.contourf(heights_la[:-1], glat_in[:], hall_con[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
@@ -2819,7 +2840,10 @@ def mapla_conductivities_plot(lon_value, min_alt, max_alt):
     plt.figure(figsize=(12, 12))
     cp3 = plt.contourf(heights_la[:-1], glat_in[:], parallel_con[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
                        interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
     plt.title('Parallel Conductivity' + title)
@@ -2840,7 +2864,10 @@ def mapla_currents_plot(lon_value, min_alt, max_alt):
     # Ohmic Current
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], J_ohmic[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
@@ -2851,7 +2878,10 @@ def mapla_currents_plot(lon_value, min_alt, max_alt):
     # Densities Current
     plt.figure(figsize=(12, 12))
     cp2 = plt.contourf(heights_la[:-1], glat_in[:], J_dens[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
@@ -2873,7 +2903,10 @@ def mapla_cross_section_plot(lon_value, min_alt, max_alt):
     # Average Ion Cross Section
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], C_ion[:, lon, :-1], cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
@@ -2896,38 +2929,44 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((Joule_Heating_noisy[:, lon, :-1] - Joule_Heating[:, lon, :-1]) / Joule_Heating[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Joule Heating Relative Error' + title)
     cbar = plt.colorbar(cp1)
-    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Ohmic Heating
     plt.figure(figsize=(12, 12))
     cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((Ohmic_Heating_noisy[:, lon, :-1] - Ohmic_Heating[:, lon, :-1]) / Ohmic_Heating[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Ohmic Heating Relative Error' + title)
     cbar = plt.colorbar(cp2)
-    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Frictional Heating
     plt.figure(figsize=(12, 12))
     cp3 = plt.contourf(heights_la[:-1], glat_in[:], abs((Frictional_Heating_noisy[:, lon, :-1] - Frictional_Heating[:, lon, :-1]) /
                                                         Frictional_Heating[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Frictional Heating Relative Error' + title)
     cbar = plt.colorbar(cp3)
-    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     plt.show()
 
@@ -2947,25 +2986,29 @@ def mapla_collisions_rel_error_plot(lon_value, min_alt, max_alt):
                                                                                                    nu_NOp_sum[:, lon, :-1]) / 3)) /
                                                            ((nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3)),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Average Ion Collision Frequency Relative Error' + title)
     cbar = plt.colorbar(cp1)
-    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Electron Collision Frequency
     plt.figure(figsize=(12, 12))
     cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((nu_e_sum_noisy[:, lon, :-1] - nu_e_sum[:, lon, :-1]) / nu_e_sum[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Electron Collision Frequency Relative Error' + title)
     cbar = plt.colorbar(cp2)
-    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     plt.show()
 
@@ -2982,37 +3025,43 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((pedersen_con_noisy[:, lon, :-1] - pedersen_con[:, lon, :-1]) / pedersen_con[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Pedersen Conductivity Relative Error' + title)
     cbar = plt.colorbar(cp1)
-    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Hall Conductivity
     plt.figure(figsize=(12, 12))
     cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((hall_con_noisy[:, lon, :-1] - hall_con[:, lon, :-1]) / hall_con[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Hall Conductivity Relative Error' + title)
     cbar = plt.colorbar(cp2)
-    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Parallel Conductivity
     plt.figure(figsize=(12, 12))
     cp3 = plt.contourf(heights_la[:-1], glat_in[:], abs((parallel_con_noisy[:, lon, :-1] - parallel_con[:, lon, :-1]) / parallel_con[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Parallel Conductivity Relative Error' + title)
     cbar = plt.colorbar(cp3)
-    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     plt.show()
 
@@ -3029,25 +3078,29 @@ def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((J_ohmic_noisy[:, lon, :-1] - J_ohmic[:, lon, :-1]) / J_ohmic[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Ohmic Current Relative Error' + title)
     cbar = plt.colorbar(cp1)
-    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     # Densities Current
     plt.figure(figsize=(12, 12))
     cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((J_dens_noisy[:, lon, :-1] - J_dens[:, lon, :-1]) / J_dens[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Densities Current Relative Error' + title)
     cbar = plt.colorbar(cp2)
-    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     plt.show()
 
@@ -3064,13 +3117,15 @@ def mapla_cross_section_rel_error_plot(lon_value, min_alt, max_alt):
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((C_ion_noisy[:, lon, :-1] - C_ion[:, lon, :-1]) / C_ion[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+
     plt.xlim(min_alt, max_alt)
+    plt.xticks(np.arange(min_alt, max_alt + 10, 10))
+    plt.yticks(np.arange(-85, 85 + 10, 10))
     plt.xlabel('~$Altitude \ (km)$')
     plt.ylabel('$Latitude \ (deg)$')
 
     plt.title('Average Ion Cross Section Relative Error' + title)
     cbar = plt.colorbar(cp1)
-    cbar.set_label(label='', size='large', weight='bold', rotation=270, labelpad=30)
 
     plt.show()
 

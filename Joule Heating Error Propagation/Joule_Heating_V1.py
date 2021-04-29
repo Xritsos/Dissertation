@@ -15,6 +15,7 @@ import numpy as np
 import plotly.graph_objects as go
 from netCDF4 import Dataset
 from matplotlib import ticker
+from matplotlib.colors import LogNorm
 from cmcrameri import cm
 from mpl_toolkits.basemap import Basemap
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -539,7 +540,6 @@ def products(lat_value=-1, lon_value=-1, pressure_level=-1):
                 term_d_hall = (NNOp[lat, lon, lev] * ccm) / (1 + r_NOp ** 2)
 
                 hall_con[lat, lon, lev] = (qe / Bnorm) * (term_a_hall - term_b_hall - term_c_hall - term_d_hall)
-
                 # Parallel conductivity (in siemens/meter)
                 # qe(in coulomb), me(mass in tesla), N(density) (in m^(-3)), collision frequency(in Hz)
                 parallel_con[lat, lon, lev] = (Ne[lat, lon, lev] * ccm * qe ** 2) / (me * nu_e_sum[lat, lon, lev])
@@ -3666,7 +3666,7 @@ def mapla_collisions_plot(lon_value, min_alt, max_alt):
     # Ion Average Collision Frequency
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], (nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3,
-                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+                       locator=ticker.LogLocator(), norm=LogNorm(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3680,7 +3680,7 @@ def mapla_collisions_plot(lon_value, min_alt, max_alt):
 
     # Electron Collision Frequency
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], nu_e_sum[:, lon, :-1], locator=ticker.LogLocator(subs=[1.0, 5.0]), cmap=cm.batlow,
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], nu_e_sum[:, lon, :-1], locator=ticker.LogLocator(subs=[1.0, 5.0]), norm=LogNorm(), cmap=cm.batlow,
                        interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
@@ -3734,8 +3734,8 @@ def mapla_conductivities_plot(lon_value, min_alt, max_alt):
 
     # Parallel Conductivity
     plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(heights_la[:-1], glat_in[:], parallel_con[:, lon, :-1], locator=ticker.LogLocator(subs=[1.0, 5.0]), cmap=cm.batlow,
-                       interpolation='bicubic')
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], parallel_con[:, lon, :-1], locator=ticker.LogLocator(subs=[1.0, 5.0]), norm=LogNorm(),
+                       cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3824,7 +3824,7 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
     # Joule Heating
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], Joule_Heating_error[:, lon, :-1] / Joule_Heating[:, lon, :-1],
-                      locator=ticker.LogLocator(subs=[1.0, 4.0, 8.0], numdecs=10), cmap=cm.batlow, interpolation='bicubic')
+                       locator=ticker.LogLocator(subs=[1.0, 4.0]), norm=LogNorm(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3838,7 +3838,7 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
     # Ohmic Heating
     plt.figure(figsize=(12, 12))
     cp2 = plt.contourf(heights_la[:-1], glat_in[:], Ohmic_Heating_error[:, lon, :-1] / Ohmic_Heating[:, lon, :-1],
-                       locator=ticker.LogLocator(subs=[1.0, 1.1, 1.2]), cmap=cm.batlow, interpolation='bicubic')
+                       locator=ticker.LogLocator(subs=[1.0, 1.5, 2.0, 2.5]), norm=LogNorm(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3852,7 +3852,7 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
     # Frictional Heating
     plt.figure(figsize=(12, 12))
     cp3 = plt.contourf(heights_la[:-1], glat_in[:], Frictional_Heating_error[:, lon, :-1] / Frictional_Heating[:, lon, :-1],
-                       locator=ticker.LogLocator(subs=[1.0, 1.2, 1.4]), cmap=cm.batlow, interpolation='bicubic')
+                       locator=ticker.LogLocator(subs=[1.0, 4.0]), norm=LogNorm(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3929,8 +3929,8 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Hall Conductivity
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], hall_con_error[:, lon, :-1] / hall_con[:, lon, :-1], locator=ticker.LogLocator(subs=[1.0, 5.0]),
-                       cmap=cm.batlow, interpolation='bicubic')
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], hall_con_error[:, lon, :-1] / hall_con[:, lon, :-1],
+                       locator=ticker.LogLocator(), norm=LogNorm(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3968,8 +3968,8 @@ def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Ohmic Current
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], J_ohmic_error[:, lon, :-1] / J_ohmic[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
-                       interpolation='bicubic')
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], J_ohmic_error[:, lon, :-1] / J_ohmic[:, lon, :-1],
+                       locator=ticker.LogLocator(subs=[1.0, 1.5, 2.0, 2.5]), norm=LogNorm(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3982,8 +3982,8 @@ def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Densities Current
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], J_dens_error[:, lon, :-1] / J_dens[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
-                       interpolation='bicubic')
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], J_dens_error[:, lon, :-1] / J_dens[:, lon, :-1], locator=ticker.LogLocator(subs=[1.0, 4.0]),
+                       norm=LogNorm(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))

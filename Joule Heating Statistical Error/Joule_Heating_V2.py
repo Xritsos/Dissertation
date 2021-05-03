@@ -878,42 +878,40 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
 
     # Assigning Accuracies
     # Magnetic field (in tesla)
-    Bx_ac = 5 * 10 ** (-9)
-    By_ac = 5 * 10 ** (-9)
-    Bz_ac = 5 * 10 ** (-9)
+    Bx_pr = 10 ** (-9)
+    By_pr = 10 ** (-9)
+    Bz_pr = 10 ** (-9)
 
     # Electric field (in V/m)
-    Ex_ac = 2 * 10 ** (-3)
-    Ey_ac = 2 * 10 ** (-3)
-    Ez_ac = 2 * 10 ** (-3)
+    Ex_pr = 0.2 * 10 ** (-3)
+    Ey_pr = 0.2 * 10 ** (-3)
+    Ez_pr = 0.2 * 10 ** (-3)
 
     # Neutral densities
-    NO_ac = 20 / 100
-    NO2_ac = 20 / 100
-    NN2_ac = 20 / 100
+    NO_pr = 10 / 100
+    NO2_pr = 10 / 100
+    NN2_pr = 10 / 100
 
     # Ion densities
-    NOp_ac = 10 / 100
-    NO2p_ac = 10 / 100
-    NNOp_ac = 10 / 100
-    Ne_ac = 10 / 100
+    NOp_pr = 5 / 100
+    NO2p_pr = 5 / 100
+    NNOp_pr = 5 / 100
+    Ne_pr = 5 / 100
 
     # Temperatures
-    Ti_ac = 10 / 100
-    Te_ac = 10 / 100
-    Tn_ac = 20 / 100
+    Ti_pr = 5 / 100
+    Te_pr = 5 / 100
+    Tn_pr = 10 / 100
 
     # Neutral wind (in m/s)
-    H_wind = 20
-    V_wind = 10
-    Unx_ac = V_wind
-    Uny_ac = V_wind
-    Unz_ac = H_wind
+    Unx_pr = 5
+    Uny_pr = 5
+    Unz_pr = 5
 
     # Ion drift (in m/s)
-    Vix_ac = 100
-    Viy_ac = 100
-    Viz_ac = 100
+    Vix_pr = 20
+    Viy_pr = 20
+    Viz_pr = 20
 
     for lev in range(lev_start, lev_range):
         for lat in range(lat_start, lat_range):
@@ -925,61 +923,61 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
                     i = lat
 
                 # Magnetic field
-                noise = np.random.normal(0, Bx_ac)
+                noise = np.random.normal(0, Bx_pr)
                 Bx_noisy[lat, lon, lev] = Bx[lat, lon, lev] + noise
-                noise = np.random.normal(0, By_ac)
+                noise = np.random.normal(0, By_pr)
                 By_noisy[lat, lon, lev] = By[lat, lon, lev] + noise
-                noise = np.random.normal(0, Bz_ac)
+                noise = np.random.normal(0, Bz_pr)
                 Bz_noisy[lat, lon, lev] = Bz[lat, lon, lev] + noise
 
                 # Electric field
-                noise = np.random.normal(0, Ex_ac)
+                noise = np.random.normal(0, Ex_pr)
                 Ex_noisy[lat, lon, lev] = Ex[lat, lon, lev] + noise
-                noise = np.random.normal(0, Ey_ac)
+                noise = np.random.normal(0, Ey_pr)
                 Ey_noisy[lat, lon, lev] = Ey[lat, lon, lev] + noise
-                noise = np.random.normal(0, Ez_ac)
+                noise = np.random.normal(0, Ez_pr)
                 Ez_noisy[lat, lon, lev] = Ez[lat, lon, lev] + noise
 
                 # Neutral densities
-                noise = np.random.normal(0, NO_ac * NO[lat, lon, lev])
+                noise = np.random.normal(0, NO_pr * NO[lat, lon, lev])
                 NO_noisy[lat, lon, lev] = NO[lat, lon, lev] + noise
-                noise = np.random.normal(0, NO2_ac * NO2[lat, lon, lev])
+                noise = np.random.normal(0, NO2_pr * NO2[lat, lon, lev])
                 NO2_noisy[lat, lon, lev] = NO2[lat, lon, lev] + noise
-                noise = np.random.normal(0, NN2_ac * NN2[lat, lon, lev])
+                noise = np.random.normal(0, NN2_pr * NN2[lat, lon, lev])
                 NN2_noisy[lat, lon, lev] = NN2[lat, lon, lev] + noise
 
                 # Ion - Electron densities
-                noise = np.random.normal(0, NOp_ac * NOp[lat, lon, lev])
+                noise = np.random.normal(0, NOp_pr * NOp[lat, lon, lev])
                 NOp_noisy[lat, lon, lev] = NOp[lat, lon, lev] + noise
-                noise = np.random.normal(0, NO2p_ac * NO2p[lat, lon, lev])
+                noise = np.random.normal(0, NO2p_pr * NO2p[lat, lon, lev])
                 NO2p_noisy[lat, lon, lev] = NO2p[lat, lon, lev] + noise
-                noise = np.random.normal(0, NNOp_ac * NNOp[lat, lon, lev])
+                noise = np.random.normal(0, NNOp_pr * NNOp[lat, lon, lev])
                 NNOp_noisy[lat, lon, lev] = NNOp[lat, lon, lev] + noise
-                noise = np.random.normal(0, Ne_ac * Ne[lat, lon, lev])
+                noise = np.random.normal(0, Ne_pr * Ne[lat, lon, lev])
                 Ne_noisy[lat, lon, lev] = Ne[lat, lon, lev] + noise
 
                 # Temperatures
-                noise = np.random.normal(0, Ti_ac * Ti[lat, lon, lev])
+                noise = np.random.normal(0, Ti_pr * Ti[lat, lon, lev])
                 Ti_noisy[lat, lon, lev] = Ti[lat, lon, lev] + noise
-                noise = np.random.normal(0, Tn_ac * Tn[lat, lon, lev])
+                noise = np.random.normal(0, Tn_pr * Tn[lat, lon, lev])
                 Tn_noisy[lat, lon, lev] = Tn[lat, lon, lev] + noise
-                noise = np.random.normal(0, Te_ac * Te[lat, lon, lev])
+                noise = np.random.normal(0, Te_pr * Te[lat, lon, lev])
                 Te_noisy[lat, lon, lev] = Te[lat, lon, lev] + noise
 
                 # Neutral wind
-                noise = np.random.normal(0, Unx_ac)
+                noise = np.random.normal(0, Unx_pr)
                 Unx_noisy[lat, lon, lev] = Unx[lat, lon, lev] + noise
-                noise = np.random.normal(0, Uny_ac)
+                noise = np.random.normal(0, Uny_pr)
                 Uny_noisy[lat, lon, lev] = Uny[lat, lon, lev] + noise
-                noise = np.random.normal(0, Unz_ac)
+                noise = np.random.normal(0, Unz_pr)
                 Unz_noisy[lat, lon, lev] = Unz[lat, lon, lev] + noise
 
                 # Ion drift
-                noise = np.random.normal(0, Vix_ac)
+                noise = np.random.normal(0, Vix_pr)
                 Vi_vertx_noisy[lat, lon, lev] = Vi_vertx[lat, lon, lev] + noise
-                noise = np.random.normal(0, Viy_ac)
+                noise = np.random.normal(0, Viy_pr)
                 Vi_verty_noisy[lat, lon, lev] = Vi_verty[lat, lon, lev] + noise
-                noise = np.random.normal(0, Viz_ac)
+                noise = np.random.normal(0, Viz_pr)
                 Vi_vertz_noisy[lat, lon, lev] = Vi_vertz[lat, lon, lev] + noise
                 progress_bar.UpdateBar(i)
 
@@ -1694,9 +1692,9 @@ def plot_heating_rates_rel_error(lat_value, lon_value, min_alt, max_alt):
     min_alt = min_alt
     max_alt = max_alt
 
-    Ohmic_rel = abs((Ohmic_Heating[lat, lon, :-1] - Ohmic_Heating_noisy[lat, lon, :-1]) / Ohmic_Heating[lat, lon, :-1])
-    Frict_rel = abs((Frictional_Heating[lat, lon, :-1] - Frictional_Heating_noisy[lat, lon, :-1]) / Frictional_Heating[lat, lon, :-1])
-    Joule_rel = abs((Joule_Heating[lat, lon, :-1] - Joule_Heating_noisy[lat, lon, :-1]) / Joule_Heating[lat, lon, :-1])
+    Ohmic_rel = abs((Ohmic_Heating[lat, lon, :-1] - Ohmic_Heating_noisy[lat, lon, :-1]) / Ohmic_Heating_noisy[lat, lon, :-1])
+    Frict_rel = abs((Frictional_Heating[lat, lon, :-1] - Frictional_Heating_noisy[lat, lon, :-1]) / Frictional_Heating_noisy[lat, lon, :-1])
+    Joule_rel = abs((Joule_Heating[lat, lon, :-1] - Joule_Heating_noisy[lat, lon, :-1]) / Joule_Heating_noisy[lat, lon, :-1])
 
     fig = go.Figure()
 
@@ -1766,13 +1764,13 @@ def plot_collisions_rel_error(lat_value, lon_value, min_alt, max_alt):
     min_alt = min_alt
     max_alt = max_alt
 
-    nuOp_rel = abs((nu_Op_sum[lat, lon, :-1] - nu_Op_sum_noisy[lat, lon, :-1]) / nu_Op_sum[lat, lon, :-1])
-    nuO2p_rel = abs((nu_O2p_sum[lat, lon, :-1] - nu_O2p_sum_noisy[lat, lon, :-1]) / nu_O2p_sum[lat, lon, :-1])
-    nuNOp_rel = abs((nu_NOp_sum[lat, lon, :-1] - nu_NOp_sum_noisy[lat, lon, :-1]) / nu_NOp_sum[lat, lon, :-1])
+    nuOp_rel = abs((nu_Op_sum[lat, lon, :-1] - nu_Op_sum_noisy[lat, lon, :-1]) / nu_Op_sum_noisy[lat, lon, :-1])
+    nuO2p_rel = abs((nu_O2p_sum[lat, lon, :-1] - nu_O2p_sum_noisy[lat, lon, :-1]) / nu_O2p_sum_noisy[lat, lon, :-1])
+    nuNOp_rel = abs((nu_NOp_sum[lat, lon, :-1] - nu_NOp_sum_noisy[lat, lon, :-1]) / nu_NOp_sum_noisy[lat, lon, :-1])
     nu_ion = (nu_Op_sum[lat, lon, :-1] + nu_O2p_sum[lat, lon, :-1] + nu_NOp_sum[lat, lon, :-1]) / 3
     nuion_error = (nu_Op_sum_noisy[lat, lon, :-1] + nu_O2p_sum_noisy[lat, lon, :-1] + nu_NOp_sum_noisy[lat, lon, :-1]) / 3
-    nuion_rel = abs((nu_ion - nuion_error) / nu_ion)
-    nue_rel = abs((nu_e_sum[lat, lon, :-1] - nu_e_sum_noisy[lat, lon, :-1]) / nu_e_sum[lat, lon, :-1])
+    nuion_rel = abs((nu_ion - nuion_error) / nuion_error)
+    nue_rel = abs((nu_e_sum[lat, lon, :-1] - nu_e_sum_noisy[lat, lon, :-1]) / nu_e_sum_noisy[lat, lon, :-1])
 
     fig = go.Figure()
 
@@ -1842,9 +1840,9 @@ def plot_conductivities_rel_error(lat_value, lon_value, min_alt, max_alt):
     min_alt = min_alt
     max_alt = max_alt
 
-    pedersen_rel = abs((pedersen_con[lat, lon, :-1] - pedersen_con_noisy[lat, lon, :-1]) / pedersen_con[lat, lon, :-1])
-    hall_rel = abs((hall_con[lat, lon, :-1] - hall_con_noisy[lat, lon, :-1]) / hall_con[lat, lon, :-1])
-    parallel_rel = abs((parallel_con[lat, lon, :-1] - parallel_con_noisy[lat, lon, :-1]) / parallel_con[lat, lon, :-1])
+    pedersen_rel = abs((pedersen_con[lat, lon, :-1] - pedersen_con_noisy[lat, lon, :-1]) / pedersen_con_noisy[lat, lon, :-1])
+    hall_rel = abs((hall_con[lat, lon, :-1] - hall_con_noisy[lat, lon, :-1]) / hall_con_noisy[lat, lon, :-1])
+    parallel_rel = abs((parallel_con[lat, lon, :-1] - parallel_con_noisy[lat, lon, :-1]) / parallel_con_noisy[lat, lon, :-1])
 
     fig = go.Figure()
 
@@ -1916,10 +1914,10 @@ def plot_currents_rel_error(lat_value, lon_value, min_alt, max_alt):
     min_alt = min_alt
     max_alt = max_alt
 
-    Jp_rel = abs((J_pedersen[lat, lon, :-1] - J_pedersen_noisy[lat, lon, :-1]) / J_pedersen[lat, lon, :-1])
-    Jh_rel = abs((J_hall[lat, lon, :-1] - J_hall_noisy[lat, lon, :-1]) / J_hall[lat, lon, :-1])
-    Johmic_rel = abs((J_ohmic[lat, lon, :-1] - J_ohmic_noisy[lat, lon, :-1]) / J_ohmic[lat, lon, :-1])
-    Jdens_rel = abs((J_dens[lat, lon, :-1] - J_dens_noisy[lat, lon, :-1]) / J_dens[lat, lon, :-1])
+    Jp_rel = abs((J_pedersen[lat, lon, :-1] - J_pedersen_noisy[lat, lon, :-1]) / J_pedersen_noisy[lat, lon, :-1])
+    Jh_rel = abs((J_hall[lat, lon, :-1] - J_hall_noisy[lat, lon, :-1]) / J_hall_noisy[lat, lon, :-1])
+    Johmic_rel = abs((J_ohmic[lat, lon, :-1] - J_ohmic_noisy[lat, lon, :-1]) / J_ohmic_noisy[lat, lon, :-1])
+    Jdens_rel = abs((J_dens[lat, lon, :-1] - J_dens_noisy[lat, lon, :-1]) / J_dens_noisy[lat, lon, :-1])
 
     fig = go.Figure()
 
@@ -1991,10 +1989,10 @@ def plot_csections_rel_error(lat_value, lon_value, min_alt, max_alt):
     min_alt = min_alt
     max_alt = max_alt
 
-    COp_rel = abs((C_Op[lat, lon, :-1] - C_Op_noisy[lat, lon, :-1]) / C_Op[lat, lon, :-1])
-    CO2p_rel = abs((C_O2p[lat, lon, :-1] - C_O2p_noisy[lat, lon, :-1]) / C_O2p[lat, lon, :-1])
-    CNOp_rel = abs((C_NOp[lat, lon, :-1] - C_NOp_noisy[lat, lon, :-1]) / C_NOp[lat, lon, :-1])
-    Cion_rel = abs((C_ion[lat, lon, :-1] - C_ion_noisy[lat, lon, :-1]) / C_ion[lat, lon, :-1])
+    COp_rel = abs((C_Op[lat, lon, :-1] - C_Op_noisy[lat, lon, :-1]) / C_Op_noisy[lat, lon, :-1])
+    CO2p_rel = abs((C_O2p[lat, lon, :-1] - C_O2p_noisy[lat, lon, :-1]) / C_O2p_noisy[lat, lon, :-1])
+    CNOp_rel = abs((C_NOp[lat, lon, :-1] - C_NOp_noisy[lat, lon, :-1]) / C_NOp_noisy[lat, lon, :-1])
+    Cion_rel = abs((C_ion[lat, lon, :-1] - C_ion_noisy[lat, lon, :-1]) / C_ion_noisy[lat, lon, :-1])
 
     fig = go.Figure()
 
@@ -2380,7 +2378,7 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(abs((Joule_Heating_noisy[:, :, lev] - Joule_Heating[:, :, lev]) / Joule_Heating[:, :, lev]), cmap=cm.batlow,
+    sc1 = m1.imshow(abs((Joule_Heating_noisy[:, :, lev] - Joule_Heating[:, :, lev]) / Joule_Heating_noisy[:, :, lev]), cmap=cm.batlow,
                     interpolation='bicubic')
 
     if night_shade:
@@ -2407,7 +2405,7 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(abs((Ohmic_Heating_noisy[:, :, lev] - Ohmic_Heating[:, :, lev]) / Ohmic_Heating[:, :, lev]), cmap=cm.batlow,
+    sc2 = m2.imshow(abs((Ohmic_Heating_noisy[:, :, lev] - Ohmic_Heating[:, :, lev]) / Ohmic_Heating_noisy[:, :, lev]), cmap=cm.batlow,
                     interpolation='bicubic')
 
     if night_shade:
@@ -2434,7 +2432,7 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
     m3 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m3.drawcoastlines()
 
-    sc3 = m3.imshow(abs((Frictional_Heating_noisy[:, :, lev] - Frictional_Heating[:, :, lev]) / Frictional_Heating[:, :, lev]), cmap=cm.batlow,
+    sc3 = m3.imshow(abs((Frictional_Heating_noisy[:, :, lev] - Frictional_Heating[:, :, lev]) / Frictional_Heating_noisy[:, :, lev]), cmap=cm.batlow,
                     interpolation='bicubic')
 
     if night_shade:
@@ -2470,10 +2468,9 @@ def mapll_collisions_rel_error_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(abs((((nu_Op_sum_noisy[:, :, lev] + nu_O2p_sum_noisy[:, :, lev] + nu_NOp_sum_noisy[:, :, lev]) / 3) -
-                    ((nu_Op_sum[:, :, lev] + nu_O2p_sum[:, :, lev] + nu_NOp_sum[:, :, lev]) / 3)) /
-                    ((nu_Op_sum[:, :, lev] + nu_O2p_sum[:, :, lev] + nu_NOp_sum[:, :, lev]) / 3)),
-                    cmap=cm.batlow, interpolation='bicubic')
+    nuion_sum = (nu_Op_sum[:, :, lev] + nu_O2p_sum[:, :, lev] + nu_NOp_sum[:, :, lev]) / 3
+    nuion_sum_noisy = (nu_Op_sum_noisy[:, :, lev] + nu_O2p_sum_noisy[:, :, lev] + nu_NOp_sum_noisy[:, :, lev]) / 3
+    sc1 = m1.imshow(abs((nuion_sum - nuion_sum_noisy) / nuion_sum_noisy), cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -2499,7 +2496,7 @@ def mapll_collisions_rel_error_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(abs((nu_e_sum_noisy[:, :, lev] - nu_e_sum[:, :, lev]) / nu_e_sum[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+    sc2 = m2.imshow(abs((nu_e_sum_noisy[:, :, lev] - nu_e_sum[:, :, lev]) / nu_e_sum_noisy[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -2534,7 +2531,8 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(abs((pedersen_con_noisy[:, :, lev] - pedersen_con[:, :, lev]) / pedersen_con[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+    sc1 = m1.imshow(abs((pedersen_con_noisy[:, :, lev] - pedersen_con[:, :, lev]) / pedersen_con_noisy[:, :, lev]), cmap=cm.batlow,
+                    interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -2560,7 +2558,7 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(abs((hall_con_noisy[:, :, lev] - hall_con[:, :, lev]) / hall_con[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+    sc2 = m2.imshow(abs((hall_con_noisy[:, :, lev] - hall_con[:, :, lev]) / hall_con_noisy[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -2586,7 +2584,8 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
     m3 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m3.drawcoastlines()
 
-    sc3 = m3.imshow(abs((parallel_con_noisy[:, :, lev] - parallel_con[:, :, lev]) / parallel_con[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+    sc3 = m3.imshow(abs((parallel_con_noisy[:, :, lev] - parallel_con[:, :, lev]) / parallel_con_noisy[:, :, lev]), cmap=cm.batlow,
+                    interpolation='bicubic')
 
     if night_shade:
         m3.nightshade(map_time, alpha=0.3)
@@ -2621,7 +2620,7 @@ def mapll_currents_rel_error_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(abs((J_ohmic_noisy[:, :, lev] - J_ohmic[:, :, lev]) / J_ohmic[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+    sc1 = m1.imshow(abs((J_ohmic_noisy[:, :, lev] - J_ohmic[:, :, lev]) / J_ohmic_noisy[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -2647,7 +2646,7 @@ def mapll_currents_rel_error_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(abs((J_dens_noisy[:, :, lev] - J_dens[:, :, lev]) / J_dens[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+    sc2 = m2.imshow(abs((J_dens_noisy[:, :, lev] - J_dens[:, :, lev]) / J_dens_noisy[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -2681,7 +2680,7 @@ def mapll_csection_rel_error_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(abs((C_ion_noisy[:, :, lev] - C_ion[:, :, lev]) / C_ion[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+    sc1 = m1.imshow(abs((C_ion_noisy[:, :, lev] - C_ion[:, :, lev]) / C_ion_noisy[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -2927,8 +2926,9 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Joule Heating
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((Joule_Heating_noisy[:, lon, :-1] - Joule_Heating[:, lon, :-1]) / Joule_Heating[:, lon, :-1]),
-                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((Joule_Heating_noisy[:, lon, :-1] - Joule_Heating[:, lon, :-1]) /
+                                                        Joule_Heating_noisy[:, lon, :-1]), locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -2941,8 +2941,9 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Ohmic Heating
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((Ohmic_Heating_noisy[:, lon, :-1] - Ohmic_Heating[:, lon, :-1]) / Ohmic_Heating[:, lon, :-1]),
-                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((Ohmic_Heating_noisy[:, lon, :-1] - Ohmic_Heating[:, lon, :-1]) /
+                                                        Ohmic_Heating_noisy[:, lon, :-1]), locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -2956,8 +2957,8 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
     # Frictional Heating
     plt.figure(figsize=(12, 12))
     cp3 = plt.contourf(heights_la[:-1], glat_in[:], abs((Frictional_Heating_noisy[:, lon, :-1] - Frictional_Heating[:, lon, :-1]) /
-                                                        Frictional_Heating[:, lon, :-1]),
-                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+                                                        Frictional_Heating_noisy[:, lon, :-1]), locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -2981,11 +2982,10 @@ def mapla_collisions_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Ion Average Collision Frequency
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((((nu_Op_sum_noisy[:, lon, :-1] + nu_O2p_sum_noisy[:, lon, :-1] +
-                                                           nu_NOp_sum_noisy[:, lon, :-1]) / 3) - ((nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] +
-                                                                                                   nu_NOp_sum[:, lon, :-1]) / 3)) /
-                                                           ((nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3)),
-                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    nuion_sum = (nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3
+    nuion_sum_noisy = (nu_Op_sum_noisy[:, lon, :-1] + nu_O2p_sum_noisy[:, lon, :-1] + nu_NOp_sum_noisy[:, lon, :-1]) / 3
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((nuion_sum - nuion_sum_noisy) / nuion_sum_noisy), locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -2998,7 +2998,7 @@ def mapla_collisions_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Electron Collision Frequency
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((nu_e_sum_noisy[:, lon, :-1] - nu_e_sum[:, lon, :-1]) / nu_e_sum[:, lon, :-1]),
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((nu_e_sum_noisy[:, lon, :-1] - nu_e_sum[:, lon, :-1]) / nu_e_sum_noisy[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
@@ -3023,8 +3023,9 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Pedersen
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((pedersen_con_noisy[:, lon, :-1] - pedersen_con[:, lon, :-1]) / pedersen_con[:, lon, :-1]),
-                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((pedersen_con_noisy[:, lon, :-1] - pedersen_con[:, lon, :-1]) /
+                                                        pedersen_con_noisy[:, lon, :-1]), locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3037,7 +3038,7 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Hall Conductivity
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((hall_con_noisy[:, lon, :-1] - hall_con[:, lon, :-1]) / hall_con[:, lon, :-1]),
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((hall_con_noisy[:, lon, :-1] - hall_con[:, lon, :-1]) / hall_con_noisy[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
@@ -3051,8 +3052,9 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Parallel Conductivity
     plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(heights_la[:-1], glat_in[:], abs((parallel_con_noisy[:, lon, :-1] - parallel_con[:, lon, :-1]) / parallel_con[:, lon, :-1]),
-                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], abs((parallel_con_noisy[:, lon, :-1] - parallel_con[:, lon, :-1]) /
+                                                        parallel_con_noisy[:, lon, :-1]), locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3076,7 +3078,7 @@ def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Ohmic Current
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((J_ohmic_noisy[:, lon, :-1] - J_ohmic[:, lon, :-1]) / J_ohmic[:, lon, :-1]),
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((J_ohmic_noisy[:, lon, :-1] - J_ohmic[:, lon, :-1]) / J_ohmic_noisy[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
@@ -3090,7 +3092,7 @@ def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Densities Current
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((J_dens_noisy[:, lon, :-1] - J_dens[:, lon, :-1]) / J_dens[:, lon, :-1]),
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((J_dens_noisy[:, lon, :-1] - J_dens[:, lon, :-1]) / J_dens_noisy[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
@@ -3115,7 +3117,7 @@ def mapla_cross_section_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Average Ion Cross Section
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((C_ion_noisy[:, lon, :-1] - C_ion[:, lon, :-1]) / C_ion[:, lon, :-1]),
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((C_ion_noisy[:, lon, :-1] - C_ion[:, lon, :-1]) / C_ion_noisy[:, lon, :-1]),
                        locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)

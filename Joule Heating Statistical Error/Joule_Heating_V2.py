@@ -317,7 +317,8 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
                 Un_e_temp = Un_east_in[timer, lev, lat, lon]
                 Un_n_temp = Un_north_in[timer, lev, lat, lon]
                 Un_u_temp = Un_up_in[timer, lev, lat, lon]
-                Unx[lat, lon, lev], Uny[lat, lon, lev], Unz[lat, lon, lev] = enu_ecef(glat_in[lat], glon_in[lon], Un_e_temp, Un_n_temp, Un_u_temp)
+                Unx[lat, lon, lev], Uny[lat, lon, lev], Unz[lat, lon, lev] = enu_ecef(glat_in[lat], glon_in[lon], Un_e_temp, Un_n_temp,
+                                                                                      Un_u_temp)
 
                 # Assign densities (in cm^(-3))
                 NO[lat, lon, lev] = O_in[timer, lev, lat, lon]
@@ -990,10 +991,10 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Calculate Products $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in, Unz_in, Vix_in, Viy_in, Viz_in, NO_in, NO2_in, NN2_in, NOp_in,
-                       NO2p_in, NNOp_in, Ne_in, Ti_in, Te_in, Tn_in, lat_value=-1, lon_value=-1, pressure_level=-1):
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Calculate Products $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in, Unz_in, Vix_in, Viy_in, Viz_in, NO_in, NO2_in, NN2_in,
+                       NOp_in, NO2p_in, NNOp_in, Ne_in, Ti_in, Te_in, Tn_in, lat_value=-1, lon_value=-1, pressure_level=-1):
 
     start_time = time.time()
     print('Calculating Products.....')
@@ -1108,9 +1109,10 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
                 # nu-e = nu(e-N2) + nu(e-O) + nu(e-O2) (in Hz)
                 # densities in cm^(-3)
                 nu_e_N2 = 2.33 * 10 ** (-11) * NN2_in[lat, lon, lev] * Te_in[lat, lon, lev] * (1 - 1.21 * 10 ** (-4) * Te_in[lat, lon, lev])
-                nu_e_O2 = 1.82 * 10 ** (-10) * NO2_in[lat, lon, lev] * Te_in[lat, lon, lev] ** (1 / 2) * (1 + 3.6 * 10 ** (-2) *
-                                                                                                          Te_in[lat, lon, lev] ** (1 / 2))
-                nu_e_O = 8.9 * 10 ** (-11) * NO_in[lat, lon, lev] * Te_in[lat, lon, lev] ** (1 / 2) * (1 + 5.7 * 10 ** (-4) * Te_in[lat, lon, lev])
+                nu_e_O2 = 1.82 * 10 ** (-10) * NO2_in[lat, lon, lev] * Te_in[lat, lon, lev] ** (1 / 2) * \
+                          (1 + 3.6 * 10 ** (-2) * Te_in[lat, lon, lev] ** (1 / 2))
+                nu_e_O = 8.9 * 10 ** (-11) * NO_in[lat, lon, lev] * Te_in[lat, lon, lev] ** (1 / 2) * \
+                         (1 + 5.7 * 10 ** (-4) * Te_in[lat, lon, lev])
 
                 nu_e_sum_temp[lat, lon, lev] = nu_e_N2 + nu_e_O2 + nu_e_O
                 # ################ GYRO-FREQUENCIES(OMEGAS) ################
@@ -1231,11 +1233,14 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
                 N_neutral = NO_in[lat, lon, lev] + NO2_in[lat, lon, lev] + NN2_in[lat, lon, lev]
                 N_neutral = N_neutral * ccm
                 # ####### O+ #######
-                C_Op_temp[lat, lon, lev] = (nu_Op_sum_temp[lat, lon, lev] / N_neutral) / (np.sqrt(2 * boltzmann * Ti_in[lat, lon, lev] / mkO))
+                C_Op_temp[lat, lon, lev] = (nu_Op_sum_temp[lat, lon, lev] / N_neutral) / \
+                                           (np.sqrt(2 * boltzmann * Ti_in[lat, lon, lev] / mkO))
                 # ####### O2+ #######
-                C_O2p_temp[lat, lon, lev] = (nu_O2p_sum_temp[lat, lon, lev] / N_neutral) / (np.sqrt(2 * boltzmann * Ti_in[lat, lon, lev] / mkO2))
+                C_O2p_temp[lat, lon, lev] = (nu_O2p_sum_temp[lat, lon, lev] / N_neutral) / \
+                                            (np.sqrt(2 * boltzmann * Ti_in[lat, lon, lev] / mkO2))
                 # ####### NO+ #######
-                C_NOp_temp[lat, lon, lev] = (nu_NOp_sum_temp[lat, lon, lev] / N_neutral) / (np.sqrt(2 * boltzmann * Ti_in[lat, lon, lev] / mkNO))
+                C_NOp_temp[lat, lon, lev] = (nu_NOp_sum_temp[lat, lon, lev] / N_neutral) / \
+                                            (np.sqrt(2 * boltzmann * Ti_in[lat, lon, lev] / mkNO))
                 # ####### ION #######
                 nu_ion = nu_Op_sum_temp[lat, lon, lev] + nu_O2p_sum_temp[lat, lon, lev] + nu_NOp_sum_temp[lat, lon, lev]
                 # Average collision frequency
@@ -1309,9 +1314,9 @@ def calculate_products(Bx_in, By_in, Bz_in, Ex_in, Ey_in, Ez_in, Unx_in, Uny_in,
     print('Products calculated in: ', time.time() - start_time, ' sec!')
     print(' ')
 
-    return Joule_Heating_temp, Ohmic_Heating_temp, Frictional_Heating_temp, pedersen_con_temp, hall_con_temp, parallel_con_temp, nu_Op_sum_temp, \
-           nu_O2p_sum_temp, nu_NOp_sum_temp, nu_e_sum_temp, C_Op_temp, C_O2p_temp, C_NOp_temp, C_ion_temp, J_pedersen_temp, J_hall_temp, \
-           J_ohmic_temp, J_dens_temp
+    return Joule_Heating_temp, Ohmic_Heating_temp, Frictional_Heating_temp, pedersen_con_temp, hall_con_temp, parallel_con_temp, \
+           nu_Op_sum_temp, nu_O2p_sum_temp, nu_NOp_sum_temp, nu_e_sum_temp, C_Op_temp, C_O2p_temp, C_NOp_temp, C_ion_temp, \
+           J_pedersen_temp, J_hall_temp, J_ohmic_temp, J_dens_temp
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ END OF PRODUCTS CALCULATION $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
@@ -1567,8 +1572,9 @@ def plot_conductivities(lat_value, lon_value, min_alt, max_alt):
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
-                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis_title="$(S/m)$", yaxis_title="$Altitude \ (km)$",
-                      width=900, height=650, title={'text': 'Conductivities' + title, 'y': 0.9, 'x': 0.41, 'xanchor': 'center', 'yanchor': 'top'})
+                      tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 10)), xaxis_title="$(S/m)$",
+                      yaxis_title="$Altitude \ (km)$", width=900, height=650,
+                      title={'text': 'Conductivities' + title, 'y': 0.9, 'x': 0.41, 'xanchor': 'center', 'yanchor': 'top'})
 
     fig.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
     fig.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='grey')
@@ -1662,12 +1668,12 @@ def plot_heating_rates_error(lat_value, lon_value, min_alt, max_alt):
     fig = go.Figure()
 
     # adding the various plots
-    fig.add_trace(go.Scatter(x=Ohmic_Heating_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ohmic Heating with noise", mode='lines',
-                             line=dict(shape='spline', color='red')))
-    fig.add_trace(go.Scatter(x=Frictional_Heating_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Frictional Heating with noise", mode='lines',
-                             line=dict(shape='spline', color='blue')))
-    fig.add_trace(go.Scatter(x=Joule_Heating_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Joule Heating with noise", mode='lines',
-                             line=dict(shape='spline', color='green')))
+    fig.add_trace(go.Scatter(x=Ohmic_Heating_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Ohmic Heating with noise",
+                             mode='lines', line=dict(shape='spline', color='red')))
+    fig.add_trace(go.Scatter(x=Frictional_Heating_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Frictional Heating with noise",
+                             mode='lines', line=dict(shape='spline', color='blue')))
+    fig.add_trace(go.Scatter(x=Joule_Heating_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Joule Heating with noise",
+                             mode='lines', line=dict(shape='spline', color='green')))
 
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
@@ -1693,7 +1699,8 @@ def plot_heating_rates_rel_error(lat_value, lon_value, min_alt, max_alt):
     max_alt = max_alt
 
     Ohmic_rel = abs((Ohmic_Heating[lat, lon, :-1] - Ohmic_Heating_noisy[lat, lon, :-1]) / Ohmic_Heating_noisy[lat, lon, :-1])
-    Frict_rel = abs((Frictional_Heating[lat, lon, :-1] - Frictional_Heating_noisy[lat, lon, :-1]) / Frictional_Heating_noisy[lat, lon, :-1])
+    Frict_rel = abs((Frictional_Heating[lat, lon, :-1] - Frictional_Heating_noisy[lat, lon, :-1]) /
+                    Frictional_Heating_noisy[lat, lon, :-1])
     Joule_rel = abs((Joule_Heating[lat, lon, :-1] - Joule_Heating_noisy[lat, lon, :-1]) / Joule_Heating_noisy[lat, lon, :-1])
 
     fig = go.Figure()
@@ -1707,7 +1714,7 @@ def plot_heating_rates_rel_error(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='green')))
 
     # updating the layout of the figure
-    fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', xaxis=dict(range=[0, 0.4]),
+    fig.update_layout(xaxis_type="linear", xaxis=dict(range=[0, 1]),
                       yaxis=dict(range=[min_alt, max_alt], tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
                       xaxis_title="", yaxis_title="$Altitude \ (km)$", width=900, height=650,
                       title={'text': 'Heating Rates Relative Error' + title, 'y': 0.9, 'x': 0.47, 'xanchor': 'center', 'yanchor': 'top'})
@@ -1787,7 +1794,7 @@ def plot_collisions_rel_error(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='yellow')))
 
     # updating the layout of the figure
-    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt], tickmode='array',
+    fig.update_layout(xaxis_type="linear", yaxis=dict(range=[min_alt, max_alt], tickmode='array',
                       tickvals=np.arange(min_alt, max_alt + 5, 5)), xaxis_title="", yaxis_title="$Altitude \ (km)$", width=900, height=650,
                       title={'text': 'Collision Frequencies Relative Error' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'})
 
@@ -1817,6 +1824,7 @@ def plot_conductivities_error(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='blue')))
     fig.add_trace(go.Scatter(x=parallel_con_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="σParallel with noise",
                              mode='lines', line=dict(shape='spline', color='green'), visible="legendonly"))
+
     # updating the layout of the figure
     fig.update_layout(xaxis_type="linear", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
@@ -1855,7 +1863,7 @@ def plot_conductivities_rel_error(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='green')))
 
     # updating the layout of the figure
-    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+    fig.update_layout(xaxis_type="linear", yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
                       xaxis_title="", yaxis_title="$Altitude \ (km)$", width=900, height=650,
                       title={'text': 'Conductivities Relative Error' + title, 'y': 0.9, 'x': 0.47, 'xanchor': 'center', 'yanchor': 'top'})
@@ -1932,7 +1940,7 @@ def plot_currents_rel_error(lat_value, lon_value, min_alt, max_alt):
                              line=dict(shape='spline', color='black')))
 
     # updating the layout of the figure
-    fig.update_layout(xaxis_type="log", xaxis_showexponent='all', xaxis_exponentformat='power', yaxis=dict(range=[min_alt, max_alt],
+    fig.update_layout(xaxis_type="linear", yaxis=dict(range=[min_alt, max_alt],
                       tickmode='array', tickvals=np.arange(min_alt, max_alt + 5, 5)),
                       xaxis_title="", yaxis_title="$Altitude \ (km)$", width=900, height=650,
                       title={'text': 'Perpendicular Currents Relative Error' + title, 'y': 0.9, 'x': 0.51, 'xanchor': 'center', 'yanchor': 'top'})
@@ -2432,8 +2440,8 @@ def mapll_heating_rates_rel_error_plot(pressure_level, night_shade):
     m3 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m3.drawcoastlines()
 
-    sc3 = m3.imshow(abs((Frictional_Heating_noisy[:, :, lev] - Frictional_Heating[:, :, lev]) / Frictional_Heating_noisy[:, :, lev]), cmap=cm.batlow,
-                    interpolation='bicubic')
+    sc3 = m3.imshow(abs((Frictional_Heating_noisy[:, :, lev] - Frictional_Heating[:, :, lev]) / Frictional_Heating_noisy[:, :, lev]),
+                    cmap=cm.batlow, interpolation='bicubic')
 
     if night_shade:
         m3.nightshade(map_time, alpha=0.3)
@@ -2496,7 +2504,8 @@ def mapll_collisions_rel_error_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(abs((nu_e_sum_noisy[:, :, lev] - nu_e_sum[:, :, lev]) / nu_e_sum_noisy[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+    sc2 = m2.imshow(abs((nu_e_sum_noisy[:, :, lev] - nu_e_sum[:, :, lev]) / nu_e_sum_noisy[:, :, lev]), cmap=cm.batlow,
+                    interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -2558,7 +2567,8 @@ def mapll_conductivities_rel_error_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(abs((hall_con_noisy[:, :, lev] - hall_con[:, :, lev]) / hall_con_noisy[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+    sc2 = m2.imshow(abs((hall_con_noisy[:, :, lev] - hall_con[:, :, lev]) / hall_con_noisy[:, :, lev]), cmap=cm.batlow,
+                    interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -2620,7 +2630,8 @@ def mapll_currents_rel_error_plot(pressure_level, night_shade):
     m1 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m1.drawcoastlines()
 
-    sc1 = m1.imshow(abs((J_ohmic_noisy[:, :, lev] - J_ohmic[:, :, lev]) / J_ohmic_noisy[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+    sc1 = m1.imshow(abs((J_ohmic_noisy[:, :, lev] - J_ohmic[:, :, lev]) / J_ohmic_noisy[:, :, lev]), cmap=cm.batlow,
+                    interpolation='bicubic')
 
     if night_shade:
         m1.nightshade(map_time, alpha=0.3)
@@ -2646,7 +2657,8 @@ def mapll_currents_rel_error_plot(pressure_level, night_shade):
     m2 = Basemap(projection='cyl', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=-180, urcrnrlon=180, resolution='c')
     m2.drawcoastlines()
 
-    sc2 = m2.imshow(abs((J_dens_noisy[:, :, lev] - J_dens[:, :, lev]) / J_dens_noisy[:, :, lev]), cmap=cm.batlow, interpolation='bicubic')
+    sc2 = m2.imshow(abs((J_dens_noisy[:, :, lev] - J_dens[:, :, lev]) / J_dens_noisy[:, :, lev]), cmap=cm.batlow,
+                    interpolation='bicubic')
 
     if night_shade:
         m2.nightshade(map_time, alpha=0.3)
@@ -2784,7 +2796,8 @@ def mapla_collisions_plot(lon_value, min_alt, max_alt):
 
     # Electron Collision Frequency
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], nu_e_sum[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], nu_e_sum[:, lon, :-1], locator=ticker.LogLocator(), cmap=cm.batlow,
+                       interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -2926,9 +2939,8 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Joule Heating
     plt.figure(figsize=(12, 12))
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((Joule_Heating_noisy[:, lon, :-1] - Joule_Heating[:, lon, :-1]) /
-                                                        Joule_Heating_noisy[:, lon, :-1]), locator=ticker.LogLocator(), cmap=cm.batlow,
-                       interpolation='bicubic')
+    temp = abs((Joule_Heating_noisy[:, lon, :-1] - Joule_Heating[:, lon, :-1]) / Joule_Heating_noisy[:, lon, :-1])
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], temp, locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -2941,9 +2953,8 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Ohmic Heating
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((Ohmic_Heating_noisy[:, lon, :-1] - Ohmic_Heating[:, lon, :-1]) /
-                                                        Ohmic_Heating_noisy[:, lon, :-1]), locator=ticker.LogLocator(), cmap=cm.batlow,
-                       interpolation='bicubic')
+    temp2 = abs((Ohmic_Heating_noisy[:, lon, :-1] - Ohmic_Heating[:, lon, :-1]) / Ohmic_Heating_noisy[:, lon, :-1])
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], temp2, locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -2956,9 +2967,8 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Frictional Heating
     plt.figure(figsize=(12, 12))
-    cp3 = plt.contourf(heights_la[:-1], glat_in[:], abs((Frictional_Heating_noisy[:, lon, :-1] - Frictional_Heating[:, lon, :-1]) /
-                                                        Frictional_Heating_noisy[:, lon, :-1]), locator=ticker.LogLocator(), cmap=cm.batlow,
-                       interpolation='bicubic')
+    temp3 = abs((Frictional_Heating_noisy[:, lon, :-1] - Frictional_Heating[:, lon, :-1]) / Frictional_Heating_noisy[:, lon, :-1])
+    cp3 = plt.contourf(heights_la[:-1], glat_in[:], temp3, locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -2984,8 +2994,8 @@ def mapla_collisions_rel_error_plot(lon_value, min_alt, max_alt):
     plt.figure(figsize=(12, 12))
     nuion_sum = (nu_Op_sum[:, lon, :-1] + nu_O2p_sum[:, lon, :-1] + nu_NOp_sum[:, lon, :-1]) / 3
     nuion_sum_noisy = (nu_Op_sum_noisy[:, lon, :-1] + nu_O2p_sum_noisy[:, lon, :-1] + nu_NOp_sum_noisy[:, lon, :-1]) / 3
-    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((nuion_sum - nuion_sum_noisy) / nuion_sum_noisy), locator=ticker.LogLocator(), cmap=cm.batlow,
-                       interpolation='bicubic')
+    cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((nuion_sum - nuion_sum_noisy) / nuion_sum_noisy),
+                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3024,8 +3034,8 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
     # Pedersen
     plt.figure(figsize=(12, 12))
     cp1 = plt.contourf(heights_la[:-1], glat_in[:], abs((pedersen_con_noisy[:, lon, :-1] - pedersen_con[:, lon, :-1]) /
-                                                        pedersen_con_noisy[:, lon, :-1]), locator=ticker.LogLocator(), cmap=cm.batlow,
-                       interpolation='bicubic')
+                                                        pedersen_con_noisy[:, lon, :-1]), locator=ticker.LogLocator(),
+                       cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3038,8 +3048,9 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
 
     # Hall Conductivity
     plt.figure(figsize=(12, 12))
-    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((hall_con_noisy[:, lon, :-1] - hall_con[:, lon, :-1]) / hall_con_noisy[:, lon, :-1]),
-                       locator=ticker.LogLocator(), cmap=cm.batlow, interpolation='bicubic')
+    cp2 = plt.contourf(heights_la[:-1], glat_in[:], abs((hall_con_noisy[:, lon, :-1] - hall_con[:, lon, :-1]) /
+                                                        hall_con_noisy[:, lon, :-1]), locator=ticker.LogLocator(),
+                       cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3053,8 +3064,8 @@ def mapla_conductivities_rel_error_plot(lon_value, min_alt, max_alt):
     # Parallel Conductivity
     plt.figure(figsize=(12, 12))
     cp3 = plt.contourf(heights_la[:-1], glat_in[:], abs((parallel_con_noisy[:, lon, :-1] - parallel_con[:, lon, :-1]) /
-                                                        parallel_con_noisy[:, lon, :-1]), locator=ticker.LogLocator(), cmap=cm.batlow,
-                       interpolation='bicubic')
+                                                        parallel_con_noisy[:, lon, :-1]), locator=ticker.LogLocator(),
+                       cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3201,13 +3212,15 @@ def gui():
             [Sg.Checkbox("Plot Currents", default=False, tooltip="Plots currents", key="-CUR_mapll-")],
             [Sg.Checkbox("Plot Cross Sections", default=False, tooltip="Plots cross sections", key="-CR_mapll-")]]
 
-    col4 = [[Sg.Checkbox("Plot Heating Rates Relative Error", default=False, tooltip="Plots heating rates relative error", key="-HR_mapll_error-")],
+    col4 = [[Sg.Checkbox("Plot Heating Rates Relative Error", default=False, tooltip="Plots heating rates relative error",
+                         key="-HR_mapll_error-")],
             [Sg.Checkbox("Plot Collision Frequencies Relative Error", default=False, tooltip="Plots collision frequencies relative error",
                          key="-COL_mapll_error-")],
             [Sg.Checkbox("Plot Conductivities Relative Error", default=False, tooltip="Plots conductivities relative error",
                          key="-CON_mapll_error-")],
             [Sg.Checkbox("Plot Currents Relative Error", default=False, tooltip="Plots currents relative error", key="-CUR_mapll_error-")],
-            [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error", key="-CR_mapll_error-")]]
+            [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error",
+                         key="-CR_mapll_error-")]]
 
     col5 = [[Sg.Checkbox("Plot Heating Rates", default=False, tooltip="Plots heating rates", key="-HR_mapla-")],
             [Sg.Checkbox("Plot Collision Frequencies", default=False, tooltip="Plots collision frequencies", key="-COL_mapla-")],
@@ -3215,20 +3228,25 @@ def gui():
             [Sg.Checkbox("Plot Currents", default=False, tooltip="Plots currents", key="-CUR_mapla-")],
             [Sg.Checkbox("Plot Cross Sections", default=False, tooltip="Plots cross sections", key="-CR_mapla-")]]
 
-    col6 = [[Sg.Checkbox("Plot Heating Rates Relative Error", default=False, tooltip="Plots heating rates relative error", key="-HR_mapla_error-")],
+    col6 = [[Sg.Checkbox("Plot Heating Rates Relative Error", default=False, tooltip="Plots heating rates relative error",
+                         key="-HR_mapla_error-")],
             [Sg.Checkbox("Plot Collision Frequencies Relative Error", default=False, tooltip="Plots collision frequencies relative error",
                          key="-COL_mapla_error-")],
             [Sg.Checkbox("Plot Conductivities Relative Error", default=False, tooltip="Plots conductivities relative error",
                          key="-CON_mapla_error-")],
             [Sg.Checkbox("Plot Currents Relative Error", default=False, tooltip="Plots currents relative error", key="-CUR_mapla_error-")],
-            [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error", key="-CR_mapla_error-")]]
+            [Sg.Checkbox("Plot Cross Sections Relative Error", default=False, tooltip="Plots cross sections relative error",
+                         key="-CR_mapla_error-")]]
 
     templay1 = [[Sg.Text("min altitude(km)", pad=((30, 0), (15, 0))), Sg.Text("max altitude(km)", pad=((30, 10), (15, 0)))],
-                [Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((40, 0), (10, 20)), size=(10, 1), default_value="110", key="-min_alt-"),
-                 Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((45, 0), (10, 20)), size=(11, 1), default_value="200", key="-max_alt-")],
+                [Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((40, 0), (10, 20)), size=(10, 1), default_value="110",
+                               key="-min_alt-"),
+                 Sg.InputCombo(values=[i for i in range(100, 601, 10)], pad=((45, 0), (10, 20)), size=(11, 1), default_value="200",
+                               key="-max_alt-")],
                 [Sg.Text("Products", pad=((30, 0), (0, 0))), Sg.Text("Errors", pad=((200, 0), (0, 0)))],
                 [Sg.Text("_" * 15, pad=((20, 0), (0, 0))), Sg.Text("_" * 30, pad=((105, 0), (0, 0)))],
-                [Sg.Column(col2, pad=((0, 0), (0, 100)), scrollable=False), Sg.Column(col1, size=(360, 270), pad=((15, 0), (0, 0)), scrollable=True)]]
+                [Sg.Column(col2, pad=((0, 0), (0, 100)), scrollable=False), Sg.Column(col1, size=(360, 270), pad=((15, 0), (0, 0)),
+                           scrollable=True)]]
 
     templay2 = [[Sg.Text("Products", pad=((30, 0), (30, 0))), Sg.Text("Errors", pad=((200, 0), (30, 0)))],
                 [Sg.Text("_" * 15, pad=((20, 0), (0, 0))), Sg.Text("_" * 30, pad=((105, 0), (0, 0)))],
@@ -3246,23 +3264,24 @@ def gui():
     templay4 = [[Sg.TabGroup([[Sg.Tab("Vertical Profile Plots", templay1), Sg.Tab("Map Profile (Lat-Lon) Plots", templay2),
                                Sg.Tab("Map Profile (Lat-Alt) Plots", templay3)]], key="-TABGROUP1-")]]
 
-    lat_values = ["-88.75", "-86.25", "-83.75", "-81.25", "-78.75", "-76.25", "-73.75", "-71.25", "-68.75", "-66.25", "-63.75", "-61.25", "-58.75",
-                  "-56.25", "-53.75", "-51.25", "-48.75", "-46.25", "-43.75", "-41.25", "-38.75", "-36.25", "-33.75", "-31.25", "-28.75", "-26.25",
-                  "-23.75", "-21.25", "-18.75", "-16.25", "-13.75", "-11.25", "-8.75", "-6.25", "-3.75", "-1.25", "1.25", "3.75", "6.25", "8.75",
-                  "11.25", "13.75", "16.25", "18.75", "21.25", "23.75", "26.25", "28.75", "31.25", "33.75", "36.25", "38.75", "41.25", "43.75",
-                  "46.25", "48.75", "51.25", "53.75", "56.25", "58.75", "61.25", "63.75", "66.25", "68.75", "71.25", "73.75", "76.25", "78.75",
-                  "81.25", "83.75", "84.25", "87.75"]
+    lat_values = ["-88.75", "-86.25", "-83.75", "-81.25", "-78.75", "-76.25", "-73.75", "-71.25", "-68.75", "-66.25", "-63.75", "-61.25",
+                  "-58.75", "-56.25", "-53.75", "-51.25", "-48.75", "-46.25", "-43.75", "-41.25", "-38.75", "-36.25", "-33.75", "-31.25",
+                  "-28.75", "-26.25", "-23.75", "-21.25", "-18.75", "-16.25", "-13.75", "-11.25", "-8.75", "-6.25", "-3.75", "-1.25", "1.25",
+                  "3.75", "6.25", "8.75", "11.25", "13.75", "16.25", "18.75", "21.25", "23.75", "26.25", "28.75", "31.25", "33.75", "36.25",
+                  "38.75", "41.25", "43.75", "46.25", "48.75", "51.25", "53.75", "56.25", "58.75", "61.25", "63.75", "66.25", "68.75", "71.25",
+                  "73.75", "76.25", "78.75", "81.25", "83.75", "84.25", "87.75"]
 
-    lon_values = ["-180.0", "-177.5", "-175.0", "-172.5", "-170.0", "-167.5", "-165.0", "-162.5", "-160.0", "-157.5", "-155.0", "-152.5", "-150.0",
-                  "-147.5", "-145.0", "-142.5", "-140.0", "-137.5", "-135.0", "-132.5", "-130.0", "-127.5", "-125.0", "-122.5", "-120.0", "-117.5",
-                  "-115.0", "-112.5", "-110.0", "-107.5", "-105.0", "-102.5", "-100.0", "-97.5", "-95.0", "-92.5", "-90.0", "-87.5", "-85.0", "-82.5",
-                  "-80.0", "-77.5", "-75.0", "-72.5", "-70.0", "-67.5", "-65.0", "-62.5", "-60.0", "-57.5", "-55.0", "-52.5", "-50.0", "-47.5",
-                  "-45.0", "-42.5", "-40.0", "-37.5", "-35.0", "-32.5", "-30.0", "-27.5", "-25.0", "-22.5", "-20.0", "-17.5", "-15.0", "-12.5",
-                  "-10.0", "-7.5", "-5.0", "-2.5", "0.0", "2.5", "5.0", "7.5", "10.0", "12.5", "15.0", "17.5", "20.0", "22.5", "25.0", "27.5", "30.0",
-                  "32.5", "35.0", "37.5", "40.0", "42.5", "45.0", "47.5", "50.0", "52.5", "55.0", "57.5", "60.0", "62.5", "65.0", "67.5", "70.0",
-                  "72.5", "75.0", "77.5", "80.0", "82.5", "85.0", "87.5", "90.0", "92.5", "95.0", "97.5", "100.0", "102.5", "105.0", "107.5", "110.0",
-                  "112.5", "115.0", "117.5", "120.0", "122.5", "125.0", "127.5", "130.0", "132.5", "135.0", "137.5", "140.0", "142.5", "145.0",
-                  "147.5", "150.0", "152.5", "155.0", "157.5", "160.0", "162.5", "165.0", "167.5", "170.0", "172.5", "175.0", "177.5"]
+    lon_values = ["-180.0", "-177.5", "-175.0", "-172.5", "-170.0", "-167.5", "-165.0", "-162.5", "-160.0", "-157.5", "-155.0", "-152.5",
+                  "-150.0", "-147.5", "-145.0", "-142.5", "-140.0", "-137.5", "-135.0", "-132.5", "-130.0", "-127.5", "-125.0", "-122.5",
+                  "-120.0", "-117.5", "-115.0", "-112.5", "-110.0", "-107.5", "-105.0", "-102.5", "-100.0", "-97.5", "-95.0", "-92.5", "-90.0",
+                  "-87.5", "-85.0", "-82.5", "-80.0", "-77.5", "-75.0", "-72.5", "-70.0", "-67.5", "-65.0", "-62.5", "-60.0", "-57.5", "-55.0",
+                  "-52.5", "-50.0", "-47.5", "-45.0", "-42.5", "-40.0", "-37.5", "-35.0", "-32.5", "-30.0", "-27.5", "-25.0", "-22.5", "-20.0",
+                  "-17.5", "-15.0", "-12.5", "-10.0", "-7.5", "-5.0", "-2.5", "0.0", "2.5", "5.0", "7.5", "10.0", "12.5", "15.0", "17.5", "20.0",
+                  "22.5", "25.0", "27.5", "30.0", "32.5", "35.0", "37.5", "40.0", "42.5", "45.0", "47.5", "50.0", "52.5", "55.0", "57.5", "60.0",
+                  "62.5", "65.0", "67.5", "70.0", "72.5", "75.0", "77.5", "80.0", "82.5", "85.0", "87.5", "90.0", "92.5", "95.0", "97.5", "100.0",
+                  "102.5", "105.0", "107.5", "110.0", "112.5", "115.0", "117.5", "120.0", "122.5", "125.0", "127.5", "130.0", "132.5", "135.0",
+                  "137.5", "140.0", "142.5", "145.0", "147.5", "150.0", "152.5", "155.0", "157.5", "160.0", "162.5", "165.0", "167.5", "170.0",
+                  "172.5", "175.0", "177.5"]
 
     # ############################################ VERTICAL PROFILE LAYOUT #############################################
     # ##################################################################################################################
@@ -3270,20 +3289,25 @@ def gui():
                     Sg.Text("Timestep", pad=((30, 20), (30, 0)))],
                    [Sg.InputCombo(values=lat_values, default_value="63.75", pad=((30, 0), (0, 20)), size=(14, 1), key="-LAT-"),
                     Sg.InputCombo(values=lon_values, default_value="-57.5", pad=((45, 0), (0, 20)), size=(15, 1), key="-LON-"),
-                    Sg.InputCombo(values=[i for i in range(0, 60)], pad=((45, 0), (0, 20)), size=(7, 1), default_value="9", key="-TIME_vert-")]]
+                    Sg.InputCombo(values=[i for i in range(0, 60)], pad=((45, 0), (0, 20)), size=(7, 1), default_value="9",
+                                  key="-TIME_vert-")]]
     # ########################################### VERTICAL PROFILE LAYOUT END ##########################################
     # ##################################################################################################################
 
     # ############################################### MAP PROFILE LAYOUT ###############################################
     # ##################################################################################################################
     map_layout = [[Sg.Text("Timestep", pad=((40, 20), (30, 0))), Sg.Text("Pressure level", pad=((30, 20), (30, 0)))],
-                  [Sg.InputCombo(values=[i for i in range(0, 60)], pad=((45, 0), (0, 20)), size=(7, 1), default_value="9", key="-TIME_map-"),
-                   Sg.InputCombo(values=[i for i in range(0, 56)], pad=((40, 0), (0, 20)), size=(11, 1), default_value="7", key="-Pr_level-")],
+                  [Sg.InputCombo(values=[i for i in range(0, 60)], pad=((45, 0), (0, 20)), size=(7, 1), default_value="9",
+                                 key="-TIME_map-"),
+                   Sg.InputCombo(values=[i for i in range(0, 56)], pad=((40, 0), (0, 20)), size=(11, 1), default_value="7",
+                                 key="-Pr_level-")],
                   [Sg.Checkbox("Add nightshade", default=True, tooltip="Adds night region on map", key="-NIGHT-")]]
 
     map2_latout = [[Sg.Text("Timestep", pad=((40, 20), (30, 0))), Sg.Text("Longitude", pad=((30, 20), (30, 0)))],
-                   [Sg.InputCombo(values=[i for i in range(0, 60)], pad=((45, 0), (0, 20)), size=(7, 1), default_value="9", key="-TIME_map2-"),
-                    Sg.InputCombo(values=lon_values, pad=((40, 0), (0, 20)), size=(11, 1), default_value="-57.5", key="-Lon_map2-")]]
+                   [Sg.InputCombo(values=[i for i in range(0, 60)], pad=((45, 0), (0, 20)), size=(7, 1), default_value="9",
+                                  key="-TIME_map2-"),
+                    Sg.InputCombo(values=lon_values, pad=((40, 0), (0, 20)), size=(11, 1), default_value="-57.5",
+                                  key="-Lon_map2-")]]
     # ############################################# MAP PROFILE LAYOUT END #############################################
     # ##################################################################################################################
 
@@ -3297,10 +3321,11 @@ def gui():
                    [Sg.Frame("Choose plots", templay4, pad=((0, 0), (40, 30)))],
                    [Sg.Text("Choose Noise Method:", font=("Helvetica", 14)), Sg.Checkbox("AWGN", default=False, enable_events=True,
                     tooltip="Additive Gaussian Noise Method", key="-AWGN-"),
-                    Sg.Checkbox("Science Study Random Error", default=False, enable_events=True, tooltip="Random Noise Based on Science Study Errors",
-                    key="-SC_rand-")],
-                   [Sg.Text("Signal to Noise Ratio (in dB):"), Sg.Spin(size=(3, 3), values=[i for i in range(0, 105, 5)], initial_value=45,
-                    disabled=True, enable_events=True, key="-SNR-")],
+                    Sg.Checkbox("Science Study Random Error", default=False, enable_events=True,
+                                tooltip="Random Noise Based on Science Study Errors", key="-SC_rand-")],
+                   [Sg.Text("Signal to Noise Ratio (in dB):"), Sg.Spin(size=(3, 3), values=[i for i in range(0, 105, 5)],
+                                                                       initial_value=45, disabled=True, enable_events=True,
+                                                                       key="-SNR-")],
                    [Sg.Text("Choose Profile")],
                    [Sg.TabGroup([[Sg.Tab("Vertical Profile", vert_layout), Sg.Tab("Map Profile (Lat-Lon)", map_layout),
                                   Sg.Tab("Map Profile (Lat-Alt)", map2_latout)]], key="-TABGROUP-")],
@@ -3380,25 +3405,33 @@ def gui():
                 min_alt = values["-min_alt-"]
                 max_alt = values["-max_alt-"]
                 user_time = int(values["-TIME_vert-"])
-                models_input(file_name=user_file_name, timer=user_time, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
-                Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
-                 parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], \
-                 C_O2p[:, :, :], C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
-                 calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
-                                    Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
-                                    Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                models_input(file_name=user_file_name, timer=user_time, lat_value=lat_dictionary[user_lat],
+                             lon_value=lon_dictionary[user_lon])
+                Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], \
+                 hall_con[:, :, :], parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], \
+                 nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], \
+                 J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
+                 calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny,
+                                    Unz_in=Unz, Vix_in=Vi_vertx, Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2,
+                                    NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp, Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn,
+                                    lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
                 prod_calculated = True
                 if values["-TABGROUP1-"] == "Vertical Profile Plots":
                     if values["-COL-"]:
-                        plot_collisions(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                        plot_collisions(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                        max_alt=max_alt)
                     if values["-HR-"]:
-                        plot_heating_rates(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                        plot_heating_rates(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                           max_alt=max_alt)
                     if values["-CON-"]:
-                        plot_conductivities(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                        plot_conductivities(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                            max_alt=max_alt)
                     if values["-CUR-"]:
-                        plot_currents(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                        plot_currents(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                      max_alt=max_alt)
                     if values["-CR-"]:
-                        plot_cross_sections(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt, max_alt=max_alt)
+                        plot_cross_sections(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
+                                            max_alt=max_alt)
             else:
                 Sg.popup("Tabs do not match!", title="Input Error", keep_on_top=True)
         if event == "Calculate Products" and values["-TABGROUP-"] == "Map Profile (Lat-Lon)":
@@ -3406,12 +3439,14 @@ def gui():
                 user_time = values["-TIME_map-"]
                 user_lev = values["-Pr_level-"]
                 models_input(file_name=user_file_name, timer=user_time, pressure_level=user_lev)
-                Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
-                 parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], \
-                 C_O2p[:, :, :], C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
-                 calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
-                                    Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
-                                    Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, pressure_level=user_lev)
+                Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], \
+                 hall_con[:, :, :], parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], \
+                 nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], \
+                 J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
+                 calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny,
+                                    Unz_in=Unz, Vix_in=Vi_vertx, Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2,
+                                    NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp, Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn,
+                                    pressure_level=user_lev)
                 prod_calculated = True
                 if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
                     user_lev = values["-Pr_level-"]
@@ -3437,12 +3472,14 @@ def gui():
                 min_alt_la = values["-min_alt_la-"]
                 max_alt_la = values["-max_alt_la-"]
                 models_input(file_name=user_file_name, timer=user_time, lon_value=lon_dictionary[user_lon])
-                Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], hall_con[:, :, :], \
-                 parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], nu_e_sum[:, :, :], C_Op[:, :, :], \
-                 C_O2p[:, :, :], C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
-                 calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny, Unz_in=Unz, Vix_in=Vi_vertx,
-                                    Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2, NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp,
-                                    Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn, lon_value=lon_dictionary[user_lon])
+                Joule_Heating[:, :, :], Ohmic_Heating[:, :, :], Frictional_Heating[:, :, :], pedersen_con[:, :, :], \
+                 hall_con[:, :, :], parallel_con[:, :, :], nu_Op_sum[:, :, :], nu_O2p_sum[:, :, :], nu_NOp_sum[:, :, :], \
+                 nu_e_sum[:, :, :], C_Op[:, :, :], C_O2p[:, :, :], C_NOp[:, :, :], C_ion[:, :, :], J_pedersen[:, :, :], \
+                 J_hall[:, :, :], J_ohmic[:, :, :], J_dens[:, :, :] = \
+                 calculate_products(Bx_in=Bx, By_in=By, Bz_in=Bz, Ex_in=Ex, Ey_in=Ey, Ez_in=Ez, Unx_in=Unx, Uny_in=Uny,
+                                    Unz_in=Unz, Vix_in=Vi_vertx, Viy_in=Vi_verty, Viz_in=Vi_vertz, NO_in=NO, NO2_in=NO2,
+                                    NN2_in=NN2, NOp_in=NOp, NO2p_in=NO2p, NNOp_in=NNOp, Ne_in=Ne, Ti_in=Ti, Te_in=Te, Tn_in=Tn,
+                                    lon_value=lon_dictionary[user_lon])
                 prod_calculated = True
                 if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
                     if values["-HR_mapla-"]:
@@ -3473,15 +3510,17 @@ def gui():
                     else:
                         Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
                     if calculated_noise:
-                        Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
-                         hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], \
-                         nu_NOp_sum_noisy[:, :, :], nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], \
-                         C_ion_noisy[:, :, :], J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
-                         calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
-                                            Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
-                                            Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
-                                            NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
-                                            lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon])
+                        Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], \
+                         pedersen_con_noisy[:, :, :], hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], \
+                         nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :], nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], \
+                         C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], J_pedersen_noisy[:, :, :], \
+                         J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
+                         calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy,
+                                            Ez_in=Ez_noisy, Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy,
+                                            Viy_in=Vi_verty_noisy, Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy,
+                                            NOp_in=NOp_noisy, NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy,
+                                            Te_in=Te_noisy, Tn_in=Tn_noisy, lat_value=lat_dictionary[user_lat],
+                                            lon_value=lon_dictionary[user_lon])
                         if values["-TABGROUP1-"] == "Vertical Profile Plots":
                             min_alt = values["-min_alt-"]
                             max_alt = values["-max_alt-"]
@@ -3492,35 +3531,35 @@ def gui():
                                 plot_data_2(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
                                             max_alt=max_alt)
                             if values["-COL_abs-"]:
-                                plot_collisions_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                      max_alt=max_alt)
+                                plot_collisions_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon],
+                                                      min_alt=min_alt, max_alt=max_alt)
                             if values["-COL_rel-"]:
-                                plot_collisions_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                          max_alt=max_alt)
+                                plot_collisions_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon],
+                                                          min_alt=min_alt, max_alt=max_alt)
                             if values["-HR_abs-"]:
-                                plot_heating_rates_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                         max_alt=max_alt)
+                                plot_heating_rates_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon],
+                                                         min_alt=min_alt, max_alt=max_alt)
                             if values["-HR_rel-"]:
-                                plot_heating_rates_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                             max_alt=max_alt)
+                                plot_heating_rates_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon],
+                                                             min_alt=min_alt, max_alt=max_alt)
                             if values["-CON_abs-"]:
-                                plot_conductivities_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                          max_alt=max_alt)
+                                plot_conductivities_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon],
+                                                          min_alt=min_alt, max_alt=max_alt)
                             if values["-CON_rel-"]:
-                                plot_conductivities_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                              max_alt=max_alt)
+                                plot_conductivities_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon],
+                                                              min_alt=min_alt, max_alt=max_alt)
                             if values["-CUR_abs-"]:
-                                plot_currents_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                    max_alt=max_alt)
+                                plot_currents_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon],
+                                                    min_alt=min_alt, max_alt=max_alt)
                             if values["-CUR_rel-"]:
-                                plot_currents_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                        max_alt=max_alt)
+                                plot_currents_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon],
+                                                        min_alt=min_alt, max_alt=max_alt)
                             if values["-CR_abs-"]:
-                                plot_csections_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                     max_alt=max_alt)
+                                plot_csections_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon],
+                                                     min_alt=min_alt, max_alt=max_alt)
                             if values["-CR_rel-"]:
-                                plot_csections_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon], min_alt=min_alt,
-                                                         max_alt=max_alt)
+                                plot_csections_rel_error(lat_value=lat_dictionary[user_lat], lon_value=lon_dictionary[user_lon],
+                                                         min_alt=min_alt, max_alt=max_alt)
                 else:
                     Sg.popup("First Products Must Be Calculated", title="Input Error", keep_on_top=True)
             else:
@@ -3540,15 +3579,16 @@ def gui():
                     else:
                         Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
                     if calculated_noise:
-                        Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
-                         hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], \
-                         nu_NOp_sum_noisy[:, :, :], nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], \
-                         C_ion_noisy[:, :, :], J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
+                        Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], \
+                         pedersen_con_noisy[:, :, :], hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], \
+                         nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :], nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], \
+                         C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], \
+                         J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
                          calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
                                             Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
                                             Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
-                                            NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
-                                            pressure_level=user_lev)
+                                            NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy,
+                                            Tn_in=Tn_noisy, pressure_level=user_lev)
                         if values["-TABGROUP1-"] == "Map Profile (Lat-Lon) Plots":
                             user_lev = values["-Pr_level-"]
                             night_shade = False
@@ -3585,15 +3625,16 @@ def gui():
                     else:
                         Sg.popup("You must choose a noise method", title="Noise Method", keep_on_top=True)
                     if calculated_noise:
-                        Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], pedersen_con_noisy[:, :, :], \
-                         hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], nu_O2p_sum_noisy[:, :, :], \
-                         nu_NOp_sum_noisy[:, :, :], nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], \
-                         C_ion_noisy[:, :, :], J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
+                        Joule_Heating_noisy[:, :, :], Ohmic_Heating_noisy[:, :, :], Frictional_Heating_noisy[:, :, :], \
+                         pedersen_con_noisy[:, :, :], hall_con_noisy[:, :, :], parallel_con_noisy[:, :, :], nu_Op_sum_noisy[:, :, :], \
+                         nu_O2p_sum_noisy[:, :, :], nu_NOp_sum_noisy[:, :, :], nu_e_sum_noisy[:, :, :], C_Op_noisy[:, :, :], \
+                         C_O2p_noisy[:, :, :], C_NOp_noisy[:, :, :], C_ion_noisy[:, :, :], J_pedersen_noisy[:, :, :], J_hall_noisy[:, :, :], \
+                         J_ohmic_noisy[:, :, :], J_dens_noisy[:, :, :] = \
                          calculate_products(Bx_in=Bx_noisy, By_in=By_noisy, Bz_in=Bz_noisy, Ex_in=Ex_noisy, Ey_in=Ey_noisy, Ez_in=Ez_noisy,
                                             Unx_in=Unx_noisy, Uny_in=Uny_noisy, Unz_in=Unz_noisy, Vix_in=Vi_vertx_noisy, Viy_in=Vi_verty_noisy,
                                             Viz_in=Vi_vertz_noisy, NO_in=NO_noisy, NO2_in=NO2_noisy, NN2_in=NN2_noisy, NOp_in=NOp_noisy,
-                                            NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy, Tn_in=Tn_noisy,
-                                            lon_value=lon_dictionary[user_lon])
+                                            NO2p_in=NO2p_noisy, NNOp_in=NNOp_noisy, Ne_in=Ne_noisy, Ti_in=Ti_noisy, Te_in=Te_noisy,
+                                            Tn_in=Tn_noisy, lon_value=lon_dictionary[user_lon])
                         if values["-TABGROUP1-"] == "Map Profile (Lat-Alt) Plots":
                             if values["-HR_mapla_error-"]:
                                 mapla_heating_rates_rel_error_plot(lon_value=lon_dictionary[user_lon], min_alt=min_alt_la, max_alt=max_alt_la)

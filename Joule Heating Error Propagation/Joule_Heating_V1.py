@@ -3849,13 +3849,11 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
     plt.title('Joule Heating Relative Error' + title)
     cbar = plt.colorbar(cp1)
-    cbar.set_ticks([1.0e-1, 4.0e-1, 1.0e0, 1.0e1, 1.0e2, 1.0e3, 1.0e4, 1.0e5, 1.0e6])
-    cbar.set_ticklabels(['0.1', '0.4', '1', '10', '1.0e2', '1.0e3', '1.0e4', '1.0e5', '1.0e6'])
 
     # Ohmic Heating
     plt.figure(figsize=(12, 12))
     cp2 = plt.contourf(heights_la[:-1], glat_in[:], Ohmic_Heating_error[:, lon, :-1] / Ohmic_Heating[:, lon, :-1],
-                       locator=ticker.LogLocator(subs=[1.0, 2.0, 4.0]), norm=LogNorm(), cmap=cm.batlow, interpolation='bicubic')
+                       locator=ticker.LogLocator(subs=[1.0, 2.5, 4.0]), norm=LogNorm(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3865,13 +3863,11 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
     plt.title('Ohmic Heating Relative Error' + title)
     cbar = plt.colorbar(cp2)
-    cbar.set_ticks([1.0e-1, 2.0e-1, 4.0e-1, 1.0e0, 1.0e1, 1.0e2, 1.0e3, 1.0e4, 1.0e5])
-    cbar.set_ticklabels(['0.1', '0.2', '0.4', '1', '10', '1.0e2', '1.0e3', '1.0e4', '1.0e5'])
 
     # Frictional Heating
     plt.figure(figsize=(12, 12))
     cp3 = plt.contourf(heights_la[:-1], glat_in[:], Frictional_Heating_error[:, lon, :-1] / Frictional_Heating[:, lon, :-1],
-                       locator=ticker.LogLocator(subs=[1.0, 4.0]), norm=LogNorm(), cmap=cm.batlow, interpolation='bicubic')
+                       locator=ticker.LogLocator(subs=[1.0, 4.5]), norm=LogNorm(), cmap=cm.batlow, interpolation='bicubic')
 
     plt.xlim(min_alt, max_alt)
     plt.xticks(np.arange(min_alt, max_alt + 10, 10))
@@ -3881,8 +3877,6 @@ def mapla_heating_rates_rel_error_plot(lon_value, min_alt, max_alt):
 
     plt.title('Frictional Heating Relative Error' + title)
     cbar = plt.colorbar(cp3)
-    cbar.set_ticks([1.0e-1, 4.0e-1, 1.0e0, 1.0e1, 1.0e2, 1.0e3, 1.0e4, 1.0e5])
-    cbar.set_ticklabels(['0.1', '0.4', '1', '10', '1.0e2', '1.0e3', '1.0e4', '1.0e5'])
 
     plt.show()
 
@@ -4000,8 +3994,6 @@ def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
 
     plt.title('Ohmic Current Relative Error' + title)
     cbar = plt.colorbar(cp1)
-    cbar.set_ticks([1.0e-1, 2.0e-1, 4.0e-1, 1.0e0, 1.0e1, 1.0e2, 1.0e3, 1.0e4, 1.0e5, 1.0e6])
-    cbar.set_ticklabels(['0.1', '0.2', '0.4', '1', '10', '1.0e2', '1.0e3', '1.0e4', '1.0e5', '1.0e6'])
 
     # Densities Current
     plt.figure(figsize=(12, 12))
@@ -4016,8 +4008,6 @@ def mapla_currents_rel_error_plot(lon_value, min_alt, max_alt):
 
     plt.title('Densities Current Relative Error' + title)
     cbar = plt.colorbar(cp2)
-    cbar.set_ticks([1.0e-1, 4.0e-1, 1.0e0, 1.0e1, 1.0e2, 1.0e3, 1.0e4, 1.0e5, 1.0e6])
-    cbar.set_ticklabels(['0.1', '0.4', '1', '10', '1.0e2', '1.0e3', '1.0e4', '1.0e5', '1.0e6'])
 
     plt.show()
 

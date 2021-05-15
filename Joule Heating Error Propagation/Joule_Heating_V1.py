@@ -331,7 +331,6 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
         lev_range = lev_start + 1
         lat_range = len(glat_in)
         lon_range = len(glon_in)
-        title = ' Pressure level: ' + str(glev_in[pressure_level]) + ', Date/Time: ' + str(real_time) + ' (UTC)'
         map_time = real_time
 
     # Vertical profile
@@ -343,6 +342,7 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
         lev_range = len(glev_in) - 1
         title = ' Lat: ' + str(glat_in[lat_value]) + ', ' + 'Lon: ' + str(glon_in[lon_value]) + ', Date/Time: ' + str(real_time) + ' (UTC)'
 
+    temp_lat_lon = 0
     for lev in range(lev_start, lev_range):
         temp_height = 0
         for lat in range(lat_start, lat_range):
@@ -353,6 +353,9 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
                 # Average heights for Lat - Alt map
                 temp_height = temp_height + heights[lat, lon, lev]
                 heights_la[lev] = round(temp_height / lat_range)
+
+                # Average altitude for Lat-Lon map
+                temp_lat_lon = temp_lat_lon + heights[lat, lon, lev]
 
                 # Run I-GRF model using pyglow to get magnetic field
                 # Create pyglow point
@@ -398,6 +401,12 @@ def models_input(file_name, timer, lat_value=-1, lon_value=-1, pressure_level=-1
                 Ti[lat, lon, lev] = Ti_in[timer, lev, lat, lon]
                 Tn[lat, lon, lev] = Tn_in[timer, lev, lat, lon]
 
+    if lat_value==-1 and lon_value==-1:
+        # Average altitude for the Lat-Lon map
+        altitude_lat_lon = temp_lat_lon / (144 * 72)
+        altitude_lat_lon = round(altitude_lat_lon)
+        title = ' Pressure level: ' + str(glev_in[pressure_level]) + ' (~' + str(altitude_lat_lon) + ' km) ' + \
+                'Date/Time: ' + str(real_time) + ' (UTC)'
     progress_bar.UpdateBar(180, 210)
     time.sleep(3)
     window.close()
@@ -4252,7 +4261,7 @@ def gui():
     map_layout = [[Sg.Text("Timestep", pad=((40, 20), (30, 0))), Sg.Text("Pressure level", pad=((30, 20), (30, 0)))],
                   [Sg.InputCombo(values=[i for i in range(0, 60)], pad=((45, 0), (0, 20)), size=(7, 1), default_value="9",
                                  key="-TIME_map-"),
-                   Sg.InputCombo(values=[i for i in range(0, 56)], pad=((40, 0), (0, 20)), size=(11, 1), default_value="7",
+                   Sg.InputCombo(values=[i for i in range(0, 56)], pad=((40, 0), (0, 20)), size=(11, 1), default_value="11",
                                  key="-Pr_level-")],
                   [Sg.Checkbox("Add nightshade", default=True, tooltip="Adds night region on map", key="-NIGHT-")]]
 

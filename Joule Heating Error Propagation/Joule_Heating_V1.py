@@ -4145,7 +4145,7 @@ def gui():
             [Sg.Checkbox("Plot Currents Absolute Error", default=False, tooltip="Plots currents absolute error", key="-CUR_abs-")],
             [Sg.Checkbox("Plot Currents With Error", default=False, tooltip="Plots currents with error", key="-CUR_plus_error-")],
             [Sg.Checkbox("Plot Currents Relative Error", default=False, tooltip="Plots currents relative error", key="-CUR_rel-")],
-            [Sg.Checkbox("Plot Currents Relative Contributions", default=False, tooltip="Plots currents relative error with contributions",
+            [Sg.Checkbox("Plot Currents Relative Error Contributions", default=False, tooltip="Plots currents relative error with contributions",
              key="-CUR_con-")],
             [Sg.Checkbox("Plot Cross Sections Absolute Error", default=False, tooltip="Plots cross sections absolute error", key="-CR_abs-")],
             [Sg.Checkbox("Plot Cross Sections With Error", default=False, tooltip="Plots cross sections with error", key="-CR_plus_error-")],

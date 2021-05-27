@@ -993,10 +993,10 @@ def calculate_noise(lat_value=-1, lon_value=-1, pressure_level=-1):
     time.sleep(3)
     window.close()
     Sg.popup("_" * 50, "Noise calculated in : " + str(time.time() - start_time) + " sec!", "_" * 50, title="Finished", keep_on_top=True)
-    print('Calculated Noise in: ', time.time() - start_time, ' sec !')
+    print('Calculated Noise in: ', time.time() - start_time, ' sec!')
     print(" ")
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Noise Calculation End $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Noise Calculation End $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Calculate Products $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -1444,11 +1444,11 @@ def plot_data_2(lat_value, lon_value, min_alt, max_alt):
                   line=dict(shape='spline', color='purple', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Vi_vertx_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Vix + noise", mode='lines',
-                             line=dict(shape='spline', color='yellow')))
+                             line=dict(shape='spline', color='navy')))
     fig.add_trace(go.Scatter(x=Vi_verty_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Viy + noise", mode='lines',
-                             line=dict(shape='spline', color='yellow', dash="dot")))
+                             line=dict(shape='spline', color='navy', dash="dot")))
     fig.add_trace(go.Scatter(x=Vi_vertz_noisy[lat, lon, :-1], y=heights[lat, lon, :-1], name="Viz + noise", mode='lines',
-                             line=dict(shape='spline', color='yellow', dash="dash")))
+                             line=dict(shape='spline', color='navy', dash="dash")))
 
     fig.add_trace(go.Scatter(x=Vi_vertx[lat, lon, :-1], y=heights[lat, lon, :-1], name="Vix", mode='lines',
                   line=dict(shape='spline', color='brown')))

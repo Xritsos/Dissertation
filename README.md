@@ -20,6 +20,8 @@ In the first version, the error propagation method is used to determine the syst
  
 The output plots depict the quantities and errors as height, latitude-longitude and altitude-latitude depended.
 
+<img src="images/Εικ5.1.png" alt="mypic" style="width:450px; height:450px"/>  <img src="images/Εικ4.11.png" alt="mypic" style="width:550px; height:450px"/>
+
 ## Prerequisites
 
 The data used in the mission are not provided here beacause of large file sizes but anyone can request a run for the models in the links below:
